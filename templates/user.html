@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid registration-form">
+<div class="row">
+
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+         <div class="row">
+             <div class="col-sm-4">
+                 Имя пользователя (ник)
+             </div>
+
+             <div class="col-sm-4">
+                  {{ explored_username }}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+         <div class="row">
+             <div class="col-sm-4">
+                  Полное имя или имя собственное
+             </div>
+             <div class="col-sm-4">
+                 {{ fullname }}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+         <div class="row">
+             <div class="col-sm-4">
+Пользователь о себе
+             </div>
+             <div class="col-sm-4">
+                 {{ bio }}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+     </div>
+<div>
+<div class="col-sm-2">
+</div> 
+
+
+</div> <!-- row ends -->
+</div> <!-- container ends -->
+
+    <div class="col-sm-2"></div>
+</div>
+</div>
+
+
+<div class="container-fluid registration-form">
+<div class="row">
+
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+     <div class="container-fluid">
+         <div class="row">
+             <div class="col-sm-4">
+                 <div class="loves"><span>Любит</span></div>
+             </div> 
+             
+
+             <div class="col-sm-4">
+                 <div class="hates" style="color:black;"><span>Безразличен к</span></div>
+             </div>
+
+
+             
+
+             <div class="col-sm-4">
+                 <div class="hates"><span>Ненавидит</span></div>
+             </div> 
+             
+                  
+         </div>
+     </div>
+<div>
+<div class="col-sm-2">
+</div> 
+
+
+</div> <!-- row ends -->
+</div> <!-- container ends -->
+
+    <div class="col-sm-2"></div>
+</div>
+</div>
+
+
+{% endblock %}

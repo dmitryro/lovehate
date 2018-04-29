@@ -1,0 +1,912 @@
+{% load static %}
+{% load meta_extras %}
+{% load bootstrap_pagination %}
+{% load bootstrap3 %}
+<html lang="ru">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<meta http-equiv="content-language" content="ru">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<style>
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+
+/* Color settings */
+$formBg: #2c3e50;
+$formColor: #fff;
+$inputBg: #fff;
+$inputColor: #000;
+$buttonBg: #e67e22;
+$buttonColor: #fff;
+$errorMsgColor: #ff0000;
+
+
+body {font-family: "Times New Roman";}
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 6px 10px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+.registration-form {
+    font-family: Times New Roman;
+    font-weight: normal;
+}
+.errors {
+    display: none;
+    color: red;
+    text-align:center;
+    font-family: Times New Roman;
+    font-weight: normal;
+    width:100%;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
+.activation-errors {
+    display: none;
+    color: red;
+    text-align:center;
+    font-family: Times New Roman;
+    font-weight: normal;
+    width:100%;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 7px 10px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+    #registration label {
+        width: 250px;
+    }
+    #registration label.error, #registration input.submit {
+        margin-left: 253px;
+    }
+    #registration label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+/* Set a style for all buttons */
+.search button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 7px 10px;
+    margin: 4px 0;
+    margin-top: 8px;
+    border: none;
+    cursor: pointer;
+    width: 60%;
+}
+
+.search button:hover {
+    opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/* Center the image and position the close button */
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+    position: relative;
+}
+
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
+}
+
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+    margin: auto;
+}
+
+/* Modal Content/Box */
+.modal-content {
+/*
+    margin: 5% auto 15% auto; 
+    border: 1px solid #888;
+    width: 80%; 
+    position: absolute;
+    min-width:16em;
+*/
+    min-width:26.00em;
+    margin: auto;
+}
+
+.modaldialogue {
+    display:none;
+    min-width:20.00em;
+    font-family: Times New Roman;
+    font-weight: normal;
+}
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+.success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    display: none;
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)} 
+    to {-webkit-transform: scale(1)}
+}
+    
+@keyframes animatezoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+
+
+
+.header-pan {
+   margin: 0.2em 0.1em 0.2em 0.1em;
+   width:99.5%;
+   min-height: 10%;
+   padding: 0.1em 0.1em 0.1em 0.1em;
+   background: #eeeeee;
+   border-top: 1px solid #808080;
+   border-left: 1px solid #808080;
+   border-bottom: 1px solid #2c2c2c;
+   border-right: 1px solid #2c2c2c; 
+}
+.header-pan-top {
+   background: #f6f6f6;
+}
+
+.header-pan-bottom {
+   background: #eeeeee;
+}
+
+.header-pan-bottom a {
+   background: transparent;
+   color: #4a4a4a;
+   text-decoration:none;
+}
+
+.heade-pan-bottom a:hover {
+   background:#4a4a4a;
+   color: #ffffff;
+   text-decoration:underline;
+}
+
+.header-pan-left {
+   float:left;
+   width:76%;
+   height:6%;
+}
+.header-pan-right {
+   float:left;
+   width:23.0%;
+   height:6%;
+}
+
+.clear {
+   clear:both;
+}
+.left {
+   margin-right:0.0em;
+   border-right: 1px solid #d89b7b;
+   font-size:1.3em;
+   font-family: Times New Roman;
+   text-align:center;
+}
+.left-last {
+   margin-right:0.0em;
+   text-align:center;
+   font-size:1.3em;
+   font-family: Times New Roman;
+}
+
+.left a, .left-last a {
+   text-decoration: none;
+   font-family: Times New Roman;
+   font-size: 10pt;
+   color: #00008b;
+}
+.left a:hover, .left a:visited, left-last a:hover, left-last a:visited {
+   text-decoration: underline;
+   font-family: Times New Roman;
+   font-size: 10pt;
+   color: #660066;
+}
+
+.right {
+   width:10%;
+   margin-left:1.4em;
+   float:right;
+   margin-right:1.4em;
+}
+.right a {
+   text-decoration: none;
+   font-family: Times New Roman;
+   font-size: 10pt;
+   color: #666666;
+}
+.right a:hover, .right a:visited {
+   text-decoration: underline;
+   font-family: Times New Roman;
+   font-size: 10pt;
+   color: #660066;
+}
+
+.logo-love {
+   margin-left:1.0em;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.5em;
+   font-weight: normal;
+   overflow: hidden;
+   float: left;
+   width:3.40em;
+   min-width:3.40em;
+}
+
+.logo-hate {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.50em;
+   float: left;
+   font-family: Times New Roman;
+   overflow: hidden;
+   width:4.6em;
+}
+
+.logo-age {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 0.90em;
+   float: left;
+   font-family: Times New Roman;
+   overflow: hidden;
+   margin-top:0.4em;
+   width:2.2em;
+}
+
+.logo-and {
+   color: #000000;
+   font-weight: normal;
+   font-size: 1.5em;
+   float: left;
+   font-family: Times New Roman;
+   width:0.7em;
+   overflow: hidden;
+}
+
+.loves {
+   margin-left:1.0em;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.2em;
+   font-weight: normal;
+   width:100%;
+   overflow: hidden;
+   text-align: center;
+   border-bottom: 1px #979797 solid;
+}
+.hates {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+   overflow: hidden;
+   text-align: center;
+   min-width:100%;
+   width:100%;
+   border-bottom: 1px #979797 solid;
+}
+
+.logo-age {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 0.90em;
+   float: left;
+   font-family: Times New Roman;
+   overflow: hidden;
+   margin-top:0.4em;
+   min-width:3.0em;
+   width:3.2em;
+}
+
+.spacer {
+   width: 50em;
+   float: left;
+}
+
+.seach-bar {
+   width: 20em;
+   float: left;
+}
+
+.search-button {
+   width: 4em;
+   float: left;
+}
+
+.search-field {
+   width:6em;
+   float: left;   
+}
+.search-spacer {
+   min-width:0em;
+   width: 10em;
+}
+
+.first {
+   margin-left:2.0em;
+}
+
+.modal-login {
+   z-index:99999999;
+   position:absolute;
+   width: 20%;
+   min-width:14em,
+   margin-left:40%;
+   min-height: 70%;
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%) !important;
+   background: #eeeeee;
+   border-top: 1px solid #808080;
+   border-left: 1px solid #808080;
+   border-bottom: 1px solid #2c2c2c;
+   border-right: 1px solid #2c2c2c;  
+}
+
+.modal-register {
+   z-index:99999999;
+   position:absolute;
+   position: absolute;
+   width: 20%;
+   height:60%;
+   background: #eeeeee;
+   border-top: 1px solid #808080;
+   border-left: 1px solid #808080;
+   border-bottom: 1px solid #2c2c2c;
+   border-right: 1px solid #2c2c2c;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) !important;
+}
+
+.modal-header-title {
+   float:left;
+   width:95%;
+   height: 5%;
+   margin-left:1.0em;
+   color: #000000;
+   font-family: Times New Roman;
+   font-size: 1.5em;
+   font-weight: normal;
+}
+
+.modal-header-close {
+   float:left;
+   width:5%;
+   height: 5%;
+}
+
+
+
+.menu-item {
+    float:left;
+    display: block;
+    text-align: center;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+    padding-left:0.2em;
+    padding-right:0.2em;
+    min-width:5.00em;
+    text-decoration: none;
+    color: #4a4a4a;
+}
+
+/* Change the link color to #111 (black) on hover */
+div.menu-item:hover {
+    background: #4a4a4a;
+    color: #ffffff;
+}
+
+.menu-item a {
+    color: inherit;
+}
+
+.error {
+    display: none;
+    font-family: Times New Roman;
+    color: #ff0000;
+}
+
+</style>
+
+</head>
+<body>
+    <div class="header-pan">
+         <div class="container-fluid">
+              <div class="row header-pan-top">
+                               <div class="col-sm-7">
+                                      <div class="container-fluid">
+                                            <div class="row">
+
+                                     <div class="logo-love">
+                                           Любовь
+                                     </div>
+                                     <div class="logo-and">
+                                           и
+                                     </div>
+                                     <div class="logo-hate">
+                                         Ненависть
+                                     </div>
+                                     <div class="logo-age">
+                                       (18+)
+                                     </div>
+                                                  <div class="clear"></div>   
+
+                                            </div> <!-- end row -->
+                                      </div> <!-- end container -->
+                                </div>  <!-- header left ends -->
+
+                                <div class="col-sm-2  left-last" style="margin-top:0.8em;margin-bottom:-0.6em;margin-left:-5em;"> 
+<!--
+                                     <div id="logged-out" style="margin-top:-0.9em;margin-bottom:0.9em;">
+                                               
+                                               {% if not user.is_authenticated %}
+                                               <a id="modal-login-open" href="#">
+Зайти</a>
+                                               {% endif %}
+                                               {% if user.is_authenticated %}
+                                                       <span style="font-size:0.7em;">{{ username }}</span>  | <a id="session-exit" href="/signout">Выйти</a>
+
+                                               {% endif %}
+
+                                     </div>
+--> 
+                               </div>
+                                <div class="col-sm-3" style="margin-top:0.8em;margin-bottom:-0.6em;float:right;margin-left:-5em;">  
+                                                                               
+                                              <div style="float:left;width:55%;margin-top:-0.9em;margin-bottom:0.9em;">
+                                                    <input type="text" id="inlineFormInputGroup" placeholder="Введите текст..." name="search" maxlength="16" size="16">
+                                              </div>
+                                              <div style="float:left;width:5%;">&nbsp;</div>
+                                              <div style="float:left;width:39.6%;margin-top:-0.9em;margin-bottom:0.9em;" class="search">
+                                                    <button type="button" style="min-width:6.0em;background:#9b9b9b;"> Искать </button>
+                                              </div>
+                                              <div class="clear"></div>
+                                </div>  
+                                <div class="clear"></div>
+
+               </div> <!-- row ends -->
+               <div class = "row header-pan-bottom">
+                    <div class="col-sm-10">
+                         <div class="menu-item">
+                             <a href="/">Главная</a>
+                         </div>
+                         <div class="menu-item">
+                             <a href="/forum">Форум</a>
+                         </div>
+                         <div class="menu-item"> 
+                             <a href="/blog">Дневник</a>
+                         </div>
+                         <div class="menu-item">
+                             <a href="/mylh">Мой ЛХ</a>
+                         </div>
+                         <div class="menu-item"> 
+                             <a href="/private">Приваты</a>
+                         </div>
+                         <div class="menu-item">
+                             <a href="/statistics">Статистика</a>
+                         </div>
+                         <div class="clear"></div>
+                    </div>
+                    <div class="col-sm-2" style="margin-top:0.2em;margin-bottom:0.2em;float:right;">
+                           <div id="logged-out">
+
+                                               {% if not user.is_authenticated %}
+                                                   <a id="modal-login-open" href="#">Зайти</a> 
+                                               {% endif %}
+                                               {% if user.is_authenticated %}
+                                                   <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/private">
+                                                         Приваты
+ 
+                                                         </a> | <a id="session-exit" href="/signout">Выйти</a>
+                                               {% endif %}
+                           </div>
+                           <div class="clear"></div>
+
+
+                    </div>
+               </div>          
+              
+    </div>
+</div>
+
+              {% if is_activated %}
+                          <div class="success" id="activation-success">
+                                        Ваша запись успешно активирована.
+
+                          </div>
+
+               {% endif %}
+
+               {% if resend_activation %}
+
+                     <div class="activation-errors" id="resend-activation-errors" style="display:block;"><span>Ваша ссылка активации более не действительна.</span> </div>
+
+               {% endif %}
+               <div class="modal-login modaldialogue" id="modal-send-activation">
+                         <div class="modal-header">
+                             <div class="container-fluid">
+                                <div class="row">
+                                     <div class="col-sm-10">
+                                      <label><b>
+                                      <span>Учётная запись не активирована</span>
+                                      </b></label>
+                                     </div>
+                                     <div class="col-sm-2" id="modal-send-activation-close"><div style="float:right;">x</div><div class="clear"></div></div>
+                                </div>
+                             </div>
+
+                    </div>
+                    <div style="height:1.4em;text-align:center; font-weight:0.8em;">
+                          <div class="activation-errors" id="resend-activation-errors"><span>Ошибка. Попытайтесь ещё раз.</span> </div>
+                          <div class="success" id="resend-activation-success">
+                                         Ссылка для активации выслана.
+                          </div>
+
+                    </div>
+                    <div class="modal-body">
+                          <form id="resend-activation-form" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+                              <div class="container-fluid">
+                                                      <br/><br/>
+                                                        <button id="user-resend-activation" style="background:#4a4a4a;" type="button">Переслать Ссылку</button
+                                                        <span class="psw">Забыли <a href="#">пароль?</a></span>
+                                                        <p>
+                                                               <a id="modal-activation-register-open"
+                                                                        href="/register" style="color:dodgerblue">Зарегистрироваться
+                                                               </a>
+                                                        </p>
+
+
+                              </div>
+                         </form>
+                    </div>
+               </div>
+
+
+               <div class="modal-login modaldialogue" id="modal-login">
+                         <div class="modal-header">
+                             <div class="container-fluid">
+                                <div class="row">
+                                     <div class="col-sm-10">
+                                      <label><b>
+                                      <span>Зайти на сайт</span>
+                                      </b></label>
+                                     </div>
+                                     <div class="col-sm-2" id="modal-login-close"><div style="float:right;">x</div><div class="clear"></div></div>
+                                </div>
+                             </div>
+
+                    </div>
+                    <div style="height:1.4em;text-align:center; font-weight:0.8em;">
+                          <div class="errors"><span>Ошибка. Попытайтесь ещё раз.</span> </div>
+                          <div class="errors" id="modal-error"><span><a href="#" id="retry-activation" class="error">Активировать?</a></span> </div>
+                    </div>
+                    <div class="modal-body">
+                          <form id="authenticate-form" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+                              <div class="container-fluid">
+                                                 <label for="uname"><b>Имя Пользователя</b></label>
+                                                 <input id="username" type="text" placeholder="Имя Пользователя" name="uname" required>
+
+                                                 <label for="psw"><b>Пароль</b></label>
+                                                        <input id="password" type="password" placeholder="Пароль" name="psw" required>
+ 
+                                                        <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button
+                                                        <span class="psw">Забыли <a href="#">пароль?</a></span>
+
+                                                        <p>
+                                                               <a id="modal-register-open" 
+                                                                        href="/register" style="color:dodgerblue">Зарегистрироваться
+                                                               </a>
+                                                        </p>
+
+
+                              </div>
+                         </form>
+                    </div>
+               </div>
+
+
+{% block content %}
+{% endblock %}
+
+
+</body>
+<script>
+       $(document).ready(function() {
+            $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
+            $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
+            $("#retry-activation").click(function() {
+            });
+
+            $('#registration').validate({
+                      rules: {
+                            register_username: {
+                                     minlength: 1,
+                                     required: true
+                            },
+                            register_password: {
+                                     required: true,
+                                     minlength: 8
+                            },
+                            register_email: {
+                                     required: true,
+                                     email: true
+                            },
+/*
+                            register_name: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                            register_confirm_password: {
+                                     required: true,
+                                     minlength: 8,
+                                     equalTo: "#register_password"
+                            }
+*/
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           register_username: {
+                               required: "Введите имя пользователя!",
+                               minlength: "Имя пользователя должно быть длиной не менее 5 символов!"
+                           },
+
+                           register_password: {
+                               required: "Введите пароль!",
+                               minlength: "Ваш пароль должен быть длиной не меньше 8 символов!"
+                           },
+
+/*
+                           register_confirm_password: {
+                               required: "Подтвердите пароль!",
+                               minlength: "Ваш пароль должен быть длиной не меньше 8 символов!",
+                               equalTo: "Ваш подтверждающий пароль должен быть идентичен!"
+                           },
+
+                           register_name: {
+                               required: "Введите полное имя или имя собственное!",
+                               minlength: "Ваше имя должно быть длиной не меньше 2 символов!",
+                           },
+*/
+                           register_email: {
+                               required: "Введите адрес электронной почты!",
+                               email: "Используйте формат электронной почты!"    
+                           }
+
+
+
+                     }
+              });
+
+
+              $('div.errors').hide();
+              $('#modal-login').hide();      
+              $('#modal-send-activation').hide();
+
+              $('#modal-send-activation-close').click(function() {
+                  $('#modal-send-activation').hide();
+              });
+
+
+              $('#modal-login-close').click(function() {
+                  $('#modal-login').hide();
+              });
+
+
+              $('#modal-login-open').click(function() {
+                  $('#modal-register').hide();
+              });
+              
+
+              $('#modal-login-open').click(function() {
+                  $('#modal-login').show();
+              });
+                 
+              $('#user-register').click(function() {
+                  var arr = {
+                      username: $("#register_username").val(),
+                      password: $("#register_password").val(),
+  //                    bio: $("#register_bio").val(),
+                      email: $("#register_email").val(),
+   //                   fullname: $("#register_name").val()                      
+                  };
+                  if ($('#registration').valid()) {
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/registernew/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+                          success: function(data){
+                              $("#registration-success" ).fadeIn( 200 ).delay( 700 ).fadeOut( 300 );   
+                          },      
+                          error: function(data){
+                              $( "#registration-error" ).fadeIn( 200 ).delay( 700 ).fadeOut( 300 );  
+                          }                
+                      });
+                  }       
+              });
+
+              $('#user-resend-activation').click(function() {
+                  var arr = {username: $("#username").val()};
+                  alert($("#username").val());
+                  $.ajax({
+                      type: "POST",
+                      url: "https://lovehate.io/resendactivationbyuser/",
+                      data: JSON.stringify(arr),
+                      dataType: 'json',
+                      contentType: "application/json; charset=utf-8",
+                      success: function(data){
+                          alert("resent success");
+                          $("resend-activation-success" ).fadeIn( 100 ).delay( 400 ).fadeOut( 200 );
+                          $('#modal-send-activation').delay( 700 ).hide();
+                      },
+                      error: function(data){
+                          alert('resent failure');
+                          $("#resend-activation-errors").fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                      }
+                  }); // end ajax call
+
+
+              }); // end on click for user login
+
+
+              $('#user-login').click(function() {
+                  var arr = {username: $("#username").val(), 
+                             password: $("#password").val()}; 
+                 
+ 
+                  $.ajax({
+                      type: "POST",
+                      url: "https://lovehate.io/authenticate/",
+                      data: JSON.stringify(arr),
+                      dataType: 'json',
+                      contentType: "application/json; charset=utf-8",
+                      success: function(data){
+                             
+                            $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
+                            $('#modal-login').hide();
+
+                            if (data.code===200) {
+
+                                if (data.not_activated==true) {
+                                    $('#modal-login').hide();
+                                    $("#modal-send-activation").show();
+                                    
+                                } else {
+                                    $('#modal-login').hide();
+
+                                    redirect_login(arr);
+                                    $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
+                                    $('#modal-login').hide();
+                                }
+                            }
+                      },
+                      error: function(data){
+                        $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                      }
+                  }); // end ajax call
+                 
+                       
+              }); // end on click for user login
+       }); // end ready
+        
+       function redirect_login(data) {
+           $("#authenticate-form").submit();
+       }
+
+
+</script>
+<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-85743813-1', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+</html>

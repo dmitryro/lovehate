@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="container-fluid registration-form">
+<div class="row">
+<div class="col-sm-2">
+</div>
+<div class="col-sm-8">
+<div>
+
+
+<br/>
+
+<h3>Регистрация нового пользователя</h3>
+<br/>
+Поля, помеченные звездочкой (*) обязательны для заполнения!
+<br/>
+Обязательно укажите действующий e-mail адрес. На него будет выслан пароль для входа на наш сайт. Если Вы укажете неработающий e-mail, то Вы не сможете пользоваться сайтом.
+<br/>
+ВНИМАНИЕ! Прежде, чем что-то писать, внимательно ознакомьтесь с правилами размещения сообщений!
+<br/>
+Примечание
+Администратор сайта оставляет за собой право удалять любые сообщения без объяснения причин
+</div>
+<div>
+<form  name="registration" id="registration">
+                <div class="container-fluid">
+
+
+                 <div class="row">
+
+
+                 <div class="col-sm-4">
+
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;">
+                           *
+                       </div> 
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+                          Ник (имя пользователя)
+                       </div>
+                       <div class="clear"></div>
+                 </div>
+                 <div class="col-sm-8">
+
+                 <div class="form-group">
+                     <input type="text" id="register_username" placeholder="Ник (имя пользователя)" name="register_username" maxlength="16" sii
+ze="16">
+                     <label id="inlineFormInputGroup-password-error" class="error" for="register_username"></label>
+                 </div>
+
+                 </div>
+
+                 </div>
+                
+
+
+
+
+                 <div class="row">
+
+
+                 <div class="col-sm-4">
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;">
+                           *
+                       </div>
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+
+Ваш пароль
+
+                       </div>
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                 <div class="form-group">
+                     <input type="password" id="register_password" placeholder="Ваш пароль (не скупитесь)" name="register_password" maxlength="16" sii
+ze="16">
+                     <label id="inlineFormInputGroup-password-error" class="error" for="register_password"></label>
+                 </div>
+
+                 </div>
+
+                 </div>
+    
+
+                 <div class="row">
+
+
+                 <div class="col-sm-4">
+
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;">
+                           *
+                       </div>
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+                          Aдрес эл.почты
+
+
+                       </div>
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                 <div class="form-group">
+                     <input type="text" id="register_email" placeholder="Aдрес эл.почты (на него будет выслана ссылка для активации)" name="register_email" maxlength="120" sii
+ze="16">
+                     <label id="inlineFormInputGroup-email-error" class="error" for="register_email"></label>
+                 </div>
+
+                 </div>
+
+                 </div>
+
+
+                 <div class="row">
+
+                 <div class="col-sm-4">
+                 </div>
+                 <div class="col-sm-8">
+
+
+      <div class="success" id="registration-success">
+Создана новая учётная запись. <br/>
+Проверьте вашу эл.почту и перейдите по ссылке для активации.
+      </div>
+      <div class="error" id="registration-error">
+Найдена учётная записть с данным именем пользователя или имейлом.
+      </div>
+
+                 </div>
+
+                 </div>
+
+
+                 <div class="row">
+                       <div class="col-sm-4">
+                       </div>
+                       <div class="col-sm-8">
+
+                            <button class="btn4" id="user-register" type="button"  style="background:#4a4a4a;">Готово
+</button>
+                       </div>
+                </div>
+<!--
+
+   <div class="form-group">
+       <input type="password" id="register_confirm_password" placeholder="ÐŸÐ¾Ð´Ñ‚Ð²ÐµÑ€Ð´Ð¸Ñ‚ÑŒ Ð¿Ð°Ñ€Ð¾Ð»ÑŒ..." name="register_confirm_password" maxlength="16" size="16">
+       <label id="inlineFormInputGroup-confirm-error" class="error" for="register_confirm_password"></label>
+   </div>
+-->
+
+
+<!--
+   <div class="form-group">
+       <input type="text" id="register_name" placeholder="Ð˜Ð¼Ñ ÑÐ¾Ð±ÑÑ‚Ð²ÐµÐ½Ð½Ð¾Ðµ (Ð¸Ð¼Ñ Ð¸ Ñ„Ð°Ð¼Ð¸Ð»Ð¸Ñ) ..." name="register_name" maxlength="16" size="16">
+       <label id="inlineFormInputGroup-name-error" class="error" for="register_name"></label>
+   </div>
+-->
+
+<!--
+   <div class="form-group">
+          <textarea name="register_bio" id="register_bio" rows="8" style="width:100%;"   placeholder="Ðž ÑÐµÐ±Ðµ..." data-constraints="@NotEmpty"></textarea>
+   </div>
+-->
+   </div>
+
+</form>
+</div>
+
+</div>
+<div class="col-sm-2">
+</div>
+</div>
+</div>
+
+
+{% endblock %}

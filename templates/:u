@@ -1,0 +1,5 @@
+with open('activate_inline.html',  mode='r+') as f:
+    lines = str(f.read()).encode()
+    lines = str(lines) #.decode("utf-8", "strict")
+#    for l in lines:
+    print(lines)
