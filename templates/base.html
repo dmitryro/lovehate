@@ -332,24 +332,17 @@ span.psw {
    width:4.6em;
 }
 
-.logo-age {
-   color: #8b0000;
-   font-weight: normal;
-   font-size: 0.90em;
-   float: left;
-   font-family: Times New Roman;
-   overflow: hidden;
-   margin-top:0.4em;
-   width:2.2em;
-}
 
 .logo-and {
    color: #000000;
    font-weight: normal;
-   font-size: 1.5em;
+   font-size: 1.2em;
    float: left;
+   padding-top:0.3em;
+   padding-left:0.2em;
+   padding-right:0.7em;
    font-family: Times New Roman;
-   width:0.7em;
+   width:0.9em;
    overflow: hidden;
 }
 
@@ -379,11 +372,12 @@ span.psw {
 .logo-age {
    color: #8b0000;
    font-weight: normal;
-   font-size: 0.90em;
+   font-size: 0.80em;
+   padding-left:0.3em;
    float: left;
    font-family: Times New Roman;
    overflow: hidden;
-   margin-top:0.4em;
+   margin-top:0.8em;
    min-width:3.0em;
    width:3.2em;
 }
@@ -482,15 +476,31 @@ span.psw {
     text-decoration: none;
     color: #4a4a4a;
 }
+.menu-item a {
+    text-decoration: none;
+    color:  #4a4a4a;
+}
+
+.menu-item a:hover {
+    text-decoration: underline;
+    color:  #4a4a4a;
+}
+
 
 /* Change the link color to #111 (black) on hover */
-div.menu-item:hover {
+.active {
     background: #4a4a4a;
     color: #ffffff;
 }
 
-.menu-item a {
-    color: inherit;
+.active a{
+    color: #ffffff;
+    text-decoration:none;
+}
+
+.active a:hover{
+    color: #ffffff;
+    text-decoration:underline;
 }
 
 .error {
@@ -499,12 +509,14 @@ div.menu-item:hover {
     color: #ff0000;
 }
 
+
 </style>
 
 </head>
 <body>
     <div class="header-pan">
          <div class="container-fluid">
+
               <div class="row header-pan-top">
                                <div class="col-sm-7">
                                       <div class="container-fluid">
@@ -538,9 +550,7 @@ div.menu-item:hover {
                                                {% endif %}
                                                {% if user.is_authenticated %}
                                                        <span style="font-size:0.7em;">{{ username }}</span>  | <a id="session-exit" href="/signout">Выйти</a>
-
                                                {% endif %}
-
                                      </div>
 --> 
                                </div>
@@ -558,9 +568,10 @@ div.menu-item:hover {
                                 <div class="clear"></div>
 
                </div> <!-- row ends -->
-               <div class = "row header-pan-bottom">
+
+               <div class = "row header-pan-bottom" style="margin-bottom:-0.3em;">
                     <div class="col-sm-10">
-                         <div class="menu-item">
+                         <div class="menu-item active">
                              <a href="/">Главная</a>
                          </div>
                          <div class="menu-item">
@@ -710,6 +721,12 @@ div.menu-item:hover {
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#retry-activation").click(function() {
+            });
+
+            $('.menu-item').click(function(event) {
+                   event.preventDefault();
+                   $('.active').removeClass('active');
+                   $(this).addClass('active');
             });
 
             $('#registration').validate({
