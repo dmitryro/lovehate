@@ -94,6 +94,21 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newforumform label {
+        width: 250px;
+    }
+
+    #newforumform label.error, #newforumform input.submit, #newforumform input.button {
+        margin-left: 253px;
+    }
+
+    #newforumform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
 /* Set a style for all buttons */
 .search button {
     background-color: #f6f6f6;
@@ -657,7 +672,7 @@ span.psw {
 
                </div> <!-- row ends -->
                <div class = "row header-pan-middle">
-                         <form method="POST">
+                         <form method="POST" id="menu-form" name="menu-form">
                          <div class="col-sm-4">&nbsp;</div>
                          <div class="col-sm-5" style="margin-left:-1.1em;min-width:41.00em;">
                                   <div id="submenu-div-1" class="menu-item active">
@@ -670,7 +685,7 @@ span.psw {
                                        <a id="submenu-3" href="/blog">Дневник</a>
                                   </div>
                                   <div id="submenu-div-4" class="menu-item">
-                                       <a id="submenu-4" href="/mylh">Мой ЛХ</a>
+                                       <a id="submenu-4" href="/mylh/">Мой ЛХ</a>
                                   </div>
                                   <div id="submenu-div-5" class="menu-item"> 
                                        <a id="submenu-5" href="/private">Приваты</a>
@@ -933,11 +948,11 @@ span.psw {
 </body>
 <script>
        $(document).ready(function() {
+            $('#feeling').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#retry-activation").click(function() {
             });
-
             $('#submenu-main').show();
             $('#submenu-forum').hide();
             $('#submenu-blog').hide();
@@ -945,13 +960,62 @@ span.psw {
             $('#submenu-statistics').hide();
             $('#submenu-private-messages').hide();
 
+            if ($('#current_page').val()==='mylh') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').show();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-4').addClass('active');
+            } else if ($('#current_page').val()==='forum') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').show();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-2').addClass('active');
+            } else if ($('#current_page').val()==='blog') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-3').addClass('active');
+            } else if ($('#current_page').val()==='statistics') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').show();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-6').addClass('active');
+            } else if ($('#current_page').val()==='private') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').show();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-5').addClass('active');
+            }
+
+
             $('.menu-item').click(function(event) {
                    event.preventDefault();
                    $('.active').removeClass('active');
-
                    $(this).addClass('active');
 
                    if ($(this).attr('id')==='submenu-div-1') {
+                       var url = '/';
+                       window.location.href = url;
                        $('#submenu-main').show();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -959,6 +1023,8 @@ span.psw {
                        $('#submenu-statistics').hide();
                        $('#submenu-private-messages').hide();
                    } else if ($(this).attr('id')==='submenu-div-2') {
+                       var url = '/forum/';
+                       window.location.href = url;
                        $('#submenu-main').hide();
                        $('#submenu-forum').show();
                        $('#submenu-blog').hide();
@@ -966,6 +1032,8 @@ span.psw {
                        $('#submenu-statistics').hide();
                        $('#submenu-private-messages').hide();
                    } else if ($(this).attr('id')==='submenu-div-3') {
+                       var url = '/blog/';
+                       window.location.href = url;
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').show();
@@ -973,6 +1041,8 @@ span.psw {
                        $('#submenu-statistics').hide();
                        $('#submenu-private-messages').hide();
                    } else if ($(this).attr('id')==='submenu-div-4') {
+                       var url = '/mylh/';
+                       window.location.href = url;
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -980,6 +1050,8 @@ span.psw {
                        $('#submenu-statistics').hide();
                        $('#submenu-private-messages').hide();
                    } else if ($(this).attr('id')==='submenu-div-5') {
+                       var url = '/private/';
+                       window.location.href = url;
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -987,6 +1059,8 @@ span.psw {
                        $('#submenu-statistics').hide();
                        $('#submenu-private-messages').show();
                    } else if ($(this).attr('id')==='submenu-div-6') {
+                       var url = '/statistics/';
+                       window.location.href = url;
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -994,10 +1068,7 @@ span.psw {
                        $('#submenu-statistics').show();
                        $('#submenu-private-messages').hide();
                    }
-
-
             });
-
             if ($('#current_page').val()==='new_feeling') {
                        $("#resend-activation-errors").hide(); 
                        $('#submenu-main').hide();
@@ -1008,8 +1079,41 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                        $('#submenu-div-2').addClass('active');
-
             }
+
+            $('#newforumform').validate({
+                      rules: {
+                            forumnew_attitude: "required",
+                            feeling: "required",
+                            subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           subject: {
+                               required: "Название темы не может быть пустым!",
+                               minlength: "Название темы не может быть короче двух символов!"
+                           },
+                           feeling: {
+                               required: "Ваше сообщение не может быть пустым!",
+                               minlength: "Опишите Ваше отношение не менее чем в десяти символах!"
+                           },
+                           forumnew_attitude: {
+                               required: "Ваше отношение должно быть высказано!",
+                           },
+
+ 
+                     }
+             });
 
             $('#registration').validate({
                       rules: {
@@ -1030,7 +1134,6 @@ span.psw {
                                      required: true,
                                      minlength: 2
                             },
-
                             register_confirm_password: {
                                      required: true,
                                      minlength: 8,
@@ -1050,19 +1153,16 @@ span.psw {
                                required: "Введите имя пользователя!",
                                minlength: "Имя пользователя должно быть длиной не менее 5 символов!"
                            },
-
                            register_password: {
                                required: "Введите пароль!",
                                minlength: "Ваш пароль должен быть длиной не меньше 8 символов!"
                            },
-
 /*
                            register_confirm_password: {
                                required: "Подтвердите пароль!",
                                minlength: "Ваш пароль должен быть длиной не меньше 8 символов!",
                                equalTo: "Ваш подтверждающий пароль должен быть идентичен!"
                            },
-
                            register_name: {
                                required: "Введите полное имя или имя собственное!",
                                minlength: "Ваше имя должно быть длиной не меньше 2 символов!",
@@ -1072,34 +1172,27 @@ span.psw {
                                required: "Введите адрес электронной почты!",
                                email: "Используйте формат электронной почты!"    
                            }
-
-
-
                      }
               });
-
-
               $('div.errors').hide();
               $('#modal-login').hide();      
               $('#modal-send-activation').hide();
-
               $('#modal-send-activation-close').click(function() {
                   $('#modal-send-activation').hide();
               });
-
-
               $('#modal-login-close').click(function() {
                   $('#modal-login').hide();
               });
-
-
               $('#modal-login-open').click(function() {
                   $('#modal-register').hide();
               });
               
-
               $('#modal-login-open').click(function() {
                   $('#modal-login').show();
+              });
+
+              $('#forumnew-publish').click(function() {
+                    alert($('#newforumform').valid());
               });
                  
               $('#user-register').click(function() {
@@ -1126,7 +1219,6 @@ span.psw {
                       });
                   }       
               });
-
               $('#user-resend-activation').click(function() {
                   var arr = {username: $("#username").val()};
                   alert($("#username").val());
@@ -1142,15 +1234,10 @@ span.psw {
                           $('#modal-send-activation').delay( 700 ).hide();
                       },
                       error: function(data){
-                          alert('resent failure');
                           $("#resend-activation-errors").fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                       }
                   }); // end ajax call
-
-
               }); // end on click for user login
-
-
               $('#user-login').click(function() {
                   var arr = {username: $("#username").val(), 
                              password: $("#password").val()}; 
@@ -1166,16 +1253,13 @@ span.psw {
                              
                             $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
                             $('#modal-login').hide();
-
                             if (data.code===200) {
-
                                 if (data.not_activated==true) {
                                     $('#modal-login').hide();
                                     $("#modal-send-activation").show();
                                     
                                 } else {
                                     $('#modal-login').hide();
-
                                     redirect_login(arr);
                                     $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
                                     $('#modal-login').hide();
@@ -1194,7 +1278,6 @@ span.psw {
        function redirect_login(data) {
            $("#authenticate-form").submit();
        }
-
 
 </script>
 <!-- Google Analytics -->
