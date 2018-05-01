@@ -8,7 +8,7 @@
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form name="newforumform" id="newforumform">
+<form  name="newforumform" id="newforumform">
 <div class="row">
 
     <div class="col-sm-2">
@@ -21,7 +21,7 @@
              <div class="col-sm-4">
              </div>
              <div class="col-sm-8">
-                    <div class=container-fluid">
+                    <div class=container-fluid" style="margin-left:0.4em;">
                                <div class="row">
                                     <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
                                </div>
@@ -173,6 +173,7 @@
      </div>
     </div>
 </div>
+<input type="hidden" id="emotion_user_id" value="{{ user.id }}" />
 </form>
 </div>
 {% endblock %}

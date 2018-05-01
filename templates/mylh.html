@@ -1,11 +1,32 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div style="margin-top:20%;margin-left:30%;width:40%;margin-right:29%;border:1px solid black; text-align:center;">
-Любовь и Ненависть <br/>
-Мы вернемся без жидов и аферистов. <br/>
-Наберитесь терпения.<br/><br/>
-<br/>
-Ваши профили, сообщения, переписка и история в безопасности.<br/>
+
+<div>
+<br />
+<br />
+<br />
 </div>
+<div class="container-fluid registration-form">
+    <div class="row">
+
+        <div class="col-sm-2">
+        </div>
+    
+        <div class="col-sm-8">
+            <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+                <form action="editprofile" method="post">
+                    <div class="row">
+                        <div class="col-sm-4">Nick
+                         </div>
+                         <div class="col-sm-8">
+                         </div>
+                    </div>
+                </form>
+           </div>
+        </div>
+    </div>
+</div>     
+
+
 {% endblock %}

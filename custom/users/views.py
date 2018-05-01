@@ -22,6 +22,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework import exceptions
 
+from custom.forum.models import Emotion
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
 from custom.users.callbacks import resend_activation_handler
@@ -43,7 +44,6 @@ class UserList(generics.ListAPIView):
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
 
 
 @api_view(['POST', 'GET'])
@@ -143,6 +143,9 @@ def registernew(request):
 def user_profile(request, user_id):
     try:
         profile = Profile.objects.get(user_id=int(user_id))
+        loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
+        mehs = Emotion.objects.filter(user=profile.user, attitude_id=2)
+        hates = Emotion.objects.filter(user=profile.user, attitude_id=3)
     except Exception as e:
         return render(request, 'index.html',{'home':'index.html'})
 
@@ -150,6 +153,9 @@ def user_profile(request, user_id):
                                      'explored_username': profile.user.username,
                                      'username': request.user.username,
                                      'is_activated': False,
+                                     'loves': loves,
+                                     'mehs': mehs,
+                                     'hates': hates,
                                      'bio': profile.bio,
                                      'fullname': "{} {}".format(profile.user.first_name, profile.user.last_name),
                                      'resend_activation': False,
@@ -208,7 +214,6 @@ def auth(request):
         except Exception as e:
             pass
 
-
     if user and not user.profile.is_activated:
         return Response({"message": 'success',
                          "code":200,
@@ -219,9 +224,6 @@ def auth(request):
                          "status": "notactivated",
                          "reason": "User is not activated"},
                          status=200)
-
-
-
     if not user:
         return Response({"message": 'failure',
                          "code":400,
@@ -230,7 +232,6 @@ def auth(request):
                          "not_activated": False,
                          "reason": "Invalid user"}, 
                          status=400)
-            
     if user.is_active:
         request.session.set_expiry(1086400) #sets the exp. value of the session 
         login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in

@@ -1,6 +1,73 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+
+<div class="container-fluid registration-form">
+<div class="row">
+
+    <div class="col-sm-1">
+    </div>
+    <div class="col-sm-10">
+          <div class="container-fluid">
+             <div class="row">
+                <div class="col-sm-4">
+                    <div class="loves">
+                       <span>
+Любовь
+                       </span>
+                    </div>
+
+
+                    <div class="loves-forum">
+                       {% for love in loves %}
+                           <div><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span><strong>любит</strong></span> {{ love.subject }} : {{ love.emotion }} </div>
+
+                       {% endfor %}
+                    </div>
+
+
+
+
+                </div>
+                <div class="col-sm-4">
+                    <div class="hates" style="color:black;">
+                         <span>Безразличие</span>
+                    </div>
+                    <div class="mehs-forum">
+
+                       {% for meh in mehs %}
+                           <div><a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a> <span><strong>плевал на </strong></span> {{ meh.subject }}  : {{ meh.emotion }} </div>
+                       {% endfor %}
+
+                    </div>
+
+
+                </div>
+                 <div class="col-sm-4">
+                     <div class="hates">
+                       <span>
+Ненависть
+                       </span>
+                     </div>
+                     <div class="hates-forum">
+                       {% for hate in hates %}
+                           <div><a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a> <span><strong>ненавидит</strong></span> {{ hate.subject }}  : {{ hate.emotion }} </div>
+
+                       {% endfor %}
+                     </div>
+
+                 </div>
+               </div><!-- row ends -->
+           </div> <!-- container ends -->
+      </div> <!-- col 10 ends -->
+     <div class="col-sm-1">
+     </div>
+</div> <!-- row ends -->
+</div>
+
+
+
+
 <div class="success" id="registration-success">
 Создана новая учётная запись. <br/>
 Проверьте вашу эл.почту и перейдите по ссылке для активации.

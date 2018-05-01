@@ -22,7 +22,13 @@ from django.conf.urls.i18n import i18n_patterns
 from rest_framework_jwt.views import obtain_jwt_token
 from rest_framework_jwt.views import refresh_jwt_token
 from rest_framework_jwt.views import verify_jwt_token
+from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework import routers, serializers, viewsets
+from rest_framework import generics
+from rest_framework import viewsets, routers
+from rest_framework.authtoken import views as drf_views
 from rest_auth.views import LoginView
+
 from custom.gui.views import home
 from custom.gui.views import blog
 from custom.gui.views import register
@@ -41,12 +47,16 @@ from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
 from custom.forum.views import forum_new
+from custom.forum.views import EmotionDetail
+from custom.forum.views import EmotionList
+from custom.forum.views import AttitudeDetail
+from custom.forum.views import AttitudeList
+from custom.forum.views import newemotion
+from django.contrib import admin
 
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('', home),
-    path('blog', blog),
-    path('forum', forum),
     path('add/', forum_new),
     path('admin/', admin.site.urls),
     path('authenticate/', csrf_exempt(auth)),
@@ -57,6 +67,11 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),      
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('emotions/', EmotionList.as_view()),
+    path('attitudes/', AttitudeList.as_view()),
+    path('addnewemotion/', csrf_exempt(newemotion)),
+    path('emotions/<int:pk>/', EmotionDetail.as_view()),
+    path('attitudes/<int:pk>/', AttitudeDetail.as_view()),
     path('accounts/', include('allauth.urls')),
     path('api-token-auth/', csrf_exempt(obtain_jwt_token)),
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
@@ -67,7 +82,10 @@ urlpatterns = [
     path('statistics/', statistics),
     path('register/', register),
     path('private/', private),
+    path('forum/', forum),
     path('mylh/', mylh),
+    path('blog/', blog),
+    path('blogs/', blog),
     path('registernew/', registernew),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

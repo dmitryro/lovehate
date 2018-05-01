@@ -273,12 +273,9 @@ span.psw {
 }
 
 .heade-pan-bottom a:hover {
-   background:#transparent;
+   background: transparent;
    color: #333333;
    text-decoration:underline;
-}
-.submenu-private-messages {
-   height:1.0em;
 }
 .submenu-item {
    float:left;
@@ -443,21 +440,57 @@ span.psw {
    border-bottom: 1px #979797 solid;
 }
 
-.loves_forum {
+.mehs {
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+   overflow: hidden;
+   text-align: center;
+   min-width:100%;
+   width:100%;
+   border-bottom: 1px #979797 solid;
+}
+
+.loves-profile {
+   text-align:center;
    color: #008000;
    font-family: Times New Roman;
    font-size: 1.2em;
    font-weight: normal;
 }
-.hates_forum {
+
+.mehs-profile {
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+.hates-profile {
+   text-align:center;
    color: #8b0000;
    font-weight: normal;
    font-size: 1.2em;
    font-family: Times New Roman;
 }
 
-.indifferent_forum {
+.loves-forum {
+   margin-left:1.0em;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.2em;
+   font-weight: normal;
+}
+.mehs-forum {
    color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.hates-forum {
+   color: #8b0000;
    font-weight: normal;
    font-size: 1.2em;
    font-family: Times New Roman;
@@ -721,13 +754,12 @@ span.psw {
 
                                      <div class="clear"></div>
                                  </div>
-
                    </div>
+                  
 --> 
-                   
-                  <div class="col-sm-4">&nbsp;</div>
-                  <div class="col-sm-6" style="margin-left:-1.1em;min-width:41.00em;">
+                  <div class="col-sm-6" style="margin-left:20em;;min-width:41.00em;">
                                  <div id="submenu-main">Main</div>
+
                                  <div id="submenu-forum">
                                      <div class="submenu-item">
                                           <a href="#">
@@ -925,7 +957,7 @@ span.psw {
                                                  <label for="psw"><b>Пароль</b></label>
                                                         <input id="password" type="password" placeholder="Пароль" name="psw" required>
  
-                                                        <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button
+                                                        <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button>
                                                         <span class="psw">Забыли <a href="#">пароль?</a></span>
 
                                                         <p>
@@ -948,6 +980,7 @@ span.psw {
 </body>
 <script>
        $(document).ready(function() {
+            var attitude = { love:1, indifferent:2, hate:3 };
             $('#feeling').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
@@ -1192,7 +1225,31 @@ span.psw {
               });
 
               $('#forumnew-publish').click(function() {
-                    alert($('#newforumform').valid());
+
+                  if ($('#newforumform').valid()) {
+                      
+                      var arr = {
+                          emotion: $("#feeling").val(),
+                          attitude: attitude[$('input[type=radio][name=forumnew_attitude]:checked').val()],
+                          subject: $("#subject").val(),
+                          user_id: $("#emotion_user_id").val(),
+                      };
+
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewemotion/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_main();
+                          },
+                          error: function(data){
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+                  }
               });
                  
               $('#user-register').click(function() {
@@ -1274,6 +1331,11 @@ span.psw {
                        
               }); // end on click for user login
        }); // end ready
+
+       function redirect_main() {
+          var url = '/';
+          window.location.href = url;
+       }
         
        function redirect_login(data) {
            $("#authenticate-form").submit();

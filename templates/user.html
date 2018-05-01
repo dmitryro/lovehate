@@ -77,11 +77,23 @@
          <div class="row">
              <div class="col-sm-4">
                  <div class="loves"><span>Любит</span></div>
+                 <div class="loves-profile">
+
+                           {% for love in loves %}
+                                  <div style="text-align:center;">{{ love.subject }} </div>
+                           {% endfor %}
+
+                 </div>
              </div> 
              
 
              <div class="col-sm-4">
-                 <div class="hates" style="color:black;"><span>Безразличен к</span></div>
+                 <div class="mehs"><span>Безразличен к</span></div>
+                 <div class=mehs-profile">
+                           {% for meh in mehs %}
+                                  <div style="text-align:center;">{{ meh.subject }} </div>
+                           {% endfor %}
+                 </div>
              </div>
 
 
@@ -89,6 +101,13 @@
 
              <div class="col-sm-4">
                  <div class="hates"><span>Ненавидит</span></div>
+                 <div class="hates-profile">
+
+                           {% for hate in hates %}
+                                  <div style="text-align:center;">{{ hate.subject }} </div>
+                           {% endfor %}
+
+                 </div>
              </div> 
              
                   

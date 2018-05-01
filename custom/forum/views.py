@@ -27,7 +27,34 @@ from custom.users.serializers import UserSerializer
 from custom.users.callbacks import resend_activation_handler
 from custom.users.models import Profile
 from custom.utils.models import Logger
+from custom.forum.models import Emotion
+from custom.forum.models import Attitude
+from custom.forum.serializers import AttitudeSerializer
+from custom.forum.serializers import EmotionSerializer
 
+
+class AttitudeList(generics.ListAPIView):
+    queryset = Attitude.objects.all()
+    serializer_class = AttitudeSerializer
+
+class AttitudeDetail(generics.RetrieveAPIView):
+    queryset = Attitude.objects.all()
+    serializer_class = AttitudeSerializer
+
+class EmotionList(generics.ListAPIView):
+    queryset = Emotion.objects.all()
+    serializer_class = EmotionSerializer
+
+class EmotionDetail(generics.RetrieveAPIView):
+    queryset = Emotion.objects.all()
+    serializer_class = EmotionSerializer
+
+class EmotionViewSet(viewsets.ModelViewSet):
+    """
+    A viewset for viewing and editing attitude instances.
+    """
+    serializer_class = EmotionSerializer
+    queryset = Emotion.objects.all()
 
 
 def forum_new(request):
@@ -62,10 +89,40 @@ def forum_new(request):
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'new_feeling',
                                      'username': request.user.username,
-                                     'logout': False,
-                                     'user_id': ''})
+                                     'logout': False})
 
 
-# Create your views here.
-def feelings(request):
-   pass 
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def newemotion(request):
+    try:
+        emotion = request.data.get('emotion', '')
+        subject = request.data.get('subject', '')
+        attitude = int(request.data.get('attitude', None))
+        user_id = int(request.data.get('user_id', None))
+        attitude = Attitude.objects.get(id=attitude)
+
+        user = User.objects.get(id=user_id)
+
+        em = Emotion.objects.get(subject=subject)
+
+        if not em:
+            em = Emotion.objects.get(subject=subject.lower())
+
+        if not em:
+            Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=subject)
+        else:
+            Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=em.subject)
+
+    except Exception as e:
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=200)
+
+    return Response({"message": "success - username used",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+

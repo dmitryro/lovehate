@@ -7,16 +7,33 @@ from custom.utils.models import Logger
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
+from custom.forum.models import Emotion
 
 @csrf_exempt
 def home(request):
-    
+    loves = None
+    mehs = None
+    hates = None
+
+    try:
+        loves = Emotion.objects.filter(attitude_id=1)
+        mehs = Emotion.objects.filter(attitude_id=2)    
+        hates = Emotion.objects.filter(attitude_id=3)
+        total_loves = len(loves)
+        total_mehs = len(mehs)
+        total_hates = len(hates)
+        log = Logger(log = 'LOVES {} MEHS {} HATES {}'.format(total_loves, total_mehs, total_hates))
+        log.save()
+    except Exception as e:
+        pass
+
     try:
         if request.user.is_authenticated:
             logout=True
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+           
         else:
             logout=False  
             user_id = -1
@@ -30,6 +47,10 @@ def home(request):
  
     return render(request, 'index.html',{'home':'index.html', 
                                          'user': request.user,
+                                         'loves': loves,
+                                         'mehs': mehs,
+                                         'hates': hates,
+                                         'current_page': 'home',
                                          'username': username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -58,13 +79,14 @@ def statistics(request):
     return render(request, 'statistics.html',{'home':'statistics.html',
                                          'user': request.user,
                                          'username': username,
+                                         'current_page': 'statistics',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
 
 
-@csrf_exempt
 def mylh(request):
+    redirect = 'mylh.html'
 
     try:
         if request.user.is_authenticated:
@@ -83,13 +105,14 @@ def mylh(request):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'mylh.html',{'home':'mylh.html',
-                                         'user': request.user,
-                                         'username': username,
-                                         'is_authenticated': is_authenticated,
-                                         'logout': logout,
-                                         'user_id': user_id})
-
+    return render(request, redirect,{'home':'mylh.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'mylh',
+                                     'username': request.user.username,
+                                     'logout': False,
+                                     'user_id': ''})
 
 @csrf_exempt
 def private(request):
@@ -114,6 +137,7 @@ def private(request):
     return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
                                          'username': username,
+                                         'current_page': 'private',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
@@ -142,6 +166,7 @@ def forum(request):
     return render(request, 'forum.html',{'home':'forum.html',
                                          'user': request.user,
                                          'username': username,
+                                         'current_page': 'forum',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
@@ -193,9 +218,7 @@ def simple_signin(request):
 
 @csrf_exempt
 def blog(request):
-
     try:
-
         if request.user.is_authenticated:
             logout=True
             username = request.user.username
@@ -212,9 +235,10 @@ def blog(request):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'index.html',{'home':'index.html',
+    return render(request, 'blog.html',{'home':'blog.html',
                                          'user': request.user,
                                          'username': username,
+                                         'current_page': 'blog',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
@@ -247,6 +271,7 @@ def register(request):
     return render(request, redirect,{'home':'index.html',
                                          'user': request.user,
                                          'username': username,
+                                         'current_page': 'register',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
