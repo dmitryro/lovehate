@@ -40,12 +40,14 @@ from custom.users.views import user_profile
 from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
+from custom.forum.views import forum_new
 
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('', home),
     path('blog', blog),
     path('forum', forum),
+    path('add/', forum_new),
     path('admin/', admin.site.urls),
     path('authenticate/', csrf_exempt(auth)),
     path('users/', UserList.as_view()),

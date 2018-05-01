@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div>
+<br />
+<br />
+<br />
+</div>
+<div class="container-fluid registration-form">
+<div class="row">
+
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+         <form action="addfeeling" method="post">
+         <div class="row">
+             <div class="col-sm-4">
+Ваш ник
+             </div>
+
+             <div class="col-sm-4">
+                  {{ username }}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+         <div class="row">
+             <div class="col-sm-4">
+                   Вы хотите написать про *:
+             </div>
+
+             <div class="col-sm-8">
+
+                 <div class="form-group">
+                     <input type="text" id="new_forum_topic" placeholder="Ваше название темы..." name="new_forum_topic" maxlength="16" size="16">
+                     <label id="inlineFormInputGroup-new_forum_topic-error" class="error" for="new_forum_topic"></label>
+                 </div>
+
+               
+             </div>
+
+         </div>
+
+         <div class="row">
+             <div class="col-sm-4">
+            Ваше отношение *: 
+             </div>
+
+             <div class="col-sm-8">
+                       <div class="container-fluid">
+                               <div class="row">
+                                       <div class="col-sm-4">
+                                                      <input type="radio" />
+                                                       <span class="loves_forum">
+                                                              Любовь
+                                                       </span>
+                                       </div>
+
+                                    
+
+                                       <div class="col-sm-4">
+                                                      <input type="radio" />
+                                                          
+                                                       <span class="indifferent_forum">
+Безразличие
+
+                                                       </span>
+                                       </div>
+
+
+
+                                       <div class="col-sm-4">
+                                                      <input type="radio" /> 
+                                                       <span class="hates_forum">
+Ненависть
+                                                       </span>
+                                       </div>
+
+ 
+
+                               </div>
+                       </div>                 
+             </div>
+
+
+         </div>
+
+         <div class="row">
+
+                       <div class="col-sm-4">
+Ваше сообщение...
+
+                       </div>
+                       <div class="col-sm-8">
+                                    <div class="form-group">
+
+                                            <textarea name="forum-new" id="forum_new" rows="8" style="width:100%;" 
+                                             placeholder="Пишите о чем хотите...">
+
+                                            </textarea>
+                                    </div>
+                       </div>
+          </div>
+         <div class="row">
+                       <div class="col-sm-4">
+                       </div>
+                       <div class="col-sm-2">
+
+                            <button class="btn4" id="user-register" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+Отправить
+                            </button>
+                       </div>
+
+                       <div class="col-sm-4">
+                       </div>                       
+         </div>
+
+         </form>
+     </div>
+    </div>
+</div>
+</div>
+{% endblock %}
+

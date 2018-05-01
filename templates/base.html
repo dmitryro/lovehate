@@ -27,6 +27,10 @@ $errorMsgColor: #ff0000;
 
 
 body {font-family: "Times New Roman";}
+
+.main {
+}
+
 /* Full-width input fields */
 input[type=text], input[type=password] {
     width: 100%;
@@ -66,7 +70,7 @@ input[type=text], input[type=password] {
 
 /* Set a style for all buttons */
 button {
-    background-color: #4CAF50;
+    background-color: #f6f6f6;
     color: white;
     padding: 7px 10px;
     margin: 8px 0;
@@ -92,7 +96,7 @@ button:hover {
     }
 /* Set a style for all buttons */
 .search button {
-    background-color: #4CAF50;
+    background-color: #f6f6f6;
     color: white;
     padding: 7px 10px;
     margin: 4px 0;
@@ -218,39 +222,91 @@ span.psw {
        width: 100%;
     }
 }
-
-
-
 .header-pan {
-   margin: 0.2em 0.1em 0.2em 0.1em;
-   width:99.5%;
-   min-height: 10%;
+   margin-top:0.1em;
+   margin-left:0.1em;
+   width:99.8%;
+   margin-right:0.1em;
+   min-height: 3%;
+   min-width:44.8em;
    padding: 0.1em 0.1em 0.1em 0.1em;
-   background: #eeeeee;
+   background: #f6f6f6;
    border-top: 1px solid #808080;
    border-left: 1px solid #808080;
    border-bottom: 1px solid #2c2c2c;
    border-right: 1px solid #2c2c2c; 
 }
 .header-pan-top {
+   font-family: "Times New Roman";
    background: #f6f6f6;
 }
 
+.header-pan-middle {
+   font-family: "Times New Roman";
+   background: #f6f6f6;
+   margin-bottom:-0.1em;
+}
 .header-pan-bottom {
+   font-family: "Times New Roman";
    background: #eeeeee;
 }
 
 .header-pan-bottom a {
    background: transparent;
-   color: #4a4a4a;
+   color: #333333;
    text-decoration:none;
 }
 
 .heade-pan-bottom a:hover {
-   background:#4a4a4a;
+   background:#transparent;
+   color: #333333;
+   text-decoration:underline;
+}
+.submenu-private-messages {
+   height:1.0em;
+}
+.submenu-item {
+   float:left;
+   font-family: "Times New Roman";
+   float:left;
+   display: block;
+   text-align: center;
+   padding-top: 0.2em;
+   padding-bottom: 0.0em;
+   padding-left:0.4em;
+   padding-right:0.4em;
+   min-width:7.00em;
+   text-decoration: none;
+   color: #333333;
+}
+
+.submenu-item a{
+   color: #333333;
+   text-decoration:none;
+}
+
+.submenu-item a:hover{
+   color: #333333;
+   text-decoration:underline;
+}
+
+.header-pan-menu {
+   background: #eeeeee;
+}
+
+.header-pan-menu a {
+   background: transparent;
+   color: #f6f6f6;
+   text-decoration:none;
+}
+
+.heade-pan-menu a:hover {
+   background:#f6f6f6;
    color: #ffffff;
    text-decoration:underline;
 }
+
+
 
 .header-pan-left {
    float:left;
@@ -348,6 +404,7 @@ span.psw {
    overflow: hidden;
 }
 
+
 .loves {
    margin-left:1.0em;
    color: #008000;
@@ -369,6 +426,26 @@ span.psw {
    min-width:100%;
    width:100%;
    border-bottom: 1px #979797 solid;
+}
+
+.loves_forum {
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.2em;
+   font-weight: normal;
+}
+.hates_forum {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.indifferent_forum {
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
 }
 
 .logo-age {
@@ -467,41 +544,46 @@ span.psw {
 
 
 .menu-item {
+    font-family: "Times New Roman";
     float:left;
     display: block;
     text-align: center;
     padding-top: 0.2em;
-    padding-bottom: 0.2em;
+    padding-bottom: 0.0em;
     padding-left:0.2em;
     padding-right:0.2em;
-    min-width:5.00em;
+    min-width:4.98em;
     text-decoration: none;
-    color: #4a4a4a;
+    color: #333333;
 }
 .menu-item a {
+    font-family: "Times New Roman";
     text-decoration: none;
-    color:  #4a4a4a;
+    color:  #333333;
 }
 
+
 .menu-item a:hover {
+    font-family: "Times New Roman";
     text-decoration: underline;
-    color:  #4a4a4a;
+    color:  #333333;
 }
 
 
 /* Change the link color to #111 (black) on hover */
 .active {
-    background: #4a4a4a;
-    color: #ffffff;
+    font-family: "Times New Roman";
+    background: #eeeeee;
+    color: #333333;
 }
 
 .active a{
-    color: #ffffff;
+    color: #333333;
     text-decoration:none;
 }
 
 .active a:hover{
-    color: #ffffff;
+    color: #333333;
     text-decoration:underline;
 }
 
@@ -516,86 +598,217 @@ span.psw {
 
 </head>
 <body>
+<div class="main">
     <div class="header-pan">
          <div class="container-fluid">
 
               <div class="row header-pan-top">
-                               <div class="col-sm-7">
+                               <div class="col-sm-3">
                                       <div class="container-fluid">
                                             <div class="row">
 
-                                     <div class="logo-love">
-                                           Любовь
-                                     </div>
-                                     <div class="logo-and">
-                                           и
-                                     </div>
-                                     <div class="logo-hate">
-                                         Ненависть
-                                     </div>
-                                     <div class="logo-age">
-                                       (18+)
-                                     </div>
-                                                  <div class="clear"></div>   
+                                                             <div class="logo-love">
+                                                                     Любовь
+                                                             </div>
+                                                             <div class="logo-and">
+                                                                 и
+                                                             </div>
+                                                             <div class="logo-hate">
+                                                              Ненависть
+                                                             </div>
+                                                             <div class="logo-age">
+                                                                  (18+)
+                                                             </div>
+                                                             <div class="clear"></div>   
 
                                             </div> <!-- end row -->
+                                            <div class="row">
+                                                    <div class="header-pan-menu">
+
+
+                                                    </div>
+                                            </div>
                                       </div> <!-- end container -->
                                 </div>  <!-- header left ends -->
 
-                                <div class="col-sm-2  left-last" style="margin-top:0.8em;margin-bottom:-0.6em;margin-left:-5em;"> 
-<!--
-                                     <div id="logged-out" style="margin-top:-0.9em;margin-bottom:0.9em;">
-                                               
-                                               {% if not user.is_authenticated %}
-                                               <a id="modal-login-open" href="#">
-Зайти</a>
-                                               {% endif %}
-                                               {% if user.is_authenticated %}
-                                                       <span style="font-size:0.7em;">{{ username }}</span>  | <a id="session-exit" href="/signout">Выйти</a>
-                                               {% endif %}
-                                     </div>
---> 
-                               </div>
-                                <div class="col-sm-3" style="margin-top:0.8em;margin-bottom:-0.6em;float:right;margin-left:-5em;">  
-                                                                               
-                                              <div style="float:left;width:55%;margin-top:-0.9em;margin-bottom:0.9em;">
-                                                    <input type="text" id="inlineFormInputGroup" placeholder="Введите текст..." name="search" maxlength="16" size="16">
+                                <div class="col-sm-6">&nbsp;</div>
+                                <div class="col-sm-3" style="float:right;margin-top:-1.4em;margin-right:0.1em;margin-bottom:-1.6em;">  
+
+
+                                      <div class="container-fluid">
+                                            <div class="row">
+                                              <div class="col-sm-9">
+
+                                                        <input type="text" id="inlineFormInputGroup" placeholder="Введите текст..." name="search" maxlength="16" size="16">
                                               </div>
-                                              <div style="float:left;width:5%;">&nbsp;</div>
-                                              <div style="float:left;width:39.6%;margin-top:-0.9em;margin-bottom:0.9em;" class="search">
-                                                    <button type="button" style="min-width:6.0em;background:#9b9b9b;"> Искать </button>
+
+                                              <div class="col-sm-3">
+                                                  <div style="text-align:center;margin-left:-1.2em;" class="search">
+                                                  <button type="button" style="min-width:6.0em;background:#4a4a4a;"> Искать </button>
                                               </div>
-                                              <div class="clear"></div>
+
+                                              </div>                                           </div>
+    
+                                 </div>
+
                                 </div>  
                                 <div class="clear"></div>
 
+
                </div> <!-- row ends -->
+               <div class = "row header-pan-middle">
+                         <form method="POST">
+                         <div class="col-sm-4">&nbsp;</div>
+                         <div class="col-sm-5" style="margin-left:-1.1em;min-width:41.00em;">
+                                  <div id="submenu-div-1" class="menu-item active">
+                                          <a id="submenu-1" href="/">Главная</a>
+                                  </div>
+                                  <div id="submenu-div-2" class="menu-item">
+                                       <a id="submenu-2" href="/forum">Форум</a>
+                                  </div>
+                                  <div id="submenu-div-3" class="menu-item"> 
+                                       <a id="submenu-3" href="/blog">Дневник</a>
+                                  </div>
+                                  <div id="submenu-div-4" class="menu-item">
+                                       <a id="submenu-4" href="/mylh">Мой ЛХ</a>
+                                  </div>
+                                  <div id="submenu-div-5" class="menu-item"> 
+                                       <a id="submenu-5" href="/private">Приваты</a>
+                                  </div>
+                                  <div id="submenu-div-6" class="menu-item">
+                                       <a id="submenu-6" href="/statistics">Статистика</a>
+                                  </div>
+                                  <div class="clear"></div>
+                         </div>
+                         <div class="col-sm-3">
 
-               <div class = "row header-pan-bottom" style="margin-bottom:-0.3em;">
-                    <div class="col-sm-10">
-                         <div class="menu-item active">
-                             <a href="/">Главная</a>
-                         </div>
-                         <div class="menu-item">
-                             <a href="/forum">Форум</a>
-                         </div>
-                         <div class="menu-item"> 
-                             <a href="/blog">Дневник</a>
-                         </div>
-                         <div class="menu-item">
-                             <a href="/mylh">Мой ЛХ</a>
-                         </div>
-                         <div class="menu-item"> 
-                             <a href="/private">Приваты</a>
-                         </div>
-                         <div class="menu-item">
-                             <a href="/statistics">Статистика</a>
-                         </div>
-                         <div class="clear"></div>
-                    </div>
-                    <div class="col-sm-2" style="margin-top:0.2em;margin-bottom:0.2em;float:right;">
-                           <div id="logged-out">
 
+                         </div>
+                         <input type="hidden" value="{{ current_page }}" id="current_page" />
+                         </form>
+
+               </div>   
+               <div class = "row header-pan-bottom">
+<!--
+                   <div class="col-sm-5">
+                                 <div id="submenu-private-messages">
+
+                                     <div class="submenu-item">
+                                            <a href="#">Входящие Сообщения</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">Список Контактов</a>
+                                     </div> 
+
+                                     <div class="submenu-item">
+                                            <a href="#">Нaстройки</a>
+                                     </div>
+
+                                     <div class="clear"></div>
+                                 </div>
+
+                   </div>
+--> 
+                   
+                  <div class="col-sm-4">&nbsp;</div>
+                  <div class="col-sm-6" style="margin-left:-1.1em;min-width:41.00em;">
+                                 <div id="submenu-main">Main</div>
+                                 <div id="submenu-forum">
+                                     <div class="submenu-item">
+                                          <a href="#">
+
+Новые сообщения
+                                          </a>
+                                     </div>
+                                     <div class="submenu-item">
+                                          <a href="/add/">
+
+Создать новую тему 
+                                          </a>
+                                     </div>                                     
+                                     <div class="submenu-item">
+                                          <a href="#">
+
+События
+
+                                          </a>
+                                     </div>
+                                 </div>
+                                 <div id="submenu-blog">
+
+                                     <div class="submenu-item">
+                                            <a href="#">Общий дневник</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">
+                                            Ваш дневник
+                                            </a>
+                                     </div>
+
+                                     <div class="submenu-item">
+                                            <a href="#">
+Добавить запись в дневник
+                                            </a>
+                                     </div>
+
+                                     <div class="submenu-item">
+                                         <a href="#">
+                                     RSS Фид
+                                         </a>
+                                     </div>
+                                     <div class="clear"></div>
+
+                                 </div>
+                                 <div id="submenu-mylh">
+                                     <div class="submenu-item">
+                                            <a href="#">Профиль</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">Нaстройки</a>
+                                     </div>
+
+                                     <div class="submenu-item">
+                                            <a href="#">
+Друзья / Враги
+</a>
+                                     </div>
+
+                                 </div> 
+                                 <div id="submenu-statistics">
+
+                                     <div class="submenu-item">
+                                            <a href="#">
+                                                   Общая статистика
+                                            </a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">
+                                                  Ваша статистика 
+                                            </a>
+                                     </div>
+
+
+
+                                 </div>
+                                 <div id="submenu-private-messages">
+
+                                     <div class="submenu-item">
+                                            <a href="#">Входящие Сообщения</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">Список Контактов</a>
+                                     </div>
+
+                                     <div class="submenu-item">
+                                            <a href="#">Нaстройки</a>
+                                     </div>
+
+                                     <div class="clear"></div>
+                                 </div>
+
+                  </div>
+                  <div class="col-sm-2">
+                           <div id="logged-out" style="float:right;width:100%;">
                                                {% if not user.is_authenticated %}
                                                    <a id="modal-login-open" href="#">Зайти</a> 
                                                {% endif %}
@@ -614,8 +827,8 @@ span.psw {
               
     </div>
 </div>
-
-              {% if is_activated %}
+  
+               {% if is_activated %}
                           <div class="success" id="activation-success">
                                         Ваша запись успешно активирована.
 
@@ -716,7 +929,7 @@ span.psw {
 {% block content %}
 {% endblock %}
 
-
+</div>
 </body>
 <script>
        $(document).ready(function() {
@@ -725,11 +938,78 @@ span.psw {
             $("#retry-activation").click(function() {
             });
 
+            $('#submenu-main').show();
+            $('#submenu-forum').hide();
+            $('#submenu-blog').hide();
+            $('#submenu-mylh').hide(); 
+            $('#submenu-statistics').hide();
+            $('#submenu-private-messages').hide();
+
             $('.menu-item').click(function(event) {
                    event.preventDefault();
                    $('.active').removeClass('active');
+
                    $(this).addClass('active');
+
+                   if ($(this).attr('id')==='submenu-div-1') {
+                       $('#submenu-main').show();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                   } else if ($(this).attr('id')==='submenu-div-2') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').show();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                   } else if ($(this).attr('id')==='submenu-div-3') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                   } else if ($(this).attr('id')==='submenu-div-4') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').show();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                   } else if ($(this).attr('id')==='submenu-div-5') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').show();
+                   } else if ($(this).attr('id')==='submenu-div-6') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').show();
+                       $('#submenu-private-messages').hide();
+                   }
+
+
             });
+
+            if ($('#current_page').val()==='new_feeling') {
+                       $("#resend-activation-errors").hide(); 
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').show();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-2').addClass('active');
+
+            }
 
             $('#registration').validate({
                       rules: {
