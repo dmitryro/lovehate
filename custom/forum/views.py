@@ -22,6 +22,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework import exceptions
 
+from transliterate import translit, get_available_language_codes
+
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
 from custom.users.callbacks import resend_activation_handler
@@ -29,6 +31,7 @@ from custom.users.models import Profile
 from custom.utils.models import Logger
 from custom.forum.models import Emotion
 from custom.forum.models import Attitude
+from custom.forum.models import Topic
 from custom.forum.serializers import AttitudeSerializer
 from custom.forum.serializers import EmotionSerializer
 
@@ -55,6 +58,14 @@ class EmotionViewSet(viewsets.ModelViewSet):
     """
     serializer_class = EmotionSerializer
     queryset = Emotion.objects.all()
+
+
+def topics(topic_id):
+    redirect = 'topics.html'
+    try:
+        pass
+    except Exception as e:
+        pass
 
 
 def forum_new(request):
@@ -102,20 +113,34 @@ def newemotion(request):
         attitude = int(request.data.get('attitude', None))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=attitude)
+        trans_subject = translit(str(subject), reversed=True) 
+
+        try:
+            log = Logger(log='NOW COMPARING {}'.format(trans_subject))
+            log.save()
+            topic = Topic.objects.get(translit_name=trans_subject)
+            log = Logger(log='FOUND TOPIC {}'.format(topic))
+            log.save()
+        except Exception as e:
+            log = Logger(log='SHIT BROKE BEFORE {}'.format(e))
+            log.save()
+
+
+            topic = Topic.objects.create(name=subject, 
+                                         translit_name=trans_subject)
+            log = Logger(log='CREATED TOPIC {}'.format(topic))
+            log.save()
+           
 
         user = User.objects.get(id=user_id)
-
-        em = Emotion.objects.get(subject=subject)
-
-        if not em:
-            em = Emotion.objects.get(subject=subject.lower())
-
-        if not em:
-            Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=subject)
-        else:
-            Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=em.subject)
+        Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=subject, translit_subject=trans_subject)
+        
 
     except Exception as e:
+        log = Logger(log='SHIT BROKE {}'.format(e))
+        log.save()
+
+
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,

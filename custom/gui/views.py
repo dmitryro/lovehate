@@ -147,6 +147,10 @@ def private(request):
 def forum(request):
 
     try:
+        loves = Emotion.objects.filter(attitude_id=1)
+        mehs = Emotion.objects.filter(attitude_id=2)
+        hates = Emotion.objects.filter(attitude_id=3)
+
         if request.user.is_authenticated:
             logout=True
             user_id = request.user.id
@@ -164,6 +168,9 @@ def forum(request):
             is_authenticated = False
 
     return render(request, 'forum.html',{'home':'forum.html',
+                                         'loves': loves,
+                                         'mehs': mehs,
+                                         'hates': hates,
                                          'user': request.user,
                                          'username': username,
                                          'current_page': 'forum',
@@ -183,6 +190,10 @@ def autneticate_user(username, password):
 def simple_signin(request):
  
     try:
+        loves = Emotion.objects.filter(attitude_id=1)
+        mehs = Emotion.objects.filter(attitude_id=2)
+        hates = Emotion.objects.filter(attitude_id=3)
+
         username = request.POST.get('uname')
         password = request.POST.get('psw')
         user = authenticate(username=username, password=password)
@@ -210,6 +221,9 @@ def simple_signin(request):
 
     return render(request, 'index.html',{'home':'index.html',
                                          'user': user,
+                                         'loves': loves,
+                                         'mehs': mehs,
+                                         'hates': hates,
                                          'username': user.username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
