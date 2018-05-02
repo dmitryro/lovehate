@@ -52,6 +52,7 @@ from custom.forum.views import EmotionList
 from custom.forum.views import AttitudeDetail
 from custom.forum.views import AttitudeList
 from custom.forum.views import newemotion
+from custom.forum.views import topics
 from django.contrib import admin
 
 urlpatterns = [
@@ -63,6 +64,7 @@ urlpatterns = [
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
+    path('topics/<int:topic_id>/', topics),
     path('activate/<activation_key>/', activate),
     path('api-auth/', include('rest_framework.urls')),      
     path('rest-auth/', include('rest_auth.urls')),

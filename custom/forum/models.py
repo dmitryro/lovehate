@@ -4,9 +4,30 @@ from datetime import date
 from datetime import datetime
 from transliterate import translit, get_available_language_codes
 
+class Topic(models.Model):
+    name = models.CharField(max_length=250,
+                            blank=True,
+                            null=True)
+    translit_name = models.CharField(max_length=250,
+                                     blank=True,
+                                     null=True)
+    time_published = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.translit_name
+
+    class Meta:
+        verbose_name = 'Topic'
+        verbose_name_plural = 'Topics'
+
+
+
 class Attitude(models.Model):
     name = models.CharField(max_length=250, blank=True, null=True)
     code = models.CharField(max_length=250, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name = 'Attitude'
@@ -24,21 +45,29 @@ class Emotion(models.Model):
     translit_subject = models.CharField(max_length=250,
                                         blank=True,
                                         null=True)
-
+     
     emotion = models.TextField(blank=True, 
                                null=True)
+
     time_published = models.DateTimeField(auto_now_add=True)
+
     rating =  models.FloatField(default=0, 
                                 blank=True, 
                                 null=True)
+
     attitude = models.ForeignKey(Attitude, 
                                  blank=True, 
-                                 null=True, 
+                                 null=True,
                                  on_delete=models.CASCADE) 
 
-#    @property
- #   def subject_translit(self):
- #       return translit(str(self.subject), reversed=True)
+    topic = models.ForeignKey(Topic,
+                              blank=True,
+                              null=True,
+                              related_name='topic',
+                              on_delete=models.CASCADE)   
+
+    def __str__(self):
+        return self.translit_subject
 
     @property
     def date_published(self):
@@ -49,33 +78,31 @@ class Emotion(models.Model):
         return "{}/{}/{}".format(day,
                                  month,
                                  year)
+    @property
+    def publishing_user_id(self):
+        try:
+            return self.user.id
+        except Exception as e:
+            return -1
 
     class Meta:
         verbose_name = 'Emotion'
         verbose_name_plural = 'Emotions'
 
 
-class Topic(models.Model):
-    name = models.CharField(max_length=250,
-                            blank=True,
-                            null=True)
-    translit_name = models.CharField(max_length=250,
-                                     blank=True,
-                                     null=True)
-    time_published = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
-    @property
-    def lovers(self):
-       lovers = Emotion.objects.filter(subject=self.name, attitude_id=1)
-       return lovers
+#    @property
+#    def lovers(self):
+#       lovers = Emotion.objects.filter(subject=self.name, attitude_id=1)
+#       return lovers
 
-    @property
-    def mehs(self):
-       mehs = Emotion.objects.filter(subject=self.name, attitude_id=2)
-       return mehs
+#    @property
+#    def mehs(self):
+#       mehs = Emotion.objects.filter(subject=self.name, attitude_id=2)
+#       return mehs
 
-    @property
-    def haters(self):
-       haters = Emotion.objects.filter(subject=self.name, attitude_id=3)
-       return haters
+#    @property
+#    def haters(self):
+#       haters = Emotion.objects.filter(subject=self.name, attitude_id=3)
+#       return haters
 

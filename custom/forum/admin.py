@@ -47,12 +47,13 @@ class EmotionAdmin(admin.ModelAdmin):
                                     'subject',
                                     'translit_subject',
                                     'emotion',
+                                    'topic',
                                     'attitude',
                                     'rating']}),)
 
-    list_display = ('id','user', 'subject', 'translit_subject','emotion', 'attitude', 'rating',)
-    list_editable = ('user', 'subject', 'translit_subject', 'emotion', 'attitude', 'rating',)
-    search_fields = ('user', 'subject', 'translit_subject', 'emotion', 'attitude', 'rating',)
+    list_display = ('id','user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
+    list_editable = ('user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
+    search_fields = ('user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
 
     class Meta:
          verbose_name = 'Emotion'

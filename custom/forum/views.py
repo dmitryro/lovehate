@@ -60,19 +60,36 @@ class EmotionViewSet(viewsets.ModelViewSet):
     queryset = Emotion.objects.all()
 
 
-def topics(topic_id):
+def topics(request, topic_id):
     redirect = 'topics.html'
     try:
-        pass
+        lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id)
+        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id)
+        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id)
+        log = Logger(log="TOPICS DID READ {} {} {}".format(lovers, mehs, haters))
+        log.save()
+    
+ 
     except Exception as e:
-        pass
+        log = Logger(log="TOPICS DID NOT READ {}".format(e))
+        log.save()
+        lovers = []
+        mehs = []
+        haters = []
 
+    log = Logger(log="EMPTIONS BEFORE WE RENDER lovers {} mehs {} haters {}".format(lovers, mehs, haters))
+    log.save()
+
+    return render(request, redirect,{'home':'topics.html',
+                                     'lovers': lovers,
+                                     'mehs' : mehs,
+                                     'haters': haters,
+                                     'user': request.user,
+                                     'current_page': 'topics',
+                                     'logout': False})
 
 def forum_new(request):
     redirect = 'forum_new.html'
-
-    log = Logger(log='USER IS AUTHENTICATED {}'.format(request.user.is_authenticated))
-    log.save()
 
     try:
         if request.user.is_authenticated:
@@ -90,9 +107,6 @@ def forum_new(request):
             logout=False
             user_id = -1
             is_authenticated = False
-
-    log = Logger(log='USER IS AUTHENTICATED {} username {}'.format(request.user.is_authenticated, username))
-    log.save()
 
     return render(request, redirect,{'home':'forum_new.html',
                                      'user': request.user,
@@ -116,31 +130,17 @@ def newemotion(request):
         trans_subject = translit(str(subject), reversed=True) 
 
         try:
-            log = Logger(log='NOW COMPARING {}'.format(trans_subject))
-            log.save()
             topic = Topic.objects.get(translit_name=trans_subject)
-            log = Logger(log='FOUND TOPIC {}'.format(topic))
-            log.save()
         except Exception as e:
-            log = Logger(log='SHIT BROKE BEFORE {}'.format(e))
-            log.save()
-
-
             topic = Topic.objects.create(name=subject, 
                                          translit_name=trans_subject)
-            log = Logger(log='CREATED TOPIC {}'.format(topic))
-            log.save()
-           
+                     
 
         user = User.objects.get(id=user_id)
-        Emotion.objects.create(user=user, attitude=attitude, emotion=emotion, subject=subject, translit_subject=trans_subject)
+        Emotion.objects.create(user=user, topic=topic, attitude=attitude, emotion=emotion, subject=subject, translit_subject=trans_subject)
         
 
     except Exception as e:
-        log = Logger(log='SHIT BROKE {}'.format(e))
-        log.save()
-
-
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,

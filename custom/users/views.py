@@ -22,6 +22,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework import exceptions
 
+from custom.forum.models import Topic
 from custom.forum.models import Emotion
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
@@ -142,20 +143,60 @@ def registernew(request):
 @permission_classes([AllowAny,])
 def user_profile(request, user_id):
     try:
+
+        log = Logger(log="LET US TRY  {}".format(user_id))
+        log.save()
+
         profile = Profile.objects.get(user_id=int(user_id))
+
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
+        loved_titles = []
+        log = Logger(log="TOTAL LOVES {}".format(len(loves)))
+        log.save()
+
+        for love in loves:
+             loved_titles.append(love.translit_subject)
+
+        log = Logger(log="APPENDED LOVED TITLES {}".format(loved_titles))
+        log.save()
+
+        loved_titles = list(set(loved_titles))
+        loved_topics = Topic.objects.filter(translit_name__in=loved_titles)
+
+
         mehs = Emotion.objects.filter(user=profile.user, attitude_id=2)
+        meh_titles = []
+        log = Logger(log="TOTAL MEHS {}".format(len(mehs)))
+        log.save()
+
+        for meh in mehs:
+             meh_titles.append(meh.translit_subject)         
+
+        log = Logger(log="APPENDED MEH TITLES {}".format(meh_titles))
+        log.save()
+
+       
+        meh_titles = list(set(meh_titles))
+        meh_topics = Topic.objects.filter(translit_name__in=meh_titles)
+
         hates = Emotion.objects.filter(user=profile.user, attitude_id=3)
+        hate_titles = []
+        for hate in hates:
+             hate_titles.append(hate.translit_subject)
+        hate_titles = list(set(hate_titles))
+        hate_topics = Topic.objects.filter(translit_name__in=hate_titles)
+
     except Exception as e:
+
         return render(request, 'index.html',{'home':'index.html'})
 
     return render(request, 'user.html', {'home':'user.html',
                                      'explored_username': profile.user.username,
                                      'username': request.user.username,
                                      'is_activated': False,
-                                     'loves': loves,
-                                     'mehs': mehs,
-                                     'hates': hates,
+                                     'loves': loved_topics,
+                                     'mehs': meh_topics,
+                                     'hates': hate_topics,
                                      'bio': profile.bio,
                                      'fullname': "{} {}".format(profile.user.first_name, profile.user.last_name),
                                      'resend_activation': False,

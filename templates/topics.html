@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% load forum_extras %}
 {% block content %}
+
 <div>
 <br />
 <br />
@@ -79,8 +79,10 @@
                  <div class="loves"><span>Любит</span></div>
                  <div class="loves-profile">
 
-                           {% for love in loves %}
-                                  <div style="text-align:center;"><a href="/topics/{{ love.id }}">{{ love.name }} ({% topic_meta love.id user_id 1 %}) </div>
+                           {% for love in lovers %}
+                                  <div style="text-align:center;">
+                                           <a href="/user/{{ love.user.id }}">{{ love.user.username }}</a>: {{ love.emotion }}<br/>
+                                  </div>
                            {% endfor %}
 
                  </div>
@@ -91,7 +93,9 @@
                  <div class="mehs"><span>Безразличен к</span></div>
                  <div class=mehs-profile">
                            {% for meh in mehs %}
-                                  <div style="text-align:center;"><a href="/topics/{{ meh.id }}">{{ meh.name }} ({% topic_meta meh.id user_id 2 %})</a></div>
+                                  <div style="text-align:center;">
+                                          <a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a>: {{ meh.emotion }}<br/>
+                                  </div>
                            {% endfor %}
                  </div>
              </div>
@@ -103,8 +107,10 @@
                  <div class="hates"><span>Ненавидит</span></div>
                  <div class="hates-profile">
 
-                           {% for hate in hates %}
-                                  <div style="text-align:center;"><a href="/topics/{{ hate.id }}">{{ hate.name }} ({% topic_meta hate.id user_id 3 %})</a></div>
+                           {% for hate in haters %}
+                                  <div style="text-align:left;">
+                                         <a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a>: {{ hate.emotion }}<br/>
+                                  </div>
                            {% endfor %}
 
                  </div>
