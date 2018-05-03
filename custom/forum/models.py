@@ -140,6 +140,15 @@ class Message(models.Model):
                                  on_delete=models.CASCADE)
     importance = models.IntegerField(default=0)
 
+    @property
+    def date_time_sent(self):
+        dt = str(self.time_sent)
+        year = dt[0:4]
+        month = dt[5:7]
+        day = dt[8:10]
+        return "{}/{}/{}".format(day,
+                                 month,
+                                 year)
 
     def __str__(self):
         return self.subject

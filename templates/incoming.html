@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load bootstrap_pagination %}
 {% block content %}
 
 <div>
@@ -17,18 +18,29 @@
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
                 <form action="editprofile" method="post">
                     <div class="row">
-                            
+
+                                            <div class="container-fluid">
+
                                                        {% for message in incoming %}
                                                            <div class="row">
   
                                                             <div  class="col-sm-1">
-
                                                             </div>
                                                             <div  class="col-sm-1">
                                                                  <input type="checkbox" name="incoming_delete" value="{{ message.id }}" />
                                                             </div>
 
-                                                            <div class="col-sm-10">  
+                                                           {% if message.attitude.id == 1 %}
+                                                                 <div class="col-sm-2 loves-messages">
+                                                           {% elif message.attitude.id == 2 %}
+                                                                  <div class="col-sm-2 mehs-messages">
+                                                           {% elif message.attitude.id == 3 %}
+                                                                  <div class="col-sm-2 hates-messages">
+                                                           {% endif %}
+                                                                  {{ message.date_time_sent }}
+                                                            </div>
+                                                            <div class="col-sm-8"> 
+                                                            
                                                            {% if message.attitude.id == 1 %}
                                                                  <div class="loves-messages">
                                                            {% elif message.attitude.id == 2 %}
@@ -41,15 +53,20 @@
                                                                 
 
 
-                                                                  {{ message.subject }} {{ message.attitude }} {{ message.body }}
+                                                                   {{ message.subject }} {{ message.attitude }} {{ message.body }}
                                                               </div>
                                                              </div>
                                                             </div>
                                                        {% endfor %}
-                              
+                                                      <div class="row">                            
+                                                         <div class="col-sm-4"> 
+                                                         </div>
+                                                         <div class="col-sm-8">
+                                                                      {% bootstrap_paginate incoming range=10 show_prev_next="false" show_first_last="true" %} 
+                                                         </div>
+                                                      </div>
+                                                  </div>
                     
-                    
-                             </div>
                     </div>
                 </form>
            </div>

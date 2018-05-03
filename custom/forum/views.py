@@ -5,6 +5,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -179,6 +180,8 @@ def outgoing_messages(request):
 
 def incoming_messages(request):
     redirect = 'incoming.html'
+    page = request.GET.get('page', 1)
+
 
     try:
         if request.user.is_authenticated:
@@ -199,10 +202,20 @@ def incoming_messages(request):
             user_id = -1
             is_authenticated = False
             incoming = []
+
+    paginator = Paginator(incoming, 10)
+
+    try:
+        incoming_slice = paginator.page(page)
+    except PageNotAnInteger:
+        incoming_slice = paginator.page(1)
+    except EmptyPage:
+        incoming_slice = paginator.page(paginator.num_pages)
+
     return render(request, redirect,{'home':'incoming.html',
                                      'user': request.user,
                                      'username': username,
-                                     'incoming': incoming,
+                                     'incoming': incoming_slice,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'incoming',
                                      'username': request.user.username,

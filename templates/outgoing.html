@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load bootstrap_pagination %}
 {% block content %}
 
 <div>
@@ -17,10 +18,6 @@
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
                 <form action="editprofile" method="post">
                     <div class="row">
-                        <div class="col-sm-4" >
-
-
-                         </div>
                          <div class="col-sm-8">
                                   {% for message in outgoing %}
                                                        {% if message.attitude.id == 1 %}
@@ -31,8 +28,8 @@
                                                        {% elif message.attitude.id == 3 %}
                                                                   <div class="hates-messages">
                                                        {% endif %}
-
-                                                                            {{ message.subject }}  {{ message.body }}
+                                                               
+                                                            {{ message.date_time_send }}  {{ message.subject }}  {{ message.body }}
                                                        </div>
                                    {% endfor %}
 
