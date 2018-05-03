@@ -148,6 +148,7 @@ def forum_new(request):
 
 def outgoing_messages(request):
     redirect = 'outgoing.html'
+    page = request.GET.get('page', 1)
 
     try:
         if request.user.is_authenticated:
@@ -168,10 +169,21 @@ def outgoing_messages(request):
             user_id = -1
             is_authenticated = False
             outgoing = []
+
+    paginator = Paginator(outgoing, 10)
+
+    try:
+        outgoing_slice = paginator.page(page)
+    except PageNotAnInteger:
+        outgoing_slice = paginator.page(1)
+    except EmptyPage:
+        outgoing_slice = paginator.page(paginator.num_pages)
+
+
     return render(request, redirect,{'home':'outgoing.html',
                                      'user': request.user,
                                      'username': username,
-                                     'outgoing': outgoing,
+                                     'outgoing': outgoing_slice,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'outgoing',
                                      'username': request.user.username,
