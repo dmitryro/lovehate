@@ -140,23 +140,66 @@ class Message(models.Model):
                                  on_delete=models.CASCADE)
     importance = models.IntegerField(default=0)
 
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def receiver_name(self):
+        return self.receiver.first_name+' '+self.receiver.last_name
+
+
     class Meta:
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
 
 
-#    @property
-#    def lovers(self):
-#       lovers = Emotion.objects.filter(subject=self.name, attitude_id=1)
-#       return lovers
+class NotificationType(models.Model):
+    notification_type = models.CharField(max_length=50, blank=True, null=True)
+    notification_code = models.CharField(max_length=50, blank=True, null=True)
 
-#    @property
-#    def mehs(self):
-#       mehs = Emotion.objects.filter(subject=self.name, attitude_id=2)
-#       return mehs
+    class Meta:
+        verbose_name = 'Notification Type'
+        verbose_name_plural = 'Notification Types'
 
-#    @property
-#    def haters(self):
-#       haters = Emotion.objects.filter(subject=self.name, attitude_id=3)
-#       return haters
 
+class Notification(models.Model):
+    is_received = models.NullBooleanField(default=False,
+                                          blank=True,
+                                          null=True)
+
+    is_sent = models.NullBooleanField(default=False,
+                                      blank=True,
+                                      null=True)
+
+    message =  models.ForeignKey(Message, 
+                                 blank=True, 
+                                 null=True,
+                                 on_delete=models.CASCADE)
+
+    notification_type = models.ForeignKey(NotificationType,
+                                          blank=True, 
+                                          null=True,
+                                          on_delete=models.CASCADE)
+
+    user = models.ForeignKey(User, blank=True, 
+                             null=True,
+                             on_delete=models.CASCADE)
+
+    time_sent = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Notification'
+        verbose_name_plural = 'Notifications'
+
+
+class MessagingSettings(models.Model):
+    user = models.OneToOneField(User, blank=True, null=True,
+                                on_delete=models.CASCADE) 
+    duplicate_private = models.NullBooleanField(default=False,
+                                                blank=True,
+                                                null=True)
+
+    class Meta:
+        verbose_name = 'Messaging Settings'
+        verbose_name_plural = 'Messaging Settings'

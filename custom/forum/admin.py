@@ -41,11 +41,11 @@ class MessageAdmin(admin.ModelAdmin):
     fieldsets = ((None, {'fields': ['subject', 'body', 'is_sent','importance','attitude','sender',  'receiver',]}),)
                       #   'is_read', 'sender',
                       #   'receiver', 'attitude', 'importance',]}),)
-    list_display = ('id','subject', 'body', 'is_sent', 'is_read', 'importance', 'attitude',) 
+    list_display = ('id','subject', 'body', 'is_sent', 'is_read', 'importance', 'attitude', 'sender',  'receiver',) 
              #       'sender',  'receiver', 'attitude', 'importance',)
     list_editable = ('subject', 'body', 'is_sent', 'is_read', 'importance','attitude','sender',  'receiver',) 
               #       'sender',  'receiver', 'attitude', 'importance',),
-    search_fields = ('subject', 'body', 'is_sent', 'is_read',) 
+    search_fields = ('subject', 'body', 'is_sent', 'is_read', 'importance','attitude','sender',  'receiver',) 
               #       'sender',  'receiver', 'attitude', 'importance',)
 
     class Meta:

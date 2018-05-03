@@ -832,6 +832,8 @@ span.psw {
                                  </div>
                                  <div id="submenu-private-messages">
 
+                                 {% if user.is_authenticated %} 
+
                                      <div class="submenu-item">
                                             <a href="#">Входящие</a>
                                      </div>
@@ -850,6 +852,7 @@ span.psw {
                                      </div>
 
                                      <div class="clear"></div>
+                                 {% endif %}
                                  </div>
 
                   </div>
@@ -1267,7 +1270,36 @@ span.psw {
               $('#message-publish').click(function() {
                            
                   if ($('#newmessageform').valid()) {
-                       alert("valid");
+                      alert("message"+$("#message").val()+
+                            "attitude"+attitude[$('input[type=radio][name=message_attitude]:checked').val()]+
+                            "subject"+$("#subject").val()+
+                            "recipients"+$("#recipient").val()+
+                            "sender id"+$("#message_user_id").val());
+
+                      var arr = {
+                          message: $("#message").val(),
+                          attitude: attitude[$('input[type=radio][name=message_attitude]:checked').val()],
+                          subject: $("#subject").val(),
+                          recipients: $("#recipient").val(),
+                          sender_id: $("#message_user_id").val(),
+                      };
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/newmessage/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              alert("we are back - sent");
+                              redirect_main();
+                          },
+                          error: function(data){
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
                   }
               });
 

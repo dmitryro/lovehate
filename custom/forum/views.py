@@ -23,6 +23,7 @@ from rest_framework.decorators import api_view, renderer_classes, permission_cla
 from rest_framework import exceptions
 
 from transliterate import translit, get_available_language_codes
+from transliterate import detect_language
 
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
@@ -126,15 +127,90 @@ def forum_new(request):
                                      'username': request.user.username,
                                      'logout': False})
 
+def outgoing_messages(request):
+    redirect = 'outgoing.html'
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, redirect,{'home':'outgoing.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'outgoing',
+                                     'username': request.user.username,
+                                     'logout': False})
+
+
+def incoming_messages(request):
+    redirect = 'incoming.html'
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, redirect,{'home':'incoming.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'incoming',
+                                     'username': request.user.username,
+                                     'logout': False})
+
 
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def newmessage(request):
     try:
-        pass
+
+        message = request.data.get('message', '')
+        subject = request.data.get('subject', '')
+        recipients = request.data.get('recipients', '')
+        attitude = int(request.data.get('attitude', None))
+        sender_id = int(request.data.get('sender_id', None))
+        attitude = Attitude.objects.get(id=attitude)
+        trans_subject = translit(str(subject), reversed=True)
+        message = "Message: {}, Subject: {}, Recipients: {}, Attitude: {}, Sender ID {} trans {}"
+        message = message.format(message,
+                                 subject,
+                                 recipient,
+                                 attitude,
+                                 sender_id,
+                                 trans_subject)
+        log = Logger(log=message)
+        log.save()        
     except Exception as e:
-        pass
+        log = Logger(log="This just didn't work {}".format(e))
+        log.save()         
+
 
     return Response({"message": "success - message sent",
                      "status": "posted",
@@ -152,7 +228,23 @@ def newemotion(request):
         attitude = int(request.data.get('attitude', None))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=attitude)
-        trans_subject = translit(str(subject), reversed=True) 
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        log = Logger(log="LANGUAGE WAS {}".format(language))
+        log.save()
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True) 
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp': 
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
 
         try:
             topic = Topic.objects.get(translit_name=trans_subject)
@@ -166,6 +258,9 @@ def newemotion(request):
         
 
     except Exception as e:
+        log = Logger(log="This just did not work out - failed to create a new topic {}".format(e))
+        log.save()
+
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,
