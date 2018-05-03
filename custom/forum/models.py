@@ -142,7 +142,7 @@ class Message(models.Model):
 
 
     def __str__(self):
-        return self.title
+        return self.subject
 
     @property
     def receiver_name(self):

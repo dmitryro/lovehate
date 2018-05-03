@@ -33,8 +33,26 @@ from custom.utils.models import Logger
 from custom.forum.models import Emotion
 from custom.forum.models import Attitude
 from custom.forum.models import Topic
+from custom.forum.models import Message
+from custom.forum.models import Notification
+from custom.forum.models import NotificationType
 from custom.forum.serializers import AttitudeSerializer
 from custom.forum.serializers import EmotionSerializer
+from custom.forum.signals import message_read
+from custom.forum.signals import message_sent
+from custom.forum.signals import message_deleted
+from custom.forum.signals import message_updated
+from custom.forum.signals import message_duplicate_to_email
+from custom.forum.callbacks import message_deleted_handler
+from custom.forum.callbacks import message_read_handler
+from custom.forum.callbacks import message_sent_handler
+from custom.forum.callbacks import message_updated_handler
+from custom.forum.callbacks import message_duplicate_to_email_handler
+from custom.forum.serializers import MessageSerializer
+from custom.forum.serializers import MessagingSettingsSerializer
+from custom.forum.serializers import NotificationSerializer
+from custom.forum.serializers import NotificationTypeSerializer
+from custom.users.serializers import UserSerializer
 
 
 class AttitudeList(generics.ListAPIView):
@@ -136,20 +154,23 @@ def outgoing_messages(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            outgoing = Message.objects.filter(sender_id=user_id)
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            outgoing = []
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
-
+            outgoing = []
     return render(request, redirect,{'home':'outgoing.html',
                                      'user': request.user,
                                      'username': username,
+                                     'outgoing': outgoing,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'outgoing',
                                      'username': request.user.username,
@@ -165,25 +186,33 @@ def incoming_messages(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            incoming = Message.objects.filter(receiver_id=user_id)
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            incoming = []
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
-
+            incoming = []
     return render(request, redirect,{'home':'incoming.html',
                                      'user': request.user,
                                      'username': username,
+                                     'incoming': incoming,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'incoming',
                                      'username': request.user.username,
                                      'logout': False})
 
+def get_substring_index(orig, search):
+    for i, s in enumerate(search):
+       if orig in s and len(orig) < len(s):
+           return i
+    return -1
 
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
@@ -191,25 +220,61 @@ def incoming_messages(request):
 def newmessage(request):
     try:
 
-        message = request.data.get('message', '')
+        body = request.data.get('message', '')
         subject = request.data.get('subject', '')
         recipients = request.data.get('recipients', '')
         attitude = int(request.data.get('attitude', None))
         sender_id = int(request.data.get('sender_id', None))
         attitude = Attitude.objects.get(id=attitude)
-        trans_subject = translit(str(subject), reversed=True)
-        message = "Message: {}, Subject: {}, Recipients: {}, Attitude: {}, Sender ID {} trans {}"
-        message = message.format(message,
-                                 subject,
-                                 recipient,
-                                 attitude,
-                                 sender_id,
-                                 trans_subject)
-        log = Logger(log=message)
-        log.save()        
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        
+        receivers = list(set(recipients.split(',')))       
+
+        for i, receiver in enumerate(receivers):
+            receivers[i] = receiver.strip()
+
+        
+        #receiver = User.objects.get(id=receiver_id)
+        sender = User.objects.get(id=sender_id)
+
+        recipients = User.objects.filter(username__in=receivers)
+        for receiver in recipients:
+            message = Message.objects.create(subject=subject,
+                                             attitude=attitude,
+                                             importance=1,
+                                             body=body,
+                                             sender=sender,
+                                             receiver=receiver)
+            if message:
+                message_sent.send(sender = sender,
+                                  receiver = receiver,
+                                  message = message,
+                                  kwargs = None)
+
+            log = Logger(log="MESSAGE SENT {}".format(message))
+            log.save()        
     except Exception as e:
         log = Logger(log="This just didn't work {}".format(e))
         log.save()         
+
+        return Response({"message": "failure - message was not sent {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 0}, status=400)
 
 
     return Response({"message": "success - message sent",
@@ -233,9 +298,6 @@ def newemotion(request):
             language = detect_language(str(subject))
         except Exception as e:
             language = 'en'
-
-        log = Logger(log="LANGUAGE WAS {}".format(language))
-        log.save()
 
         if language=='ru':
             trans_subject = translit(str(subject), reversed=True) 
@@ -271,3 +333,9 @@ def newemotion(request):
                      "code": 200,
                      "falure_code": 0}, status=200)
 
+
+message_duplicate_to_email.connect(message_duplicate_to_email_handler)
+message_read.connect(message_read_handler)
+message_sent.connect(message_sent_handler)
+message_deleted.connect(message_deleted_handler)
+message_updated.connect(message_updated_handler)

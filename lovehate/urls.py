@@ -56,6 +56,9 @@ from custom.forum.views import topics
 from custom.forum.views import newmessage
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
+from custom.blog.views import newblog
+from custom.blog.views import addnewblog
+from custom.blog.views import userblog
 from django.contrib import admin
 
 urlpatterns = [
@@ -95,5 +98,8 @@ urlpatterns = [
     path('newmessage/', newmessage),
     path('outgoing/', outgoing_messages),
     path('incoming/', incoming_messages),
+    path('blog/new/', newblog),
+    path('blog/add/', addnewblog),
+    path('blog/<int:user_id>/', userblog),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

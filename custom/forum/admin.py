@@ -3,6 +3,25 @@ from custom.forum.models import Attitude
 from custom.forum.models import Emotion
 from custom.forum.models import Topic
 from custom.forum.models import Message
+from custom.forum.models import NotificationType
+from custom.forum.models import Notification
+
+
+####################################################
+# Register Notification Type with Django Admin     #
+####################################################
+
+class NotificationTypeAdmin(admin.ModelAdmin):
+    fieldsets = ((None, {'fields': ['notification_type',
+                                    'notification_code',]}),)
+    list_display = ('id', 'notification_code', 'notification_type',)
+    list_editable = ('notification_code', 'notification_type',)
+    search_fields = ('notification_code', 'notification_type',)
+
+    class Meta:
+         verbose_name = 'Notification Type'
+         verbose_name_plural = 'Notification Types'
+
 
 ########################################
 # Register Topic with Django Admin     #
@@ -75,6 +94,7 @@ class EmotionAdmin(admin.ModelAdmin):
          verbose_name_plural = 'Emotions'
 
 
+admin.site.register(NotificationType, NotificationTypeAdmin)
 admin.site.register(Topic, TopicAdmin)
 admin.site.register(Attitude, AttitudeAdmin)
 admin.site.register(Emotion, EmotionAdmin)

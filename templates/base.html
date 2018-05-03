@@ -453,6 +453,26 @@ span.psw {
    border-bottom: 1px #979797 solid;
 }
 
+.loves-messages {
+   color: #008000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.mehs-messages {
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.hates-messages {
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
 .mehs {
    color: #333333;
    font-weight: normal;
@@ -835,20 +855,20 @@ span.psw {
                                  {% if user.is_authenticated %} 
 
                                      <div class="submenu-item">
-                                            <a href="#">Входящие</a>
+                                            <a href="/incoming">Входящие</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">Исходящие</a>
+                                            <a href="/outgoing">Исходящие</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">Отправить</a>
+                                            <a href="/private">Отправить</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">Контакты</a>
+                                            <a href="/private/contacts">Контакты</a>
                                      </div>
 
                                      <div class="submenu-item">
-                                            <a href="#">Нaстройки</a>
+                                            <a href="/private/settings">Нaстройки</a>
                                      </div>
 
                                      <div class="clear"></div>
@@ -1041,7 +1061,26 @@ span.psw {
                        $('#submenu-private-messages').show();
                        $('.active').removeClass('active');
                        $('#submenu-div-5').addClass('active');
+            } else if ($('#current_page').val()==='outgoing') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').show();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-5').addClass('active');
+            } else if ($('#current_page').val()==='incoming') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').show();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-5').addClass('active');
             }
+
 
 
             $('.menu-item').click(function(event) {

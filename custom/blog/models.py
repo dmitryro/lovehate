@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from custom.forum.models import Attitude
 
 class Post(models.Model):

@@ -10,12 +10,9 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 # smtp imports
 import smtplib
-import urllib2
 from smtplib import SMTPRecipientsRefused
 import string
 import codecs
-from StringIO import StringIO
-import urllib2
 import random
 import json
 import os
@@ -24,14 +21,15 @@ import re
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 
-from models import Notification
-from models import NotificationType
-from signals import message_read
-from signals import message_sent
-from signals import message_deleted
-from signals import message_updated
-from signals import message_duplicate_to_email
-from custom.metaprop.models import ProfileMetaProp
+from custom.forum.models import Message
+from custom.forum.models import Notification
+from custom.forum.models import NotificationType
+from custom.forum.signals import message_read
+from custom.forum.signals import message_sent
+from custom.forum.signals import message_deleted
+from custom.forum.signals import message_updated
+from custom.forum.signals import message_duplicate_to_email
+from custom.meta.models import ProfileMetaProp
 from custom.utils.models import Logger
 
 @receiver(message_deleted,sender=User)
@@ -49,7 +47,7 @@ def message_sent_handler(sender, receiver, message, **kwargs):
                                                    is_sent = True,
                                                    message = message,
                                                    user = receiver)
-    except Exception, R:
+    except Exception as R:
         log = Logger(log = 'WE ARE IN SIGNAL AND WE HAVE FAILED '+str(R))
         log.save()
 
@@ -64,7 +62,7 @@ def message_read_handler(sender, receiver, message, **kwargs):
        notification = Notification.objects.get(message=message)
        notification.is_received = True
        notification.save()
-    except Exception, R:
+    except Exception as R:
         log = Logger(log = 'WE ARE IN SIGNAL READ MESSAGE AND WE HAVE FAILED '+str(R))
         log.save()
 
@@ -105,7 +103,7 @@ def message_duplicate_to_email_handler(sender, receiver, message, **kwargs):
         m = f.read()
         mess = string.replace(m, '[Name]', receiver.first_name+' '+receiver.last_name)
         mess = string.replace(mess, '[sender]', sender.first_name+' '+sender.last_name)
-        mess = string.replace(mess,'[title]', message.title)
+        mess = string.replace(mess,'[title]', message.subject)
         mess = string.replace(mess,'[body]', message.body)
         mess = string.replace(mess, '[email_address]', receiver.email)
        

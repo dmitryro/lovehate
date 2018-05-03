@@ -17,10 +17,39 @@
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
                 <form action="editprofile" method="post">
                     <div class="row">
-                        <div class="col-sm-4">Nick
-                         </div>
-                         <div class="col-sm-8">
-                         </div>
+                            
+                                                       {% for message in incoming %}
+                                                           <div class="row">
+  
+                                                            <div  class="col-sm-1">
+
+                                                            </div>
+                                                            <div  class="col-sm-1">
+                                                                 <input type="checkbox" name="incoming_delete" value="{{ message.id }}" />
+                                                            </div>
+
+                                                            <div class="col-sm-10">  
+                                                           {% if message.attitude.id == 1 %}
+                                                                 <div class="loves-messages">
+                                                           {% elif message.attitude.id == 2 %}
+                                                                  <div class="mehs-messages">
+                                                           {% elif message.attitude.id == 3 %}
+                                                                  <div class="hates-messages">
+                                                           {% endif %}
+                                                         
+
+                                                                
+
+
+                                                                  {{ message.subject }} {{ message.attitude }} {{ message.body }}
+                                                              </div>
+                                                             </div>
+                                                            </div>
+                                                       {% endfor %}
+                              
+                    
+                    
+                             </div>
                     </div>
                 </form>
            </div>
