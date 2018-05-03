@@ -138,27 +138,22 @@ def registernew(request):
                      "username": username},
                      status=200)
 
-@api_view(['POST', 'GET'])
-@renderer_classes((JSONRenderer,))
-@permission_classes([AllowAny,])
 def user_profile(request, user_id):
+
+
     try:
 
-        log = Logger(log="LET US TRY  {}".format(user_id))
+        log = Logger(log="LET US TRY ================ {} {} ".format(user_id, request.user))
         log.save()
 
         profile = Profile.objects.get(user_id=int(user_id))
 
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
         loved_titles = []
-        log = Logger(log="TOTAL LOVES {}".format(len(loves)))
-        log.save()
 
         for love in loves:
              loved_titles.append(love.translit_subject)
 
-        log = Logger(log="APPENDED LOVED TITLES {}".format(loved_titles))
-        log.save()
 
         loved_titles = list(set(loved_titles))
         loved_topics = Topic.objects.filter(translit_name__in=loved_titles)
@@ -166,16 +161,10 @@ def user_profile(request, user_id):
 
         mehs = Emotion.objects.filter(user=profile.user, attitude_id=2)
         meh_titles = []
-        log = Logger(log="TOTAL MEHS {}".format(len(mehs)))
-        log.save()
 
         for meh in mehs:
              meh_titles.append(meh.translit_subject)         
 
-        log = Logger(log="APPENDED MEH TITLES {}".format(meh_titles))
-        log.save()
-
-       
         meh_titles = list(set(meh_titles))
         meh_topics = Topic.objects.filter(translit_name__in=meh_titles)
 
@@ -190,18 +179,34 @@ def user_profile(request, user_id):
 
         return render(request, 'index.html',{'home':'index.html'})
 
+    if request.user:
+        if request.user.is_authenticated:
+            username = request.user.username
+            is_authenticated = True
+        else:
+            username = ''
+            is_authenticated = False
+    else:
+        username = ''
+        is_authenticated = False
+
+    redirect = 'user.html'
     return render(request, 'user.html', {'home':'user.html',
-                                     'explored_username': profile.user.username,
-                                     'username': request.user.username,
-                                     'is_activated': False,
-                                     'loves': loved_topics,
-                                     'mehs': meh_topics,
-                                     'hates': hate_topics,
-                                     'bio': profile.bio,
-                                     'fullname': "{} {}".format(profile.user.first_name, profile.user.last_name),
-                                     'resend_activation': False,
-                                     'logout': False,
-                                     'user_id': profile.user.id})
+                                         'explored_username': profile.user.username,
+                                         'username': profile.user.username,
+                                         'is_activated': False,
+                                         'loves': loved_topics,
+                                         'mehs': meh_topics,
+                                         'hates': hate_topics,
+                                         'bio': profile.bio,
+                                         'user': request.user,
+                                         'is_authenticated': is_authenticated,
+                                         'current_page': 'user_profile',
+                                         'username': request.user.username,
+                                         'fullname': "{} {}".format(profile.user.first_name, profile.user.last_name),
+                                         'resend_activation': False,
+                                         'logout': False,
+                                         'user_id': profile.user.id})
 
 
 

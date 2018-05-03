@@ -109,7 +109,19 @@ button:hover {
         width: auto;
         display: inline;
     }
+    #newmessageform label {
+        width: 250px;
+    }
 
+    #newmessageform label.error, #newmessageform input.submit, #newmessageform input.button {
+        margin-left: 253px;
+    }
+
+    #newmessageform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
 /* Set a style for all buttons */
 .search button {
     background-color: #f6f6f6;
@@ -738,26 +750,6 @@ span.psw {
 
                </div>   
                <div class = "row header-pan-bottom">
-<!--
-                   <div class="col-sm-5">
-                                 <div id="submenu-private-messages">
-
-                                     <div class="submenu-item">
-                                            <a href="#">Входящие Сообщения</a>
-                                     </div>
-                                     <div class="submenu-item">
-                                            <a href="#">Список Контактов</a>
-                                     </div> 
-
-                                     <div class="submenu-item">
-                                            <a href="#">Нaстройки</a>
-                                     </div>
-
-                                     <div class="clear"></div>
-                                 </div>
-                   </div>
-                  
---> 
                   <div class="col-sm-6" style="margin-left:20em;;min-width:41.00em;">
                                  <div id="submenu-main">Main</div>
 
@@ -841,10 +833,16 @@ span.psw {
                                  <div id="submenu-private-messages">
 
                                      <div class="submenu-item">
-                                            <a href="#">Входящие Сообщения</a>
+                                            <a href="#">Входящие</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">Список Контактов</a>
+                                            <a href="#">Исходящие</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">Отправить</a>
+                                     </div>
+                                     <div class="submenu-item">
+                                            <a href="#">Контакты</a>
                                      </div>
 
                                      <div class="submenu-item">
@@ -983,6 +981,7 @@ span.psw {
        $(document).ready(function() {
             var attitude = { love:1, indifferent:2, hate:3 };
             $('#feeling').html('');
+            $('#message').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#retry-activation").click(function() {
@@ -1115,6 +1114,46 @@ span.psw {
                        $('#submenu-div-2').addClass('active');
             }
 
+
+            $('#newmessageform').validate({
+                      rules: {
+                            message_attitude: "required",
+                            message: "required",
+                            recipient: "required",
+                            subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           subject: {
+                               required: "Введите тему сообщения!",
+                               minlength: "Введите тему сообщения!"
+                           },
+                           message: {
+                               required: "Введите текст сообщения!",
+                               minlength: "Введите текст сообщения!"
+                           },
+                           recipient: {
+                               required: "Введите минимум одного получателя!",
+                               minlength: "Введите минимум одного получателя!",
+                           },
+                           message_attitude: {
+                               required: "Выскажите свое отношение к отсылаемому!",
+                           },
+
+
+                     }
+             });
+
             $('#newforumform').validate({
                       rules: {
                             forumnew_attitude: "required",
@@ -1223,6 +1262,13 @@ span.psw {
               
               $('#modal-login-open').click(function() {
                   $('#modal-login').show();
+              });
+               
+              $('#message-publish').click(function() {
+                           
+                  if ($('#newmessageform').valid()) {
+                       alert("valid");
+                  }
               });
 
               $('#forumnew-publish').click(function() {

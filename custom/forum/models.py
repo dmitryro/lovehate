@@ -13,14 +13,22 @@ class Topic(models.Model):
                                      null=True)
     time_published = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
+    creator = models.ForeignKey(User,
+                                blank=True,
+                                null=True,
+                                on_delete=models.CASCADE)
+
+
+    @property
+    def creator_name(self):
+        return self.creator.username
+
     def __str__(self):
         return self.translit_name
 
     class Meta:
         verbose_name = 'Topic'
         verbose_name_plural = 'Topics'
-
-
 
 class Attitude(models.Model):
     name = models.CharField(max_length=250, blank=True, null=True)
@@ -32,6 +40,21 @@ class Attitude(models.Model):
     class Meta:
         verbose_name = 'Attitude'
         verbose_name_plural = 'Attitude'
+
+
+class Importance(models.Model):
+    name = models.CharField(max_length=250, blank=True, null=True)
+    code = models.CharField(max_length=250, blank=True, null=True)
+    level = models.IntegerField(default=0)
+    is_severe = models.NullBooleanField(default=False, blank=True, null=True) 
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Importance'
+        verbose_name_plural = 'Importance'
+
 
 class Emotion(models.Model):
     user = models.ForeignKey(User, 
@@ -89,6 +112,37 @@ class Emotion(models.Model):
         verbose_name = 'Emotion'
         verbose_name_plural = 'Emotions'
 
+
+
+class Message(models.Model):
+    subject = models.CharField(max_length=250,
+                               blank=True,
+                               null=True)
+    body = models.TextField(blank=True,
+                            null=True)
+    is_sent = models.NullBooleanField(default=False, blank=True, null=True)
+    is_read = models.NullBooleanField(default=False, blank=True, null=True)
+    time_sent = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(User,
+                               blank=True,
+                               null=True,
+                               related_name='sender',
+                               on_delete=models.CASCADE)
+    receiver =  models.ForeignKey(User,
+                                  blank=True,
+                                  null=True,
+                                  related_name='receiver',
+                                  on_delete=models.CASCADE)
+    attitude = models.ForeignKey(Attitude,
+                                 blank=True,
+                                 null=True,
+                                 related_name='attitude',
+                                 on_delete=models.CASCADE)
+    importance = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = 'Message'
+        verbose_name_plural = 'Messages'
 
 
 #    @property

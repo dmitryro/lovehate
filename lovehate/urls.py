@@ -53,6 +53,7 @@ from custom.forum.views import AttitudeDetail
 from custom.forum.views import AttitudeList
 from custom.forum.views import newemotion
 from custom.forum.views import topics
+from custom.forum.views import newmessage
 from django.contrib import admin
 
 urlpatterns = [
@@ -89,5 +90,6 @@ urlpatterns = [
     path('blog/', blog),
     path('blogs/', blog),
     path('registernew/', registernew),
+    path('newmessage/', newmessage),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

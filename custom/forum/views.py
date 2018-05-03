@@ -80,10 +80,20 @@ def topics(request, topic_id):
     log = Logger(log="EMPTIONS BEFORE WE RENDER lovers {} mehs {} haters {}".format(lovers, mehs, haters))
     log.save()
 
+    if request.user:
+        if request.user.is_authenticated:
+            username = request.user.username
+        else:
+            username = ''
+    else:
+        username = ''
+
     return render(request, redirect,{'home':'topics.html',
                                      'lovers': lovers,
                                      'mehs' : mehs,
                                      'haters': haters,
+                                     'username': username,
+                                     'user_id': request.user.id,
                                      'user': request.user,
                                      'current_page': 'topics',
                                      'logout': False})
@@ -115,6 +125,21 @@ def forum_new(request):
                                      'current_page': 'new_feeling',
                                      'username': request.user.username,
                                      'logout': False})
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def newmessage(request):
+    try:
+        pass
+    except Exception as e:
+        pass
+
+    return Response({"message": "success - message sent",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
 
 
 @api_view(['POST', 'GET'])

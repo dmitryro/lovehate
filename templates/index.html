@@ -20,7 +20,9 @@
 
                     <div class="loves-forum">
                        {% for love in loves %}
-                           <div><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span><strong>любит</strong></span> {{ love.subject }} : {{ love.emotion }} </div>
+                           <div><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span><strong>любит</strong></span> 
+
+<a href="/topics/{{ love.topic.id }}">{{ love.subject }}</a> : {{ love.emotion }} </div>
 
                        {% endfor %}
                     </div>
@@ -36,7 +38,8 @@
                     <div class="mehs-forum">
 
                        {% for meh in mehs %}
-                           <div><a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a> <span><strong>плевал на </strong></span> {{ meh.subject }}  : {{ meh.emotion }} </div>
+                           <div><a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a> <span><strong>плевал на </strong></span> 
+<a href="/topics/{{ meh.topic.id }}">{{ meh.subject }}</a>  : {{ meh.emotion }} </div>
                        {% endfor %}
 
                     </div>
@@ -51,7 +54,9 @@
                      </div>
                      <div class="hates-forum">
                        {% for hate in hates %}
-                           <div><a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a> <span><strong>ненавидит</strong></span> {{ hate.subject }}  : {{ hate.emotion }} </div>
+                           <div><a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a> <span><strong>ненавидит</strong></span> 
+<a href="/topics/{{  hate.topic.id }}">{{ hate.subject }}</a> 
+ : {{ hate.emotion }} </div>
 
                        {% endfor %}
                      </div>
