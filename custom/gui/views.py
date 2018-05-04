@@ -7,10 +7,50 @@ from custom.utils.models import Logger
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from custom.forum.models import Emotion
+
+class Page(object):
+    def __init__(self, loves, mehs, hates):
+        self.__loves = loves
+        self.__mehs = mehs
+        self.__hates = hates
+
+    @property
+    def loves(self):
+        return self.__loves
+
+    @property
+    def hates(self):
+        return self.__hates
+
+    @property
+    def mehs(self):
+        return self.__mehs
+
+    @mehs.setter
+    def mehs(self, mehs):
+        self.__mehs = mehs
+
+    @loves.setter
+    def loves(self, loves):
+        self.__loves = loves
+
+    @hates.setter
+    def hates(self, hates):
+        self.__hates = hates
+
+
+def chunks(l, n):
+    # For item i in a range that is a length of l,
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield l[i:i+n]
+
 
 @csrf_exempt
 def home(request):
+    page = request.GET.get('page')
     loves = None
     mehs = None
     hates = None
@@ -22,10 +62,41 @@ def home(request):
         total_loves = len(loves)
         total_mehs = len(mehs)
         total_hates = len(hates)
-        log = Logger(log = 'LOVES {} MEHS {} HATES {}'.format(total_loves, total_mehs, total_hates))
-        log.save()
     except Exception as e:
         pass
+
+    loves_chunked = list(chunks(loves, 10))
+    loves_chunked_length = len(loves_chunked)
+    mehs_chunked = list(chunks(mehs, 10))
+    mehs_chunked_length = len(mehs_chunked)
+    hates_chunked = list(chunks(hates, 10))
+    hates_chunked_length = len(hates_chunked)
+    index = max([loves_chunked_length, mehs_chunked_length, hates_chunked_length])
+
+    pages = []
+    pages_loves = []
+    pages_hates = []
+    pages_mehs = []
+
+    for i in range(0, index):
+        try:
+            pages_loves.append(loves_chunked[i])
+        except Exception as e:
+            pages_loves.append([])
+        try:
+            pages_mehs.append(mehs_chunked[i])
+        except Exception as e:
+            pages_mehs.append([])
+        try:
+            pages_hates.append(hates_chunked[i])
+        except Exception as e:
+            pages_hates.append([])
+
+    for i in range(0, index):
+        p = Page(pages_loves[i], pages_mehs[i], pages_hates[i])
+        pages.append(p)
+
+    paginator = Paginator(pages, 1) # Show 25 contacts per page
 
     try:
         if request.user.is_authenticated:
@@ -33,7 +104,6 @@ def home(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
-           
         else:
             logout=False  
             user_id = -1
@@ -44,12 +114,52 @@ def home(request):
             logout=False
             user_id = -1
             is_authenticated = False
+
+  
+
+    paginator1 = Paginator(loves, 10)
+    paginator2 = Paginator(mehs, 10)
+    paginator3 = Paginator(hates, 10)
+
+
+    try:
+        meh_slice = paginator2.page(page)
+    except PageNotAnInteger:
+        meh_slice = paginator2.page(1)
+    except EmptyPage:
+        meh_slice = paginator2.page(paginator.num_pages)
+
+    try:
+        love_slice = paginator1.page(page)
+    except PageNotAnInteger:
+        love_slice = paginator1.page(1)
+    except EmptyPage:
+        love_slice = paginator1.page(paginator1.num_pages)
  
+    try:
+        hate_slice = paginator3.page(page)
+    except PageNotAnInteger:
+        hate_slice = paginator3.page(1)
+    except EmptyPage:
+        hate_slice = paginator3.page(paginator3.num_pages)
+
+  
+    try:
+        pages_slice = paginator.page(page)
+    except PageNotAnInteger:
+        pages_slice = paginator.page(1)
+    except EmptyPage:
+        pages_slice = paginator.page(paginator4.num_pages)
+ 
+    log = Logger(log="PAGES SLICE IS {} and NUMBER OF PAGES {}".format(pages_slice, paginator.num_pages))
+    log.save()
+
     return render(request, 'index.html',{'home':'index.html', 
                                          'user': request.user,
-                                         'loves': loves,
-                                         'mehs': mehs,
-                                         'hates': hates,
+                                         'pages': pages_slice,
+                                         'loves': love_slice,
+                                         'mehs': meh_slice,
+                                         'hates': hate_slice,
                                          'current_page': 'home',
                                          'username': username,
                                          'is_authenticated': is_authenticated,
@@ -58,7 +168,6 @@ def home(request):
 
 @csrf_exempt
 def statistics(request):
-
     try:
         if request.user.is_authenticated:
             logout=True
@@ -75,14 +184,13 @@ def statistics(request):
             logout=False
             user_id = -1
             is_authenticated = False
-
     return render(request, 'statistics.html',{'home':'statistics.html',
-                                         'user': request.user,
-                                         'username': username,
-                                         'current_page': 'statistics',
-                                         'is_authenticated': is_authenticated,
-                                         'logout': logout,
-                                         'user_id': user_id})
+                                              'user': request.user,
+                                              'username': username,
+                                              'current_page': 'statistics',
+                                              'is_authenticated': is_authenticated,
+                                              'logout': logout,
+                                              'user_id': user_id})
 
 
 def mylh(request):
