@@ -56,8 +56,8 @@ from custom.forum.views import topics
 from custom.forum.views import newmessage
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
-from custom.blog.views import newblog
 from custom.blog.views import addnewblog
+from custom.blog.views import newblog
 from custom.blog.views import userblog
 from django.contrib import admin
 
@@ -85,7 +85,7 @@ urlpatterns = [
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
     path('logout/', Logout.as_view()),
-    path('signin/', simple_signin),
+    path('signin/', home),
     path('signout/', logout),
     path('statistics/', statistics),
     path('register/', register),
@@ -100,6 +100,7 @@ urlpatterns = [
     path('incoming/', incoming_messages),
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
+    path('addnewblog/', addnewblog),
     path('blog/<int:user_id>/', userblog),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

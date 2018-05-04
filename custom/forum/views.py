@@ -86,9 +86,6 @@ def topics(request, topic_id):
         lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id)
         mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id)
         haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id)
-        log = Logger(log="TOPICS DID READ {} {} {}".format(lovers, mehs, haters))
-        log.save()
-    
  
     except Exception as e:
         log = Logger(log="TOPICS DID NOT READ {}".format(e))

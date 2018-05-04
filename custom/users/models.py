@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
 from datetime import date
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=250, blank=True, null=True)
@@ -52,3 +51,35 @@ class Profile(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'      
+
+
+class Relationship(models.Model):
+    name = models.CharField(max_length=250, blank=True, null=True, default='')
+    code = models.CharField(max_length=250, blank=True, null=True, default='')
+
+    class Meta:
+        verbose_name = 'Relationship'
+        verbose_name_plural = 'Relationships'
+
+
+class Peer(models.Model):
+    strength = models.FloatField(default=0.0)
+    relation = models.ForeignKey(Relationship,
+                                 blank=True,
+                                 null=True,
+                                 on_delete=models.CASCADE)
+    initiator = models.ForeignKey(User,
+                                  blank=True,
+                                  null=True,
+                                  related_name='initiator',
+                                  on_delete=models.CASCADE)
+    acceptor = models.ForeignKey(User,
+                                 blank=True,
+                                 null=True,
+                                 related_name='acceptor',
+                                 on_delete=models.CASCADE)
+    class Meta:
+        verbose_name = 'Peer'
+        verbose_name_plural = 'Peers'
+
+

@@ -29,8 +29,6 @@ $errorMsgColor: #ff0000;
 
 body {font-family: "Times New Roman";}
 
-.main {
-}
 
 /* Full-width input fields */
 input[type=text], input[type=password] {
@@ -232,6 +230,10 @@ span.psw {
     cursor: pointer;
 }
 
+.change-password-modal {
+    display:none;
+}
+
 /* Add Zoom Animation */
 .animate {
     -webkit-animation: animatezoom 0.6s;
@@ -243,6 +245,23 @@ span.psw {
     background-color: #dff0d8;
     border-color: #d6e9c6;
     display: none;
+}
+
+.footer {
+    opacity: 1.0;
+    color:#cccccc;
+    text-align: center;
+    font-family: Times New Roman;
+    font-weight: normal;
+    font-size: 1.2em;
+}
+
+.footer a{
+    text-decoration:none; 
+}
+
+.footer a:hover{
+    text-decoration:underline;
 }
 
 @-webkit-keyframes animatezoom {
@@ -699,7 +718,6 @@ span.psw {
 
 </head>
 <body>
-<div class="main">
     <div class="header-pan">
          <div class="container-fluid">
 
@@ -791,11 +809,14 @@ span.psw {
                </div>   
                <div class = "row header-pan-bottom">
                   <div class="col-sm-6" style="margin-left:20em;;min-width:41.00em;">
-                                 <div id="submenu-main">Main</div>
+                                 <div id="submenu-main">
+                                          Главная
+                                  
+                                 </div>
 
                                  <div id="submenu-forum">
                                      <div class="submenu-item">
-                                          <a href="#">
+                                          <a href="/forum">
 
 Новые сообщения
                                           </a>
@@ -970,7 +991,54 @@ span.psw {
                     </div>
                </div>
 
+               <div class="modal-login modaldialogue"  id="change-password-modal">
 
+                         <div class="modal-header">
+                             <div class="container-fluid">
+                                <div class="row">
+                                     <div class="col-sm-10">
+                                      <label><b>
+                                      <span>
+Сменить Пароль
+                                      </span>
+                                      </b></label>
+                                     </div>
+                                     <div class="col-sm-2" id="change-password-modal-close"><div style="float:right;">x</div><div class="clear"></div></div>
+                                </div>
+                             </div>
+                        </div>
+
+
+                    <div class="modal-body">
+                          <form id="changepassword-form" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+                              <div class="container-fluid">
+                                                 <label for="uname"><b>Введите существующий пароль</b></label>
+                                                 <input id="oldpassword" name="oldpassword" type="password" required />
+
+                                                 <label for="newpassword"><b>Введите новый пароль</b></label>
+                                                        <input id="newpassword" type="password" placeholder="" name="newpassword" required>
+                                                 <label for="newpassword_confirmed"><b>Введите новый пароль еще раз</b></label>
+                                                        <input id="newpassword_confirmed" type="password" placeholder="" name="newpassword_confirmed" required>
+
+
+
+
+
+
+                                                        <button id="password-change" style="background:#4a4a4a;" type="button">
+                                                        Сохранить 
+                                                        </button>
+
+
+
+                              </div>
+                         </form>
+                    </div>
+
+
+
+               </div>
                <div class="modal-login modaldialogue" id="modal-login">
                          <div class="modal-header">
                              <div class="container-fluid">
@@ -981,8 +1049,10 @@ span.psw {
                                       </b></label>
                                      </div>
                                      <div class="col-sm-2" id="modal-login-close"><div style="float:right;">x</div><div class="clear"></div></div>
-                                </div>
-                             </div>
+                                </div> <!-- row ends -->
+                             </div> <!-- container ends-->
+
+                             
 
                     </div>
                     <div style="height:1.4em;text-align:center; font-weight:0.8em;">
@@ -1018,24 +1088,47 @@ span.psw {
 {% block content %}
 {% endblock %}
 
+<!--
+<div class="fluid-container">
+    <div class="row">
+       <div class="col-sm-4"></div>
+
+       <div class="col-sm-4 footer">
+           <div>Любовь и Ненависть 2018</div>
+           <div>info[a]lovehate.io</div>
+       </div>
+ 
+       <div class="col-sm-4"></div>
+    </div>
 </div>
+-->
 </body>
 <script>
        $(document).ready(function() {
             var attitude = { love:1, indifferent:2, hate:3 };
             $('#feeling').html('');
             $('#message').html('');
+            $('#bio').html($('#user-bio').val());
             $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#retry-activation").click(function() {
             });
+            
             $('#submenu-main').show();
             $('#submenu-forum').hide();
             $('#submenu-blog').hide();
             $('#submenu-mylh').hide(); 
             $('#submenu-statistics').hide();
             $('#submenu-private-messages').hide();
+
+            $('#change_password').click(function(event) {
+                $('#change-password-modal').show();
+            });
+
+            $('#change-password-modal-close').click(function(event) {
+                $('#change-password-modal').hide();
+            });
 
             if ($('#current_page').val()==='mylh') {
                        $('#submenu-main').hide();
@@ -1091,7 +1184,17 @@ span.psw {
                        $('#submenu-private-messages').show();
                        $('.active').removeClass('active');
                        $('#submenu-div-5').addClass('active');
-            } else if ($('#current_page').val()==='incoming') {
+            } else if ($('#current_page').val()==='new_blog') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                        $('#submenu-div-3').addClass('active');
+            }
+            else if ($('#current_page').val()==='incoming') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -1465,7 +1568,7 @@ span.psw {
                           dataType: 'json',
                           contentType: "application/json; charset=utf-8",
                           success: function(data){
-                              $("#registration-success" ).fadeIn( 200 ).delay( 700 ).fadeOut( 300 );   
+                              $("#registration-success" ).fadeIn( 200 ).delay( 1200 ).fadeOut( 300 );   
                           },      
                           error: function(data){
                               $( "#registration-error" ).fadeIn( 200 ).delay( 700 ).fadeOut( 300 );  
@@ -1475,7 +1578,6 @@ span.psw {
               });
               $('#user-resend-activation').click(function() {
                   var arr = {username: $("#username").val()};
-                  alert($("#username").val());
                   $.ajax({
                       type: "POST",
                       url: "https://lovehate.io/resendactivationbyuser/",

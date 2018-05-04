@@ -1,3 +1,4 @@
+from pyshorteners import Shortener
 from django.shortcuts import render
 from django.contrib.auth import logout as log_out
 from django.contrib.auth import authenticate
@@ -12,6 +13,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
+
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -31,6 +33,8 @@ from rest_framework import exceptions
 
 from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
+from settings import settings
+
 from custom.blog.models import Post
 from custom.forum.models import Attitude
 
@@ -97,14 +101,13 @@ def addnewblog(request):
         post = request.data.get('post', '')
         subject = request.data.get('subject', '')
         att = int(request.data.get('attitude', None))
-        link = request.data.get('link', '')
+        url = request.data.get('link', '')
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
-
-        log = Logger(log="PARAMS IN BLOG WERE {} {} {} {}".format(post, subject, attitude, user_id))
-        log.save()
+        shortener = Shortener('Google', api_key=settings.GOOGLE_API_KEY)
+        link = shortener.short(url)
 
         try:
             language = detect_language(str(subject))
@@ -122,8 +125,6 @@ def addnewblog(request):
 
         user = User.objects.get(id=user_id)
         Post.objects.create(author=user, subject=subject, link=link, attitude=attitude, body=post, translit_subject=trans_subject)
-
-
     except Exception as e:
         log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
         log.save()
@@ -132,7 +133,6 @@ def addnewblog(request):
                          "status": "posted",
                          "code": 400,
                          "falure_code": 1}, status=400)
-
 
     return Response({"message": "success - username used",
                      "status": "posted",

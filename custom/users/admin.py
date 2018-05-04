@@ -1,5 +1,39 @@
 from django.contrib import admin
 from custom.users.models import Profile
+from custom.users.models import Relationship
+from custom.users.models import Peer
+
+#####################################
+#  Register Peer with Django Admin  #
+#####################################
+
+class PeerAdmin(admin.ModelAdmin):
+    fieldsets = ((None, {'fields': ['strength',
+                                    'relation',
+                                    'initiator',
+                                    'acceptor',
+                         ]}),)
+
+    list_display = ('id', 'strength', 'relation', 'initiator', 'acceptor',)
+    list_editable = ('strength', 'relation', 'initiator', 'acceptor',)
+    search_fields = ('strength', 'relation', 'initiator', 'acceptor',)
+
+
+#############################################
+#  Register Relationship with Django Admin  #
+#############################################
+
+class RelationshipAdmin(admin.ModelAdmin):
+    fieldsets = ((None, {'fields': ['name',
+                                    'code']}),)
+    list_display = ('id', 'name', 'code',)
+    list_editable = ('name', 'code',)
+    search_fields = ('name', 'code',)
+
+    class Meta:
+         verbose_name = 'Relationship'
+         verbose_name_plural = 'Relationship'
+
 
 ########################################
 #  Register Profile with Django Admin  #
@@ -33,4 +67,6 @@ class ProfileAdmin(admin.ModelAdmin):
          verbose_name = 'User Profile'
          verbose_name_plural = 'User Profiles'
 
+admin.site.register(Relationship, RelationshipAdmin)
+admin.site.register(Peer, PeerAdmin)
 admin.site.register(Profile,ProfileAdmin)
