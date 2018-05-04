@@ -28,15 +28,15 @@
              <div class="col-sm-8">
                     <div class=container-fluid" style="margin-left:0.4em;">
                                <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
+                                    <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_subject"></label>
                                </div>
 
                                <div class="row">
-                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="forumnew_attitude"></label>
+                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="blognew_attitude"></label>
                                </div>
 
                                <div class="row">
-                                    <label id="inlineFormInputGroup-feeling-error" class="error" for="feeling"></label>
+                                    <label id="inlineFormInputGroup-post-error" class="error" for="blognew_post"></label>
                                </div>
                     </div>
 
@@ -63,12 +63,36 @@
                  <div class="col-sm-8">
 
                                              <div class="form-group">
-                                                       <input type="subject" id="subject" name="subject" maxlength="100" size="56"  />
+                                                       <input type="text" id="blognew_subject" name="blognew_subject" maxlength="100" size="56"  />
                                              </div>
 
                  </div>
 
                  </div>
+
+                 <div class="row">
+
+
+                 <div class="col-sm-4">
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+                        Ссылка
+                       </div>
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                       </div>
+
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                                             <div class="form-group">
+                                                       <input type="text" id="blognew_link" name="blognew_link" maxlength="100" size="56"  />
+                                             </div>
+
+                 </div>
+
+                 </div>
+
 
          <div class="row">
              <div class="col-sm-4">
@@ -90,7 +114,7 @@
 
                                <div class="row">
                                        <div class="col-sm-4">
-                                                      <input type="radio" name="forumnew_attitude" value="love" />
+                                                      <input type="radio" name="blognew_attitude" value="love" />
                                                        
                                                        <span class="loves-profile">
                                                               Любовь
@@ -100,7 +124,7 @@
                                                             
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumnew_attitude" value="indifferent" />
+                                                       <input type="radio" name="blognew_attitude" value="indifferent" checked />
                                                           
                                                        <span class="mehs-profile">
 Безразличие
@@ -111,7 +135,7 @@
 
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumnew_attitude" value="hate" /> 
+                                                       <input type="radio" name="blognew_attitude" value="hate" /> 
                                                        <span class="hates-profile">
 Ненависть                  
                                                        </span>
@@ -132,8 +156,9 @@
                        </div>
                        <div class="col-sm-8">
                                     <div class="form-group">
-                                            <textarea name="feeling" id="feeling" cols="10" rows="8" style="width:100%;"
-                                             placeholder="Пишите что хотите (но по теме)..." value="">
+                                            <textarea name="blognew_post" id="blognew_post" cols="10" rows="8" style="width:100%;"
+                                             placeholder="Ваше сообщение для публикации в дневнике ...
+" value="">
                                             </textarea>
                                     </div>
                        </div>
@@ -143,7 +168,7 @@
                        </div>
                        <div class="col-sm-2">
 
-                            <button class="btn4" id="forumnew-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                            <button class="btn4" id="blognew-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
                                   Отправить
                             </button>
                             
@@ -155,7 +180,7 @@
      </div>
     </div>
 </div>
-<input type="hidden" id="emotion_user_id" value="{{ user.id }}" />
+<input type="hidden" id="blog_user_id" value="{{ user.id }}" />
 </form>
 </div>
 {% endblock %}

@@ -315,9 +315,12 @@ def newemotion(request):
     try:
         emotion = request.data.get('emotion', '')
         subject = request.data.get('subject', '')
-        attitude = int(request.data.get('attitude', None))
+        att = int(request.data.get('attitude', None))
         user_id = int(request.data.get('user_id', None))
-        attitude = Attitude.objects.get(id=attitude)
+        attitude = Attitude.objects.get(id=int(att))
+
+        log = Logger(log="PARAMS WERE {} {} {} {}".format(emotion, subject, attitude, user_id, attitude))
+        log.save()
 
         try:
             language = detect_language(str(subject))
@@ -351,7 +354,7 @@ def newemotion(request):
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,
-                         "falure_code": 1}, status=200)
+                         "falure_code": 1}, status=400)
 
     return Response({"message": "success - username used",
                      "status": "posted",

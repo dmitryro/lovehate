@@ -32,6 +32,7 @@ from rest_framework import exceptions
 from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
 from custom.blog.models import Post
+from custom.forum.models import Attitude
 
 @csrf_exempt
 def newblog(request):
@@ -92,6 +93,47 @@ def userblog(request, user_id):
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def addnewblog(request):
+    try:
+        post = request.data.get('post', '')
+        subject = request.data.get('subject', '')
+        att = int(request.data.get('attitude', None))
+        link = request.data.get('link', '')
+        user_id = int(request.data.get('user_id', None))
+        attitude = Attitude.objects.get(id=int(att))
+        user_id = int(request.data.get('user_id', None))
+        attitude = Attitude.objects.get(id=int(att))
+
+        log = Logger(log="PARAMS IN BLOG WERE {} {} {} {}".format(post, subject, attitude, user_id))
+        log.save()
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        user = User.objects.get(id=user_id)
+        Post.objects.create(author=user, subject=subject, link=link, attitude=attitude, body=post, translit_subject=trans_subject)
+
+
+    except Exception as e:
+        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log.save()
+
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+
+
     return Response({"message": "success - username used",
                      "status": "posted",
                      "code": 200,

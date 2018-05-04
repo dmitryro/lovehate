@@ -9,6 +9,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from custom.forum.models import Emotion
+from custom.blog.models import Post
 
 class Page(object):
     def __init__(self, loves, mehs, hates):
@@ -253,19 +254,62 @@ def private(request):
 
 @csrf_exempt
 def forum(request):
+    page = request.GET.get('page')
+    loves = None
+    mehs = None
+    hates = None
 
     try:
         loves = Emotion.objects.filter(attitude_id=1)
-        mehs = Emotion.objects.filter(attitude_id=2)
+        mehs = Emotion.objects.filter(attitude_id=2)    
         hates = Emotion.objects.filter(attitude_id=3)
+        total_loves = len(loves)
+        total_mehs = len(mehs)
+        total_hates = len(hates)
+    except Exception as e:
+        pass
 
+    loves_chunked = list(chunks(loves, 10))
+    loves_chunked_length = len(loves_chunked)
+    mehs_chunked = list(chunks(mehs, 10))
+    mehs_chunked_length = len(mehs_chunked)
+    hates_chunked = list(chunks(hates, 10))
+    hates_chunked_length = len(hates_chunked)
+    index = max([loves_chunked_length, mehs_chunked_length, hates_chunked_length])
+
+    pages = []
+    pages_loves = []
+    pages_hates = []
+    pages_mehs = []
+
+    for i in range(0, index):
+        try:
+            pages_loves.append(loves_chunked[i])
+        except Exception as e:
+            pages_loves.append([])
+        try:
+            pages_mehs.append(mehs_chunked[i])
+        except Exception as e:
+            pages_mehs.append([])
+        try:
+            pages_hates.append(hates_chunked[i])
+        except Exception as e:
+            pages_hates.append([])
+
+    for i in range(0, index):
+        p = Page(pages_loves[i], pages_mehs[i], pages_hates[i])
+        pages.append(p)
+
+    paginator = Paginator(pages, 1) # Show 25 contacts per page
+
+    try:
         if request.user.is_authenticated:
             logout=True
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
         else:
-            logout=False
+            logout=False  
             user_id = -1
             username = ''
             is_authenticated = False
@@ -275,16 +319,51 @@ def forum(request):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'forum.html',{'home':'forum.html',
-                                         'loves': loves,
-                                         'mehs': mehs,
-                                         'hates': hates,
+    paginator1 = Paginator(loves, 10)
+    paginator2 = Paginator(mehs, 10)
+    paginator3 = Paginator(hates, 10)
+
+    try:
+        meh_slice = paginator2.page(page)
+    except PageNotAnInteger:
+        meh_slice = paginator2.page(1)
+    except EmptyPage:
+        meh_slice = paginator2.page(paginator.num_pages)
+
+    try:
+        love_slice = paginator1.page(page)
+    except PageNotAnInteger:
+        love_slice = paginator1.page(1)
+    except EmptyPage:
+        love_slice = paginator1.page(paginator1.num_pages)
+ 
+    try:
+        hate_slice = paginator3.page(page)
+    except PageNotAnInteger:
+        hate_slice = paginator3.page(1)
+    except EmptyPage:
+        hate_slice = paginator3.page(paginator3.num_pages)
+
+  
+    try:
+        pages_slice = paginator.page(page)
+    except PageNotAnInteger:
+        pages_slice = paginator.page(1)
+    except EmptyPage:
+        pages_slice = paginator.page(paginator4.num_pages)
+ 
+    return render(request, 'forum.html',{'home':'forum.html', 
                                          'user': request.user,
-                                         'username': username,
+                                         'pages': pages_slice,
+                                         'loves': love_slice,
+                                         'mehs': meh_slice,
+                                         'hates': hate_slice,
                                          'current_page': 'forum',
+                                         'username': username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
+
 
 def autneticate_user(username, password):
     user = authenticate(username=username, password=password)
@@ -337,10 +416,23 @@ def simple_signin(request):
                                          'logout': logout,
                                          'user_id': user.id})
 
-
 @csrf_exempt
 def blog(request):
+    page = request.GET.get('page')
+
     try:
+        posts = Post.objects.all()
+
+        paginator = Paginator(posts, 10)
+
+        try:
+            posts_slice = paginator.page(page)
+        except PageNotAnInteger:
+            posts_slice = paginator.page(1)
+        except EmptyPage:
+            posts_slice = paginator.page(paginator.num_pages)
+
+
         if request.user.is_authenticated:
             logout=True
             username = request.user.username
@@ -356,10 +448,12 @@ def blog(request):
             logout=False
             user_id = -1
             is_authenticated = False
+            posts_slice = []
 
     return render(request, 'blog.html',{'home':'blog.html',
                                          'user': request.user,
                                          'username': username,
+                                         'posts': posts_slice, 
                                          'current_page': 'blog',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,

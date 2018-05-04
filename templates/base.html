@@ -122,6 +122,21 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newblogform label {
+        width: 250px;
+    }
+
+    #newblogform label.error, #newblogform input.submit, #newblogform input.button {
+        margin-left: 253px;
+    }
+
+    #newblogform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
 /* Set a style for all buttons */
 .search button {
     background-color: #f6f6f6;
@@ -674,7 +689,12 @@ span.psw {
     color: #ff0000;
 }
 
+.pagination a.active {
+    background-color: #F6F6F6;
+    color: white;
+}
 
+.pagination a:hover:not(.active) {background-color: #ddd;}
 </style>
 
 </head>
@@ -797,22 +817,22 @@ span.psw {
                                  <div id="submenu-blog">
 
                                      <div class="submenu-item">
-                                            <a href="#">Общий дневник</a>
+                                            <a href="/blog">Общий дневник</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">
+                                            <a href="/blog/all">
                                             Ваш дневник
                                             </a>
                                      </div>
 
                                      <div class="submenu-item">
-                                            <a href="#">
+                                            <a href="/blog/new">
 Добавить запись в дневник
                                             </a>
                                      </div>
 
                                      <div class="submenu-item">
-                                         <a href="#">
+                                         <a href="/rss">
                                      RSS Фид
                                          </a>
                                      </div>
@@ -1005,6 +1025,7 @@ span.psw {
             var attitude = { love:1, indifferent:2, hate:3 };
             $('#feeling').html('');
             $('#message').html('');
+            $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#retry-activation").click(function() {
@@ -1230,6 +1251,41 @@ span.psw {
                      }
              });
 
+            $('#newblogform').validate({
+                      rules: {
+                            blognew_attitude: "required",
+                            blognew_post: "required",
+                            blognew_subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           blognew_subject: {
+                               required: "Введите тему сообщения!",
+                               minlength: "Введите тему сообщения!",
+                           },
+                           blognew_post: {
+                               required: "Введите текст сообщения!",
+                               minlength: "Введите текст сообщения!",
+                           },
+                           blognew_attitude: {
+                               required: "Выскажите свое отношение к публикуемому!",
+                           },
+
+
+                     }
+             });
+
+
             $('#registration').validate({
                       rules: {
                             register_username: {
@@ -1324,7 +1380,37 @@ span.psw {
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){
-                              redirect_main();
+                              redirect_url('privates');
+                          },
+                          error: function(data){
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+                  }
+              });
+
+              $('#blognew-publish').click(function() {
+
+                  if ($('#newblogform').valid()) {
+                      var arr = {
+                          post: $("#blognew_post").val(),
+                          attitude: attitude[$('input[type=radio][name=blognew_attitude]:checked').val()],
+                          subject: $("#blognew_subject").val(),
+                          link: $("#blognew_link").val(),
+                          user_id: $("#blog_user_id").val(),
+                      };
+
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewblog/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('blog');
                           },
                           error: function(data){
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
@@ -1442,11 +1528,19 @@ span.psw {
               }); // end on click for user login
        }); // end ready
 
+
+       function redirect_url(url) {
+          var redirect = '/'+url;
+          window.location.href = redirect;
+       }
+
+
        function redirect_main() {
           var url = '/';
           window.location.href = url;
        }
         
+
        function redirect_login(data) {
            $("#authenticate-form").submit();
        }
