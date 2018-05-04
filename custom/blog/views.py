@@ -13,7 +13,7 @@ from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -64,34 +64,6 @@ def newblog(request):
                                             'is_authenticated': is_authenticated,
                                             'logout': logout,
                                             'user_id': user_id})
-@csrf_exempt
-def userblog(request, user_id):
-    try:
-        if request.user.is_authenticated:
-            logout=True
-            current_user_id = request.user.id
-            username = request.user.username
-            is_authenticated = True
-        else:
-            logout=False
-            current_user_id = -1
-            username = ''
-            is_authenticated = False
-    except Exception as e:
-            username = ''
-            logout=False
-            user_id = -1
-            is_authenticated = False
-
-    return render(request, 'blog_new.html',{'home':'user_blog.html',
-                                            'user': request.user,
-                                            'username': username,
-                                            'current_page': 'user_blog',
-                                            'is_authenticated': is_authenticated,
-                                            'logout': logout,
-                                            'user_id': current_user_id})
-
-
 
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
@@ -140,4 +112,47 @@ def addnewblog(request):
                      "falure_code": 0}, status=200)
 
 
+
+@csrf_exempt
+def userblog(request, user_id):
+    page = request.GET.get('page')
+
+    try:
+        posts = Post.objects.filter(author_id=int(user_id))
+
+        paginator = Paginator(posts, 10)
+
+        try:
+            posts_slice = paginator.page(page)
+        except PageNotAnInteger:
+            posts_slice = paginator.page(1)
+        except EmptyPage:
+            posts_slice = paginator.page(paginator.num_pages)
+
+
+        if request.user.is_authenticated:
+            logout=True
+            username = request.user.username
+            user_id = request.user.id
+            is_authenticated = True
+        else:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+            posts_slice = []
+
+    return render(request, 'user_blog.html',{'home':'user_blog.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'posts': posts_slice,
+                                         'current_page': 'user_blog',
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
 

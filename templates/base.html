@@ -1010,7 +1010,7 @@ span.psw {
 
 
                     <div class="modal-body">
-                          <form id="changepassword-form" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+                          <form id="changepassword" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
                               {% csrf_token %}
                               <div class="container-fluid">
                                                  <label for="uname"><b>Введите существующий пароль</b></label>
@@ -1020,8 +1020,6 @@ span.psw {
                                                         <input id="newpassword" type="password" placeholder="" name="newpassword" required>
                                                  <label for="newpassword_confirmed"><b>Введите новый пароль еще раз</b></label>
                                                         <input id="newpassword_confirmed" type="password" placeholder="" name="newpassword_confirmed" required>
-
-
 
 
 
@@ -1280,6 +1278,24 @@ span.psw {
                        $('#submenu-div-2').addClass('active');
             }
 
+            $('#changepassword').validate({
+                      rules: {
+
+                      },
+
+                      highlight: function(element) {
+
+                      },
+
+                      success: function(element) {
+
+                      },
+
+                      messages: {
+
+                      }
+
+            });
 
             $('#newmessageform').validate({
                       rules: {
@@ -1465,6 +1481,7 @@ span.psw {
                   $('#modal-login').show();
               });
                
+
               $('#message-publish').click(function() {
                            
                   if ($('#newmessageform').valid()) {
@@ -1549,6 +1566,20 @@ span.psw {
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                           }
                       }); // end ajax call
+                  }
+              });
+
+              $('#password-change').click(function(event) {
+                  if($('#changepassword').valid()) {
+                      alert('valid');
+                      var arr = {
+                          oldpassword: $("#oldpassword").val(),
+                          newpassword: $("#newpassword").val(),
+                      };
+
+
+                  } else {
+                      alert('invalid');
                   }
               });
                  

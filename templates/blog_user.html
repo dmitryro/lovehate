@@ -24,13 +24,13 @@
                                <div class="container-fluid">
                                    
                                {% for post in posts %}
-                                                           {% if post.attitude.id == 1 %}
-                                                                 <div class="row loves-messages" style="margin-top:1.5em;">
-                                                           {% elif post.attitude.id == 2 %}
-                                                                  <div class="row mehs-messages" style="margin-top:1.5em;">
-                                                           {% elif post.attitude.id == 3 %}
-                                                                  <div class="row hates-messages" style="margin-top:1.5em;">
-                                                           {% endif %}
+                                     {% if post.attitude.id == 1 %}
+                                            <div class="row loves-messages" style="margin-top:1.5em;">
+                                     {% elif post.attitude.id == 2 %}
+                                            <div class="row mehs-messages" style="margin-top:1.5em;">
+                                     {% elif post.attitude.id == 3 %}
+                                            <div class="row hates-messages" style="margin-top:1.5em;">
+                                     {% endif %}
 
                                      <div class="col-sm-2">
                                          <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>

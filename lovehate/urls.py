@@ -101,6 +101,6 @@ urlpatterns = [
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
     path('addnewblog/', addnewblog),
-    path('blog/<int:user_id>/', userblog),
+    path('blog/user/<int:user_id>/', userblog),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]
