@@ -56,6 +56,17 @@ input[type=text], input[type=password] {
     padding-bottom: 0.4em;
 }
 
+.change-errors {
+    display: none;
+    color: red;
+    text-align:center;
+    font-family: Times New Roman;
+    font-weight: normal;
+    width:100%;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
 .activation-errors {
     display: none;
     color: red;
@@ -135,16 +146,24 @@ button:hover {
         display: inline;
     }
 
-    #changepassword label {
+    #changepassword label, .change-errors label{
         width: 250px;
     }
 
+    .change-success {
+        display:none;
+        color: #3c763d;
+        background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+
+    .change-errors label.error, .change-errors input.submit, .change-errors input.button, 
     #changepassword label.error, #changepassword input.submit, #changepassword input.button {
         font-size:0.9em;
         margin-left: 253px;
     }
 
-    #changepassword label.error {
+    #changepassword label.error, .change-errors label-error {
         margin-left: -0.5em;
         width: auto;
         min-width: 30.00em;
@@ -912,7 +931,6 @@ span.psw {
                                  <div id="submenu-private-messages">
 
                                  {% if user.is_authenticated %} 
-
                                      <div class="submenu-item">
                                             <a href="/incoming">Входящие</a>
                                      </div>
@@ -937,15 +955,19 @@ span.psw {
                   </div>
                   <div class="col-sm-2">
                            <div id="logged-out" style="float:right;width:100%;">
+                                            <form method="POST">
+                                               
                                                {% if not user.is_authenticated %}
                                                    <a id="modal-login-open" href="#">Зайти</a> 
                                                {% endif %}
                                                {% if user.is_authenticated %}
+                                                   <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}" />
                                                    <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/private">
                                                          Приваты
  
                                                          </a> | <a id="session-exit" href="/signout">Выйти</a>
                                                {% endif %}
+                                            </form>
                            </div>
                            <div class="clear"></div>
 
@@ -1036,6 +1058,16 @@ span.psw {
                                       <div class="row">
                                              <div class="col-sm-12">
                                                     <div class="container-fluid" style="margin-left:0.4em;">
+                                                          <div class="row">
+                                                               <div class="success change-success" id="change-success"> 
+                                                                      Старый пароль успешно изменён!      
+                                                               </div>
+                                                          
+
+                                                               <div class="change-errors" id="change-errors" style="display:none;">
+                                                                      Старый пароль не найден!
+                                                               </div>
+                                                          </div>
                                                           <div class="row">
                                                                <label id="inlineFormInputGroup-oldpassword-error" class="error" for="oldpassword"></label>
                                                           </div>
@@ -1640,15 +1672,34 @@ span.psw {
 
               $('#password-change').click(function(event) {
                   if($('#changepassword').valid()) {
-                      alert('valid');
                       var arr = {
                           oldpassword: $("#oldpassword").val(),
                           newpassword: $("#newpassword").val(),
+                          user_id: $("#user_id").val(),
                       };
 
+                      alert($("#user_id").val());
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/changepassword/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              $( ".change-success" ).fadeIn(300).delay(1000).fadeOut(300).promise().done(function() {
+                                     wait(1000);
+                                 
+                                     $('#change-password-modal').hide();
+                              });
+                          },
+                          error: function(data){
+                              
+                              $( ".change-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
 
                   } else {
-                      alert('invalid');
                   }
               });
                  
@@ -1745,6 +1796,14 @@ span.psw {
 
        function redirect_login(data) {
            $("#authenticate-form").submit();
+       }
+
+       function wait(ms){
+           var start = new Date().getTime();
+           var end = start;
+           while(end < start + ms) {
+               end = new Date().getTime();
+           }
        }
 
 </script>

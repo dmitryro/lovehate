@@ -345,6 +345,52 @@ def activate(request, activation_key):
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
+def changepassword(request):
+    oldpassword = str(request.data.get('oldpassword', ''))
+    newpassword = str(request.data.get('newpassword', ''))
+    user_id = request.data.get('user_id', '')
+
+    try:
+        user = User.objects.get(password=oldpassword)
+    except Exception as e:
+
+        try:
+            user = User.objects.get(id=int(user_id))
+            vaid = False
+            
+            if user.is_authenticated and user.is_superuser:
+               user = authenticate(username=user.username, password=oldpassword)
+               if user:
+                   valid = True
+        except Exception as e1:
+            valid = False
+
+        if not valid:
+            return Response({"message": 'Старый пароль не найден!',
+                             "code":400,
+                             "message_error": str(e),
+                             "log_out": False,
+                             "status": "unauthenticated",
+                             "not_activated": False,
+                             "reason": "invalid old password"},
+                             status=400)
+    user.password = newpassword
+    user.save()
+
+    return Response({"message": "success",
+                     "status": "authenticated",
+                     "code": 200,
+                     "not_activated": False,
+                     "user_id": user.id,
+                     "username": user.username,
+                     "log_out": True},
+                     status=200)
+
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
 def auth(request):
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
