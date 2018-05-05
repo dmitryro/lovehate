@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+{% load blog_extras %}
+{% load bootstrap_pagination %}
+{% block content %}
+<div>
+<br />
+<br />
+<br />
+</div>
+<div class="container-fluid registration-form">
+    <div class="row">
+
+        <div class="col-sm-2">
+        </div>
+    
+        <div class="col-sm-8">
+            <div class="container-fluid">
+                <form action="editprofile" method="post">
+                    <div class="row">
+                         <div class="col-sm-1">
+                         </div>
+                         <div class="col-sm-10">
+                               <div class="container-fluid">
+
+
+                                                           {% if post.attitude.id == 1 %}
+                                                                 <div class="row loves-messages" style="margin-top:1.5em;">
+                                                           {% elif post.attitude.id == 2 %}
+                                                                  <div class="row mehs-messages" style="margin-top:1.5em;">
+                                                           {% elif post.attitude.id == 3 %}
+                                                                  <div class="row hates-messages" style="margin-top:1.5em;">
+                                                           {% endif %}
+               
+                                     <div class="col-sm-2">
+                                         <a href="/user/{{ post.author.id }}"><strong>{{ post.author_nick }}</strong></a>
+                                     </div>
+                                     <div class="col-sm-10">
+                                         <strong> {{ post.subject }}</strong> {{ post.date_time_published }}
+                                     </div>
+                              </div>
+
+
+
+                              <div class="row">
+                                     <div class="col-sm-12">{{ post.body  }}</div>
+                              </div>
+
+                              {% if post.link %}
+
+
+                              <div class="row">
+                                     <div class="col-sm-12">
+                                          <a href="{{ post.link }}">{{ post.link }}</a>
+                                     </div>
+
+                              </div>
+                              {% endif %}
+                                   
+                                                          {% for comment in comments %}
+                                                           {% if comment.attitude.id == 1 %}
+                                                                 <div class="row loves-messages" style="margin-top:1.5em;">
+                                                           {% elif comment.attitude.id == 2 %}
+                                                                  <div class="row mehs-messages" style="margin-top:1.5em;">
+                                                           {% elif comment.attitude.id == 3 %}
+                                                                  <div class="row hates-messages" style="margin-top:1.5em;">
+                                                           {% endif %}
+
+                                     <div class="col-sm-2">
+                                         <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a>
+                                     </div>
+                                     <div class="col-sm-10">
+                                         <strong> {{ comment.title }}</strong>
+                                     </div>  
+                                    
+                                     </div>
+                                     <div class="row"> 
+                                              <div class="col-sm-12">{{ comment.body  }}</div> 
+                                     </div>
+                                      
+                                      <div class="row">
+                                     <div class="col-sm-12">
+                                          {% if comment.link %}
+                                          <a href="{{ comment.link }}">{{ post.link }}</a>
+                                          {% endif %}
+                                     </div>
+
+
+                                                            </div>
+                               {% endfor %}
+                               </div>
+                         </div>
+                         <div class="col-sm-1">
+                         </div>
+
+                    </div>
+                    <div class="row"> 
+                       <div class="col-sm-1"></div>
+                       <div class="col-sm-4">
+                              <br/>
+                              <strong>
+                            &nbsp;  &nbsp; &nbsp;<a href="/blog" style="text-decoration:underline;">Вернутъся</a>
+                              </strong>
+                       </div>
+                       <div class="col-sm-4">
+                              <br/>
+                              <strong>
+                                           <a href="/blogcomment/{{ post.id }}">Комментироватъ
+
+
+                                            </a>
+                             </strong>
+
+                       </div>
+                   </div>
+                </form>
+           </div>
+        </div>
+       <div class="col-sm-8">
+       </div>
+        
+
+    </div>
+</div>     
+
+
+{% endblock %}

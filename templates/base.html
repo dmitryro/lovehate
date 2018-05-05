@@ -1,5 +1,6 @@
 {% load static %}
 {% load forum_extras %}
+{% load blog_extras %}
 {% load meta_extras %}
 {% load bootstrap_pagination %}
 {% load bootstrap3 %}
@@ -131,6 +132,21 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newcommentform label {
+        width: 250px;
+    }
+
+    #newcommentform label.error, #newcommentform input.submit, #newcommentform input.button {
+        margin-left: 253px;
+    }
+
+    #newcommentform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
 
     #newblogform label {
         width: 250px;
@@ -322,6 +338,7 @@ span.psw {
     }
 }
 .header-pan {
+   overflow:hidden;
    margin-top:0.1em;
    margin-left:0.1em;
    width:99.8%;
@@ -344,10 +361,13 @@ span.psw {
    font-family: "Times New Roman";
    background: #f6f6f6;
    margin-bottom:-0.1em;
+   overflow:hidden;
 }
 .header-pan-bottom {
    font-family: "Times New Roman";
    background: #eeeeee;
+   height:1.8em;
+   overflow:hidden;
 }
 
 .header-pan-bottom a {
@@ -700,8 +720,8 @@ span.psw {
     float:left;
     display: block;
     text-align: center;
-    padding-top: 0.2em;
-    padding-bottom: 0.0em;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
     padding-left:0.2em;
     padding-right:0.2em;
     min-width:4.98em;
@@ -877,8 +897,10 @@ span.psw {
                                      <div class="submenu-item">
                                             <a href="/blog">Общий дневник</a>
                                      </div>
+
+                        {% if user.is_authenticated %}
                                      <div class="submenu-item">
-                                            <a href="/blog/all">
+                                            <a href="/blog/user/{{ user.id }}">
                                             Ваш дневник
                                             </a>
                                      </div>
@@ -888,6 +910,7 @@ span.psw {
 Добавить запись в дневник
                                             </a>
                                      </div>
+                        {% endif %}
 
                                      <div class="submenu-item">
                                          <a href="/rss">
@@ -1176,6 +1199,7 @@ span.psw {
 <script>
        $(document).ready(function() {
             var attitude = { love:1, indifferent:2, hate:3 };
+            $('#comment').html('');
             $('#feeling').html('');
             $('#message').html('');
             $('#bio').html($('#user-bio').val());
@@ -1263,7 +1287,35 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                         $('#submenu-div-3').addClass('active');
+            } else if ($('#current_page').val()==='new_comment') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-3').addClass('active');
+            } else if ($('#current_page').val()==='blog_comments') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-3').addClass('active');
+            } else if ($('#current_page').val()==='user_blog') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').show();
+                       $('#submenu-mylh').hide();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-3').addClass('active');
             }
+
             else if ($('#current_page').val()==='incoming') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
@@ -1349,6 +1401,28 @@ span.psw {
                        $('.active').removeClass('active');
                        $('#submenu-div-2').addClass('active');
             }
+
+            $('#newcommentform').validate({
+                      rules: {
+                            comment_attitude: "required",
+                            comment: "required",
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {  
+                           comment: {
+                               required: "Введите ваш комментарий!",
+                           },
+                           comment_attitude: {
+                               required: "?~R?~K?~Aкажи?~Bе ?~Aвое о?~Bно?~Hение к о?~B?~A?~Kлаемом?~C!",
+                           },               
+                      }
+            }); 
 
             $('#changepassword').validate({
                       rules: {
@@ -1582,7 +1656,32 @@ span.psw {
                   $('#modal-login').show();
               });
                
+              $('#newcomment-publish').click(function(event) {
+                  if ($('#newcommentform').valid()) {
+                      var arr = {
+                          body: $("#comment").val(),
+                          attitude: attitude[$('input[type=radio][name=comment_attitude]:checked').val()],
+                          title: $("#comment_subject").val(),
+                          user_id: $("#comment_user_id").val(),
+                          post_id: $("#comment_post_id").val()
+                      };
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewcomment/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
 
+                          success: function(data){
+                              redirect_url('blog');
+                          },
+                          error: function(data){
+                              alert(data.message+" "+data.code);
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+                  }
+              });
               $('#message-publish').click(function() {
                            
                   if ($('#newmessageform').valid()) {

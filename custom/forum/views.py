@@ -94,8 +94,6 @@ def topics(request, topic_id):
         mehs = []
         haters = []
 
-    log = Logger(log="EMPTIONS BEFORE WE RENDER lovers {} mehs {} haters {}".format(lovers, mehs, haters))
-    log.save()
 
     if request.user:
         if request.user.is_authenticated:
@@ -315,9 +313,6 @@ def newemotion(request):
         att = int(request.data.get('attitude', None))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
-
-        log = Logger(log="PARAMS WERE {} {} {} {}".format(emotion, subject, attitude, user_id, attitude))
-        log.save()
 
         try:
             language = detect_language(str(subject))

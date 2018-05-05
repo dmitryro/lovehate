@@ -1,5 +1,6 @@
 from django.contrib import admin
 from custom.blog.models import Post
+from custom.blog.models import Comment
 ########################################
 #  Register Post with Django Admin     #
 ########################################
@@ -21,5 +22,19 @@ class PostAdmin(admin.ModelAdmin):
          verbose_name = 'Post'
          verbose_name_plural = 'Posts'
 
-admin.site.register(Post, PostAdmin)
+class CommentAdmin(admin.ModelAdmin):
+    fieldsets = ((None, {'fields': ['author',
+                                    'title',
+                                    'post',
+                                    'body',
+                                    'link',
+                                    'rating',
+                                    'attitude',]}),)
 
+    list_display = ('id','author', 'title', 'body', 'link', 'attitude', 'rating',)
+    list_editable = ('author', 'title', 'body', 'link', 'attitude', 'rating',)
+    search_fields = ('author', 'title', 'body', 'link', 'attitude', 'rating',)
+
+
+admin.site.register(Post, PostAdmin)
+admin.site.register(Comment, CommentAdmin)

@@ -57,9 +57,9 @@ def home(request):
     hates = None
 
     try:
-        loves = Emotion.objects.filter(attitude_id=1)
-        mehs = Emotion.objects.filter(attitude_id=2)    
-        hates = Emotion.objects.filter(attitude_id=3)
+        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published')
+        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published')
+        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published')
         total_loves = len(loves)
         total_mehs = len(mehs)
         total_hates = len(hates)
@@ -260,9 +260,9 @@ def forum(request):
     hates = None
 
     try:
-        loves = Emotion.objects.filter(attitude_id=1)
-        mehs = Emotion.objects.filter(attitude_id=2)    
-        hates = Emotion.objects.filter(attitude_id=3)
+        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published')
+        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published')    
+        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published')
         total_loves = len(loves)
         total_mehs = len(mehs)
         total_hates = len(hates)

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
+{{ user.id }}
 <div>
 <br />
 <br />
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form  name="newforumform" id="newforumform">
+<form  name="newcommentform" id="newcommentform">
 <div class="row">
 
     <div class="col-sm-2">
@@ -28,33 +28,62 @@
              <div class="col-sm-8">
                     <div class=container-fluid" style="margin-left:0.4em;">
                                <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
+                                    <label id="inlineFormInputGroup-comment_subject-error" class="error" for="comment_subject"></label>
                                </div>
 
                                <div class="row">
-                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="forumnew_attitude"></label>
+                                    <label id="inlineFormInputGroup-comment_attitude-error" class="error" for="comment_attitude"></label>
                                </div>
 
                                <div class="row">
-                                    <label id="inlineFormInputGroup-feeling-error" class="error" for="feeling"></label>
+                                    <label id="inlineFormInputGroup-comment-error" class="error" for="comment"></label>
                                </div>
                     </div>
 
              </div>
          </div>
 
-
+                 <div class="row">
+                    <div class="col-sm-4">
+<div style="font-weight:bold;font-size:1.1em;">
+Автор сообщения
+</div>
+                    </div>
+                    <div class="col-sm-8">
+                           {{ post.author_nick }}
+                    </div>     
+                 </div>
 
                  <div class="row">
+                    <div class="col-sm-4">
+                    <div style="font-weight:bold;font-size:1.1em;">
+                    Тема сообщения
+                    </div>
+                    </div>
+                    <div class="col-sm-8">
+
+
+
+                                                           {% if post.attitude.id == 1 %}
+                                                                 <div class="loves-messages">
+                                                           {% elif post.attitude.id == 2 %}
+                                                                  <div class="mehs-messages">
+                                                           {% elif post.attitude.id == 3 %}
+                                                                  <div class="hates-messages">
+                                                           {% endif %}
+
+                                                           {{ post.subject }}
+                                                                  </div>
+                    </div>
+                 </div>
+
+
+                <div class="row">
 
 
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-
-Название темы
-                       </div>
-                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
-                           *
+Ваш заголовок
                        </div>
 
                        <div class="clear"></div>
@@ -63,7 +92,7 @@
                  <div class="col-sm-8">
 
                                              <div class="form-group">
-                                                       <input type="text" id="subject" name="subject" maxlength="100" size="56"  />
+                                                       <input type="text" id="comment_subject" name="comment_subject" maxlength="100" size="56"  />
                                              </div>
 
                  </div>
@@ -74,12 +103,10 @@
              <div class="col-sm-4">
 
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-Ваше отношение
-                       </div>
 
-                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
-                           *
-                       </div>
+Ваше отношение
+                    </div>
+
 
                        <div class="clear"></div>
 
@@ -90,7 +117,7 @@
 
                                <div class="row">
                                        <div class="col-sm-4">
-                                                      <input type="radio" name="forumnew_attitude" value="love" />
+                                                      <input type="radio" name="comment_attitude" value="love" />
                                                        
                                                        <span class="loves-profile">
                                                               Любовь
@@ -100,7 +127,7 @@
                                                             
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumnew_attitude" value="indifferent" />
+                                                       <input type="radio" name="comment_attitude" value="indifferent" checked />
                                                           
                                                        <span class="mehs-profile">
 Безразличие
@@ -111,7 +138,7 @@
 
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumnew_attitude" value="hate" /> 
+                                                       <input type="radio" name="comment_attitude" value="hate" /> 
                                                        <span class="hates-profile">
 Ненависть                  
                                                        </span>
@@ -128,11 +155,13 @@
          <div class="row">
 
                        <div class="col-sm-4">
-
+<div style="float:left;font-weight:bold;font-size:1.1em;">
+Ваш комментарий
+</div>
                        </div>
                        <div class="col-sm-8">
                                     <div class="form-group">
-                                            <textarea name="feeling" id="feeling" cols="10" rows="8" style="width:100%;"
+                                            <textarea name="comment" id="comment" cols="10" rows="8" style="width:100%;"
                                              placeholder="Пишите что хотите (но по теме)..." value="">
                                             </textarea>
                                     </div>
@@ -143,7 +172,7 @@
                        </div>
                        <div class="col-sm-2">
 
-                            <button class="btn4" id="forumnew-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                            <button class="btn4" id="newcomment-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
                                   Отправить
                             </button>
                             
@@ -152,10 +181,34 @@
                        <div class="col-sm-4">
                        </div>                       
          </div>
+
+
      </div>
     </div>
+
+
+
 </div>
-<input type="hidden" id="emotion_user_id" value="{{ user.id }}" />
+
+         <div class="row">
+                       <div class="col-sm-2">
+                       </div>
+                       <div class="col-sm-10">
+
+                              <br/>
+                              <strong>
+                            &nbsp;  &nbsp; &nbsp;<a href="/blog" style="text-decoration:underline;">Вернутъся</a>
+                              </strong>
+
+                       </div>
+
+         </div>
+
+
+
+
+<input type="hidden" id="comment_user_id" value="{{ user.id }}" />
+<input type="hidden" id="comment_post_id" value="{{ post.id }}" />
 </form>
 </div>
 {% endblock %}

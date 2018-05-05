@@ -46,6 +46,7 @@ from custom.users.views import user_profile
 from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
+from custom.users.views import changepassword
 from custom.forum.views import forum_new
 from custom.forum.views import EmotionDetail
 from custom.forum.views import EmotionList
@@ -59,6 +60,10 @@ from custom.forum.views import incoming_messages
 from custom.blog.views import addnewblog
 from custom.blog.views import newblog
 from custom.blog.views import userblog
+from custom.blog.views import blogpost
+from custom.blog.views import newcomment
+from custom.blog.views import addnewcomment
+from custom.blog.views import blogcomments
 from django.contrib import admin
 
 urlpatterns = [
@@ -101,6 +106,12 @@ urlpatterns = [
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
     path('addnewblog/', addnewblog),
+    path('addnewcomment/', addnewcomment),
+    path('changepassword/', changepassword),
+    path('blogpost/<int:post_id>/', blogpost),
     path('blog/user/<int:user_id>/', userblog),
+    path('blogcomment/<int:post_id>/', newcomment),
+    path('blog/<int:post_id>/', blogcomments),
+    path('blog/<int:post_id>/comments/', blogcomments),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

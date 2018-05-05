@@ -35,8 +35,140 @@ from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
 from settings import settings
 
+from custom.blog.models import Comment
 from custom.blog.models import Post
 from custom.forum.models import Attitude
+
+@csrf_exempt
+def newcomment(request, post_id):
+    try:
+        post = Post.objects.get(id=int(post_id))
+    except Exception:
+        post = None
+
+    try:
+        if post:
+            comments = Comment.objects.filter(post=post)
+        else:
+            comments = []
+    except Exception:
+        comments = []
+  
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, 'comment_new.html',{'home':'comment_new.html',
+                                               'post': post,
+                                               'comments': comments,
+                                               'user': request.user,
+                                               'username': username,
+                                               'current_page': 'new_comment',
+                                               'is_authenticated': is_authenticated,
+                                               'logout': logout,
+                                               'user_id': user_id})
+
+
+@csrf_exempt
+def blogcomments(request, post_id):
+    comments = []
+    try:
+        post = Post.objects.get(id=int(post_id))
+    except Exception:
+        post = None
+
+    try:
+        if post:
+            comments = Comment.objects.filter(post=post)
+        else:
+            comments = []
+    except Exception:
+        comments = []
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+    return render(request, 'comments.html',{'home':'comments.html',
+                                             'post': post,
+                                             'comments': comments,
+                                             'user': request.user,
+                                             'username': username,
+                                             'current_page': 'blog_comments',
+                                             'is_authenticated': is_authenticated,
+                                             'logout': logout,
+                                             'user_id': user_id})
+
+
+@csrf_exempt
+def blogpost(request, post_id):
+    comments = []
+    try:
+        post = Post.objects.get(id=int(post_id))
+    except Exception:
+        post = None
+
+    try:
+        if post:
+            comments = Comment.objects.filter(post=post)
+        else:
+            comments = []
+    except Exception:
+        comments = []
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, 'blog_post.html',{'home':'blog_post.html',
+                                             'post': post,
+                                             'comments': comments,
+                                             'user': request.user,
+                                             'username': username,
+                                             'current_page': 'blog_post',
+                                             'is_authenticated': is_authenticated,
+                                             'logout': logout,
+                                             'user_id': user_id})
+
+
 
 @csrf_exempt
 def newblog(request):
@@ -65,6 +197,37 @@ def newblog(request):
                                             'logout': logout,
                                             'user_id': user_id})
 
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def addnewcomment(request):
+    try:
+        body = request.data.get('body', '')
+        title = request.data.get('title', '')
+        att = int(request.data.get('attitude', None))
+        post_id = int(request.data.get('post_id', None))
+        attitude = Attitude.objects.get(id=int(att))
+        user_id = int(request.data.get('user_id', None))
+        attitude = Attitude.objects.get(id=int(att))
+        post = Post.objects.get(id=post_id)
+       
+        user = User.objects.get(id=user_id)
+        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post)
+    except Exception as e:
+        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log.save()
+
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+    return Response({"message": "success - username used",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
+
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
@@ -79,7 +242,11 @@ def addnewblog(request):
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
         shortener = Shortener('Google', api_key=settings.GOOGLE_API_KEY)
-        link = shortener.short(url)
+
+        try:
+            link = shortener.short(url)
+        except Exception as e:
+            link = None
 
         try:
             language = detect_language(str(subject))
@@ -110,6 +277,7 @@ def addnewblog(request):
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
+
 
 
 
