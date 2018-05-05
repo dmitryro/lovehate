@@ -48,6 +48,7 @@ from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
 from custom.users.views import changepassword
 from custom.forum.views import forum_new
+from custom.forum.views import forum_add
 from custom.forum.views import EmotionDetail
 from custom.forum.views import EmotionList
 from custom.forum.views import AttitudeDetail
@@ -70,6 +71,7 @@ urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('', home),
     path('add/', forum_new),
+    path('topics/<int:topic_id>/attitude/<int:attitude_id>/', forum_add),
     path('admin/', admin.site.urls),
     path('authenticate/', csrf_exempt(auth)),
     path('users/', UserList.as_view()),

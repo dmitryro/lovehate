@@ -65,7 +65,25 @@
                                                                 
 
 
-                                                                   {{ message.subject }} {{ message.attitude }} {{ message.body }}
+                                                                   {{ message.subject }} {{ message.attitude }} 
+
+                                                                   <br/>
+
+                                                  {% for line in message.body_lines %}
+                                                          {% if line|slice:"0:1" == '>' %}
+                                                                  <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                  <span style="font-style:italic;">
+                                                                  {{ line|slice:"1:" }}
+                                                          {% else %}
+                                                                  <span style="font-style:normal;">
+                                                                  {{ line|slice:"0:" }}
+                                                          {% endif %}
+                                                                  </span>
+                                                           <br/>
+                                                  {% endfor %}
+
+
+
                                                               </div>
                                                              </div>
                                                             </div>

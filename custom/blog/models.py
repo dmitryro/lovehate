@@ -40,6 +40,10 @@ class Post(models.Model):
         return "{}/{}/{}".format(day,
                                  month,
                                  year)
+    @property
+    def body_lines(self):
+        return self.body.splitlines()
+
 
 class Comment(models.Model):
     title = models.CharField(max_length=250, blank=True, null=True)

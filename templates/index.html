@@ -25,7 +25,21 @@
                            
                            <div><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span><strong>любит</strong></span> 
 
-<a href="/topics/{{ love.topic.id }}">{{ love.subject }}</a> : {{ love.emotion }} </div>
+<a href="/topics/{{ love.topic.id }}">{{ love.subject }}</a> : 
+                                                                            {% for line in love.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                            {% endfor %}
+
+</div>
                          {% endfor %}
                        {% endfor %}
                     </div>
@@ -42,7 +56,21 @@
                     {% for page in pages %}
                        {% for meh in page.mehs %}
                            <div><a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a> <span><strong>плевал на </strong></span> 
-<a href="/topics/{{ meh.topic.id }}">{{ meh.subject }}</a>  : {{ meh.emotion }} </div>
+<a href="/topics/{{ meh.topic.id }}">{{ meh.subject }}</a>  :
+                                                                            {% for line in meh.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                            {% endfor %}
+
+ </div>
                        {% endfor %}
                     {% endfor %}
                     </div>
@@ -60,7 +88,23 @@
                        {% for hate in page.hates %}
                            <div><a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a> <span><strong>ненавидит</strong></span> 
 <a href="/topics/{{  hate.topic.id }}">{{ hate.subject }}</a> 
- : {{ hate.emotion }} </div>
+
+ : 
+                                                                            {% for line in hate.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                            {% endfor %}
+
+
+ </div>
 
                        {% endfor %}
                       {% endfor %}

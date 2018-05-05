@@ -535,6 +535,19 @@ span.psw {
    text-align: center;
    border-bottom: 1px #979797 solid;
 }
+
+.loves a {
+   text-decoration: none;
+   color: #008000;
+}
+
+.loves a :hover {
+   text-decoration: underlined;
+   color: #008000;
+}
+
+
+
 .hates {
    color: #8b0000;
    font-weight: normal;
@@ -546,6 +559,16 @@ span.psw {
    width:100%;
    border-bottom: 1px #979797 solid;
 }
+.hates a {
+   text-decoration: none;
+   color: #8b0000;
+}
+
+.hates a :hover {
+   text-decoration: underlined;
+   color: #8b0000;
+}
+
 
 .loves-messages {
    color: #008000;
@@ -574,6 +597,15 @@ span.psw {
    min-width:100%;
    width:100%;
    border-bottom: 1px #979797 solid;
+}
+
+.topics-header-mehs a {
+   text-decoration: none;
+   color: #333333;
+}
+.topics-header-mehs a:hover{
+   color: #333333;
+   text-decoration:underline;
 }
 
 .loves-profile {
@@ -740,6 +772,67 @@ span.psw {
     text-decoration: underline;
     color:  #333333;
 }
+
+.mehs-item {
+    font-weight: bold;
+    padding-top:0.4em;
+    padding-bottom:0.4em;
+    font-size:0.94em;
+}
+.mehs-item a {
+    font-family: "Times New Roman";
+    text-decoration: none;
+    color:  #333333;
+}
+
+
+.mehs-item a:hover {
+    font-family: "Times New Roman";
+    text-decoration: underline;
+    color:  #333333;
+}
+
+.loves-item {
+    font-weight: bold;
+    padding-top:0.4em;
+    padding-bottom:0.4em;
+    font-size:0.94em;
+    color: #008000;
+}
+
+.loves-item a {
+    font-family: "Times New Roman";
+    text-decoration: none;
+    color:  #008000;
+}
+
+
+.loves-item a:hover {
+    font-family: "Times New Roman";
+    text-decoration: underline;
+    color:  #008000;
+}
+
+.hates-item {
+    font-weight: bold;
+    padding-top:0.4em;
+    padding-bottom:0.4em;
+    font-size:0.94em;
+}
+
+.hates-item a {
+    font-family: "Times New Roman";
+    text-decoration: none;
+    color:  #8b0000;
+}
+
+
+.hates-item a:hover {
+    font-family: "Times New Roman";
+    text-decoration: underline;
+    color:  #8b0000;
+}
+
 
 
 /* Change the link color to #111 (black) on hover */
@@ -1703,7 +1796,7 @@ span.psw {
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){
-                              redirect_url('privates');
+                              redirect_url('outgoing');
                           },
                           error: function(data){
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );

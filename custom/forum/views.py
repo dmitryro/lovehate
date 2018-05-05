@@ -84,16 +84,26 @@ def topics(request, topic_id):
     redirect = 'topics.html'
     try:
         lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id)
-        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id)
-        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id)
- 
     except Exception as e:
+       lovers = []
+
+    try:
+        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id)
+    except Exception as e:
+        mehs = []
+ 
+    try:
+        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id)
+    except Exception as e:
+        haters = []
+    
+    try:
+        topic = Topic.objects.get(id=int(topic_id))
+    except Exception as e:
+        topic = None
         log = Logger(log="TOPICS DID NOT READ {}".format(e))
         log.save()
-        lovers = []
-        mehs = []
-        haters = []
-
+        
 
     if request.user:
         if request.user.is_authenticated:
@@ -105,6 +115,7 @@ def topics(request, topic_id):
 
     return render(request, redirect,{'home':'topics.html',
                                      'lovers': lovers,
+                                     'topic': topic,
                                      'mehs' : mehs,
                                      'haters': haters,
                                      'username': username,
@@ -140,6 +151,47 @@ def forum_new(request):
                                      'current_page': 'new_feeling',
                                      'username': request.user.username,
                                      'logout': False})
+
+def forum_add(request, topic_id, attitude_id):
+    redirect = 'forum_add.html'
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        attitude = Attitude.objects.get(id=int(attitude_id))
+    except Exception as e:
+        attitude = Attitude.objects.get(id=3)
+
+    try:
+        topic = Topic.objects.get(id=int(topic_id))
+    except Exception as e:
+        topic = None
+
+    return render(request, redirect,{'home':'forum_new.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'attitude': attitude,
+                                     'topic': topic,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'new_feeling',
+                                     'username': request.user.username,
+                                     'logout': False})
+
 
 def outgoing_messages(request):
     redirect = 'outgoing.html'

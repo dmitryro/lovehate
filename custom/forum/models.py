@@ -93,6 +93,10 @@ class Emotion(models.Model):
         return self.translit_subject
 
     @property
+    def body_lines(self):
+        return self.emotion.splitlines()
+
+    @property
     def date_published(self):
         dt = str(self.time_published)
         year = dt[0:4]
@@ -141,6 +145,10 @@ class Message(models.Model):
     importance = models.IntegerField(default=0)
 
     @property
+    def body_lines(self):
+        return self.body.splitlines()
+
+    @property
     def date_time_sent(self):
         dt = str(self.time_sent)
         year = dt[0:4]
@@ -149,7 +157,6 @@ class Message(models.Model):
         return "{}/{}/{}".format(day,
                                  month,
                                  year)
-
     def __str__(self):
         return self.subject
 

@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
 <div>
 <br />
 <br />
@@ -66,7 +65,7 @@
 </div>
 </div>
 
-
+<div style="margin-top:1.6em"></div>
 <div class="container-fluid registration-form">
 <div class="row">
 
@@ -76,7 +75,11 @@
      <div class="container-fluid">
          <div class="row">
              <div class="col-sm-4">
-                 <div class="loves"><span>Любит</span></div>
+                 <div class="loves loves-item"><span>
+                      <a href="/topics/{{ topic.id }}/attitude/1">          Я тоже люблю
+                   {{ topic.name }}</a>
+
+</span></div>
                  <div class="loves-profile">
 
                            {% for love in lovers %}
@@ -90,7 +93,7 @@
              
 
              <div class="col-sm-4">
-                 <div class="mehs"><span>Безразличен к</span></div>
+                 <div class="mehs mehs-item"><span><a href="/topics/{{ topic.id }}/attitude/2">Я тоже плевал на  {{ topic.name }}</a></span></div>
                  <div class=mehs-profile">
                            {% for meh in mehs %}
                                   <div style="text-align:center;">
@@ -104,7 +107,11 @@
              
 
              <div class="col-sm-4">
-                 <div class="hates"><span>Ненавидит</span></div>
+                 <div class="hates hates-item"><span><a href="/topics/{{ topic.id }}/attitude/3">
+                                 Я тоже ненавижу 
+                                 {{ topic.name }}
+                           </a>
+                  </div>
                  <div class="hates-profile">
 
                            {% for hate in haters %}

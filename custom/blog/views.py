@@ -286,7 +286,7 @@ def userblog(request, user_id):
     page = request.GET.get('page')
 
     try:
-        posts = Post.objects.filter(author_id=int(user_id))
+        posts = Post.objects.filter(author_id=int(user_id)).order_by('-time_published')
 
         paginator = Paginator(posts, 10)
 
