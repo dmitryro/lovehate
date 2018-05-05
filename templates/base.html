@@ -105,6 +105,9 @@ button:hover {
         width: auto;
         display: inline;
     }
+    .forum-row, .blog-row {
+        font-size:0.78em;
+    }
 
     #newforumform label {
         width: 250px;
@@ -547,21 +550,18 @@ span.psw {
 .loves-messages {
    color: #008000;
    font-weight: normal;
-   font-size: 1.2em;
    font-family: Times New Roman;
 }
 
 .mehs-messages {
    color: #333333;
    font-weight: normal;
-   font-size: 1.2em;
    font-family: Times New Roman;
 }
 
 .hates-messages {
    color: #8b0000;
    font-weight: normal;
-   font-size: 1.2em;
    font-family: Times New Roman;
 }
 .mehs {
@@ -1278,6 +1278,7 @@ span.psw {
                        $('#submenu-private-messages').show();
                        $('.active').removeClass('active');
                        $('#submenu-div-5').addClass('active');
+
             } else if ($('#current_page').val()==='new_blog') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
@@ -1287,6 +1288,7 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                         $('#submenu-div-3').addClass('active');
+
             } else if ($('#current_page').val()==='new_comment') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
@@ -1296,6 +1298,7 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                        $('#submenu-div-3').addClass('active');
+
             } else if ($('#current_page').val()==='blog_comments') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
@@ -1673,7 +1676,7 @@ span.psw {
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){
-                              redirect_url('blog');
+                              redirect_url('blog/'+$("#comment_post_id").val()+"/comments");
                           },
                           error: function(data){
                               alert(data.message+" "+data.code);

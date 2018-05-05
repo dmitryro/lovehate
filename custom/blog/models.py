@@ -63,4 +63,10 @@ class Comment(models.Model):
     def author_nick(self):
         return self.author.profile.username
     
+    @property
+    def body_len(self):
+        return len(self.body.splitlines())
 
+    @property
+    def body_lines(self):
+        return self.body.splitlines()
