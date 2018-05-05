@@ -135,6 +135,24 @@ button:hover {
         display: inline;
     }
 
+    #changepassword label {
+        width: 250px;
+    }
+
+    #changepassword label.error, #changepassword input.submit, #changepassword input.button {
+        font-size:0.9em;
+        margin-left: 253px;
+    }
+
+    #changepassword label.error {
+        margin-left: -0.5em;
+        width: auto;
+        min-width: 30.00em;
+        font-size:0.9em;
+        display: inline;
+    }
+
+
 /* Set a style for all buttons */
 .search button {
     background-color: #f6f6f6;
@@ -1008,10 +1026,33 @@ span.psw {
                              </div>
                         </div>
 
+                          <form id="changepassword" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+
 
                     <div class="modal-body">
-                          <form id="changepassword" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
-                              {% csrf_token %}
+
+                            <div class="container-fluid">
+                                      <div class="row">
+                                             <div class="col-sm-12">
+                                                    <div class="container-fluid" style="margin-left:0.4em;">
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-oldpassword-error" class="error" for="oldpassword"></label>
+                                                          </div>
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-newpassword-error" class="error" for="newpassword"></label>
+                                                          </div>
+
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-newpassword_confirmed-error" class="error" for="newpassword_confirmed"></label>
+                                                          </div>
+                                                   </div>
+                                            </div>
+                                     </div>
+                          </div>
+
+
+
                               <div class="container-fluid">
                                                  <label for="uname"><b>Введите существующий пароль</b></label>
                                                  <input id="oldpassword" name="oldpassword" type="password" required />
@@ -1031,10 +1072,9 @@ span.psw {
 
 
                               </div>
-                         </form>
                     </div>
 
-
+                   </form>
 
                </div>
                <div class="modal-login modaldialogue" id="modal-login">
@@ -1280,18 +1320,47 @@ span.psw {
 
             $('#changepassword').validate({
                       rules: {
+                            oldpassword: {
+                                     required: true,
+                                     minlength: 8
+                            },
+                            newpassword: {
+                                     required: true,
+                                     minlength: 8
+                            },
+                            newpassword_confirmed: {
+                                     required: true,
+                                     minlength: 8,
+                                     equalTo: "#newpassword"
+                            }
+
 
                       },
 
-                      highlight: function(element) {
-
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
                       },
-
-                      success: function(element) {
-
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
                       },
-
                       messages: {
+
+                           newpassword_confirmed: {
+                               required: "Подтверждающий пароль необходим!",
+                               minlength: "Подтверждение минимум 8 символов!",
+                               equalTo:  "Подтверждение не идентично!",
+                           },
+                           newpassword: {
+                               required: "Новый пароль необходим!",
+                               minlength: "Новый пароль - минимум 8 символов!",
+                           },
+                           oldpassword: {
+                               required: "Старый пароль необходим!",
+                               minlength: "Старый пароль - минимум 8 символов!",
+                           },
+
+
 
                       }
 
