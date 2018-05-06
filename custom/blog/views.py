@@ -312,7 +312,7 @@ def addnewblog(request):
         attitude = Attitude.objects.get(id=int(att))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
-        shortener = Shortener('Google', api_key=settings.GOOGLE_API_KEY)
+        shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
 
         try:
             link = shortener.short(url)

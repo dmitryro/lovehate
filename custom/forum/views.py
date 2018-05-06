@@ -203,7 +203,7 @@ def outgoing_messages(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
-            outgoing = Message.objects.filter(sender_id=user_id)
+            outgoing = Message.objects.filter(sender_id=user_id).order_by('-time_sent')
         else:
             logout=False
             user_id = -1
@@ -248,7 +248,7 @@ def incoming_messages(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
-            incoming = Message.objects.filter(receiver_id=user_id)
+            incoming = Message.objects.filter(receiver_id=user_id).order_by('-time_sent')
         else:
             logout=False
             user_id = -1
