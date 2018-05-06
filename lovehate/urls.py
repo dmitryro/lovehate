@@ -65,6 +65,7 @@ from custom.blog.views import blogpost
 from custom.blog.views import newcomment
 from custom.blog.views import addnewcomment
 from custom.blog.views import blogcomments
+from custom.blog.views import editcomment
 from django.contrib import admin
 
 urlpatterns = [
@@ -85,6 +86,7 @@ urlpatterns = [
     path('emotions/', EmotionList.as_view()),
     path('attitudes/', AttitudeList.as_view()),
     path('addnewemotion/', csrf_exempt(newemotion)),
+    path('editcomment/<int:comment_id>/', csrf_exempt(editcomment)),
     path('emotions/<int:pk>/', EmotionDetail.as_view()),
     path('attitudes/<int:pk>/', AttitudeDetail.as_view()),
     path('accounts/', include('allauth.urls')),
@@ -97,6 +99,7 @@ urlpatterns = [
     path('statistics/', statistics),
     path('register/', register),
     path('private/', private),
+    path('topics/', forum),
     path('forum/', forum),
     path('mylh/', mylh),
     path('blog/', blog),

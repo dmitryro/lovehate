@@ -108,7 +108,10 @@ button:hover {
     .forum-row, .blog-row {
         font-size:0.78em;
     }
-
+ 
+    .blog-common-row {
+        font-size:1.20em;
+    }
     #newforumform label {
         width: 250px;
     }
@@ -213,6 +216,7 @@ button:hover {
     padding: 10px 18px;
     background-color: #f44336;
 }
+
 
 /* Center the image and position the close button */
 .imgcontainer {
@@ -536,17 +540,21 @@ span.psw {
    border-bottom: 1px #979797 solid;
 }
 
-.loves a {
-   text-decoration: none;
-   color: #008000;
+.column-header {
+   font-size: 1.54em;
 }
 
-.loves a :hover {
-   text-decoration: underlined;
-   color: #008000;
+.mehs-column-header {
+   color: #333333;
+   font-weight: normal;
+   font-family: Times New Roman;
+   overflow: hidden;
+   text-align: center;
+   min-width:100%;
+   width:100%;
+   border-bottom: 1px #979797 solid;
+   font-size: 1.54em;
 }
-
-
 
 .hates {
    color: #8b0000;
@@ -559,31 +567,37 @@ span.psw {
    width:100%;
    border-bottom: 1px #979797 solid;
 }
-.hates a {
-   text-decoration: none;
+.hates-column-header {
    color: #8b0000;
+   font-weight: normal;
+   font-family: Times New Roman;
+   overflow: hidden;
+   text-align: center;
+   min-width:100%;
+   width:100%;
+   border-bottom: 1px #979797 solid;
+   font-size: 1.54em;
 }
 
-.hates a :hover {
-   text-decoration: underlined;
-   color: #8b0000;
-}
 
 
 .loves-messages {
    color: #008000;
+   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
 
 .mehs-messages {
    color: #333333;
+   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
 
 .hates-messages {
    color: #8b0000;
+   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
@@ -597,6 +611,39 @@ span.psw {
    min-width:100%;
    width:100%;
    border-bottom: 1px #979797 solid;
+}
+
+.mehs a {
+   color: #333333;
+   text-decoration: none;
+   font-weight: bold;
+}
+.mehs a:hover {
+   color: #333333;
+   text-decoration: underline;
+   font-weight: bold;
+}
+
+.loves a {
+   color: #008000;
+   text-decoration: none;
+   font-weight: bold;
+}
+.loves a:hover {
+   color: #008000;
+   text-decoration: underline;
+   font-weight: bold;
+}
+
+.hates a {
+   color: #8b0000;
+   text-decoration: none;
+   font-weight: bold;
+}
+.hates a:hover {
+   color: #8b0000;
+   text-decoration: underline;
+   font-weight: bold;
 }
 
 .topics-header-mehs a {
@@ -616,6 +663,59 @@ span.psw {
    font-weight: normal;
 }
 
+.loves-profile a{
+   text-decoration:none;
+   text-align:center;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.0em;
+   font-weight: normal;
+}
+
+.loves-profile a:hover{
+   text-decoration:underline;
+   text-align:center;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.0em;
+   font-weight: normal;
+}
+
+.loves-newcomment {
+   text-align:center;
+   color: #008000;
+   font-family: Times New Roman;
+   font-size: 1.2em;
+   font-weight: normal;
+}
+
+.loves-topic {
+   text-align:center;
+   color: #008000;
+   font-family: Times New Roman;
+   font-weight: normal;
+   font-size: 1.2em;
+}
+
+
+
+.hates-topic {
+   text-align:center;
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.mehs-topic {
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+
 .mehs-profile {
    text-align:center;
    color: #333333;
@@ -623,7 +723,79 @@ span.psw {
    font-size: 1.2em;
    font-family: Times New Roman;
 }
+.mehs-profile a{
+   text-decoration:none;
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.0em;
+   font-family: Times New Roman;
+}
+
+
+
+.mehs-newcomment {
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
 .hates-profile {
+   text-align:center;
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.hates-profile a{
+   text-decoration:none;
+   text-align:center;
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.0em;
+   font-family: Times New Roman;
+}
+
+.hates-profile a:hover{
+   text-decoration:underline;
+   text-align:center;
+   color: #8b0000;
+   font-weight: normal;
+   font-size: 1.0em;
+   font-family: Times New Roman;
+}
+
+
+.mehs-profile {
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.2em;
+   font-family: Times New Roman;
+}
+
+.mehs-profile a{
+   text-decoration:none;
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.0em;
+   font-family: Times New Roman;
+}
+
+.mehs-profile a:hover{
+   text-decoration:underline;
+   text-align:center;
+   color: #333333;
+   font-weight: normal;
+   font-size: 1.0em;
+   font-family: Times New Roman;
+}
+
+.hates-newcomment {
    text-align:center;
    color: #8b0000;
    font-weight: normal;
@@ -635,20 +807,31 @@ span.psw {
    margin-left:1.0em;
    color: #008000;
    font-family: Times New Roman;
-   font-size: 1.2em;
+   font-size: 1.4em;
    font-weight: normal;
 }
+.loves-forum a {
+   color: #008000;
+   text-decoration:none;
+   font-weight:bold;
+}
+.loves-forum a:hover {
+   color: #008000;
+   text-decoration:underlined;
+   font-weight:bold;
+}
+
 .mehs-forum {
    color: #333333;
    font-weight: normal;
-   font-size: 1.2em;
+   font-size: 1.4em;
    font-family: Times New Roman;
 }
 
 .hates-forum {
    color: #8b0000;
    font-weight: normal;
-   font-size: 1.2em;
+   font-size: 1.4em;
    font-family: Times New Roman;
 }
 
@@ -774,10 +957,11 @@ span.psw {
 }
 
 .mehs-item {
-    font-weight: bold;
     padding-top:0.4em;
     padding-bottom:0.4em;
-    font-size:0.94em;
+    font-family: Times New Roman;
+    font-size: 1.54em;
+    font-weight: normal;
 }
 .mehs-item a {
     font-family: "Times New Roman";
@@ -793,11 +977,13 @@ span.psw {
 }
 
 .loves-item {
-    font-weight: bold;
     padding-top:0.4em;
     padding-bottom:0.4em;
-    font-size:0.94em;
+    font-family: Times New Roman;
+    font-size: 1.54em;
+    font-weight: normal;
     color: #008000;
+    
 }
 
 .loves-item a {
@@ -814,10 +1000,11 @@ span.psw {
 }
 
 .hates-item {
-    font-weight: bold;
     padding-top:0.4em;
     padding-bottom:0.4em;
-    font-size:0.94em;
+    font-family: Times New Roman;
+    font-size: 1.54em;
+    font-weight: normal;
 }
 
 .hates-item a {
@@ -864,6 +1051,36 @@ span.psw {
 }
 
 .pagination a:hover:not(.active) {background-color: #ddd;}
+
+.forum-entry {
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+   display:block;
+}
+
+.form-row {
+   padding-top: 0.2em; 
+   padding-bottom: 0.2em;
+   display:block;
+}
+.comment-form-row {
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+   display:block;
+}
+
+.private-form-row {
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+   display:block;
+}
+
+.attitude-form-row {
+   padding-top: 0.5em;
+   padding-bottom: 0.5em;
+   display:block;
+}
+
 </style>
 
 </head>
@@ -1295,6 +1512,7 @@ span.psw {
             $('#comment').html('');
             $('#feeling').html('');
             $('#message').html('');
+            $('#comment').html($('#comment-body').val());
             $('#bio').html($('#user-bio').val());
             $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
@@ -1497,6 +1715,7 @@ span.psw {
                        $('.active').removeClass('active');
                        $('#submenu-div-2').addClass('active');
             }
+
 
             $('#newcommentform').validate({
                       rules: {
@@ -1759,7 +1978,8 @@ span.psw {
                           attitude: attitude[$('input[type=radio][name=comment_attitude]:checked').val()],
                           title: $("#comment_subject").val(),
                           user_id: $("#comment_user_id").val(),
-                          post_id: $("#comment_post_id").val()
+                          post_id: $("#comment_post_id").val(),
+                          comment_id: $("#comment_id").val()
                       };
                       $.ajax({
                           type: "POST",
@@ -1778,6 +1998,33 @@ span.psw {
                       }); // end ajax call
                   }
               });
+
+              $('#editcomment-publish').click(function(event) {
+                      var arr = {
+                          body: $("#comment").val(),
+                          attitude: attitude[$('input[type=radio][name=comment_attitude]:checked').val()],
+                          title: $("#comment_subject").val(),
+                          user_id: $("#comment_user_id").val(),
+                          post_id: $("#comment_post_id").val(),
+                          comment_id: $("#comment_id").val()
+                      };
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewcomment/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('blog/'+$("#comment_post_id").val()+"/comments");
+                          },
+                          error: function(data){
+                              alert(data.message+" "+data.code);
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+              });
+
               $('#message-publish').click(function() {
                            
                   if ($('#newmessageform').valid()) {

@@ -75,16 +75,31 @@
      <div class="container-fluid">
          <div class="row">
              <div class="col-sm-4">
-                 <div class="loves loves-item"><span>
+              
+                 <div class="loves">
+
+<span>
                       <a href="/topics/{{ topic.id }}/attitude/1">          Я тоже люблю
                    {{ topic.name }}</a>
 
 </span></div>
-                 <div class="loves-profile">
+                <div class="loves-topic">
 
                            {% for love in lovers %}
-                                  <div style="text-align:center;">
-                                           <a href="/user/{{ love.user.id }}">{{ love.user.username }}</a>: {{ love.emotion }}<br/>
+                                  <div style="text-align:left;">
+                                           <a href="/user/{{ love.user.id }}">{{ love.user.username }}</a>:
+                                                                            {% for line in love.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                               {% endfor %}
                                   </div>
                            {% endfor %}
 
@@ -93,11 +108,23 @@
              
 
              <div class="col-sm-4">
-                 <div class="mehs mehs-item"><span><a href="/topics/{{ topic.id }}/attitude/2">Я тоже плевал на  {{ topic.name }}</a></span></div>
-                 <div class=mehs-profile">
+                 <div class="mehs"><span><a href="/topics/{{ topic.id }}/attitude/2">Я тоже плевал на  {{ topic.name }}</a></span></div>
+                 <div class="mehs-topic">
                            {% for meh in mehs %}
-                                  <div style="text-align:center;">
-                                          <a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a>: {{ meh.emotion }}<br/>
+                                  <div style="text-align:left;">
+                                          <a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a>:
+                                                                            {% for line in meh.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                               {% endfor %}
                                   </div>
                            {% endfor %}
                  </div>
@@ -107,16 +134,28 @@
              
 
              <div class="col-sm-4">
-                 <div class="hates hates-item"><span><a href="/topics/{{ topic.id }}/attitude/3">
+                 <div class="hates"><span><a href="/topics/{{ topic.id }}/attitude/3">
                                  Я тоже ненавижу 
                                  {{ topic.name }}
                            </a>
                   </div>
-                 <div class="hates-profile">
+                 <div class="hates-topic">
 
                            {% for hate in haters %}
                                   <div style="text-align:left;">
-                                         <a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a>: {{ hate.emotion }}<br/>
+                                         <a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a>: 
+                                                                            {% for line in hate.body_lines %}
+                                                                                      {% if line|slice:"0:1" == '>' %}
+                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-style:italic;">
+                                                                                              {{ line|slice:"1:" }}
+                                                                                      {% else %}
+                                                                                              <span style="font-style:normal;">
+                                                                                               {{ line|slice:"0:" }}
+                                                                                      {% endif %}
+                                                                                              </span>
+                                                                                               <br/>
+                                                                               {% endfor %}
                                   </div>
                            {% endfor %}
 

@@ -66,11 +66,11 @@ def home(request):
     except Exception as e:
         pass
 
-    loves_chunked = list(chunks(loves, 10))
+    loves_chunked = list(chunks(loves, 50))
     loves_chunked_length = len(loves_chunked)
-    mehs_chunked = list(chunks(mehs, 10))
+    mehs_chunked = list(chunks(mehs, 50))
     mehs_chunked_length = len(mehs_chunked)
-    hates_chunked = list(chunks(hates, 10))
+    hates_chunked = list(chunks(hates, 50))
     hates_chunked_length = len(hates_chunked)
     index = max([loves_chunked_length, mehs_chunked_length, hates_chunked_length])
 
@@ -117,18 +117,35 @@ def home(request):
             is_authenticated = False
 
   
+    try:
+        paginator1 = Paginator(loves, 50)
+    except Exception as e:
+        paginator1 = None
 
-    paginator1 = Paginator(loves, 10)
-    paginator2 = Paginator(mehs, 10)
-    paginator3 = Paginator(hates, 10)
+    try:
+        if len(mehs)>=10:
+            paginator2 = Paginator(mehs, 50)
+        else:
+            paginator2 = None
+    except Exception as e:
+        paginator2 = None
 
+    try:
+        paginator3 = Paginator(hates, 50)
+    except Exception as e:
+        patinator3 = None
 
     try:
         meh_slice = paginator2.page(page)
     except PageNotAnInteger:
         meh_slice = paginator2.page(1)
     except EmptyPage:
-        meh_slice = paginator2.page(paginator.num_pages)
+        meh_slice = paginator2.page(paginator2.num_pages)
+        #else:
+        #    meh_slice = []
+    except Exception:
+        meh_slice = []
+
 
     try:
         love_slice = paginator1.page(page)
@@ -136,13 +153,18 @@ def home(request):
         love_slice = paginator1.page(1)
     except EmptyPage:
         love_slice = paginator1.page(paginator1.num_pages)
+    except Exception:
+        love_slice = []
  
+
     try:
         hate_slice = paginator3.page(page)
     except PageNotAnInteger:
         hate_slice = paginator3.page(1)
     except EmptyPage:
         hate_slice = paginator3.page(paginator3.num_pages)
+    except Exception:
+        hate_slice = []
 
   
     try:
@@ -151,7 +173,10 @@ def home(request):
         pages_slice = paginator.page(1)
     except EmptyPage:
         pages_slice = paginator.page(paginator4.num_pages)
+    except Exception:
+        pages_slice = []
  
+
     log = Logger(log="PAGES SLICE IS {} and NUMBER OF PAGES {}".format(pages_slice, paginator.num_pages))
     log.save()
 
@@ -269,11 +294,11 @@ def forum(request):
     except Exception as e:
         pass
 
-    loves_chunked = list(chunks(loves, 10))
+    loves_chunked = list(chunks(loves, 50))
     loves_chunked_length = len(loves_chunked)
-    mehs_chunked = list(chunks(mehs, 10))
+    mehs_chunked = list(chunks(mehs, 50))
     mehs_chunked_length = len(mehs_chunked)
-    hates_chunked = list(chunks(hates, 10))
+    hates_chunked = list(chunks(hates, 50))
     hates_chunked_length = len(hates_chunked)
     index = max([loves_chunked_length, mehs_chunked_length, hates_chunked_length])
 
@@ -319,16 +344,18 @@ def forum(request):
             user_id = -1
             is_authenticated = False
 
-    paginator1 = Paginator(loves, 10)
-    paginator2 = Paginator(mehs, 10)
-    paginator3 = Paginator(hates, 10)
+    paginator1 = Paginator(loves, 50)
+    paginator2 = Paginator(mehs, 50)
+    paginator3 = Paginator(hates, 50)
 
     try:
         meh_slice = paginator2.page(page)
     except PageNotAnInteger:
         meh_slice = paginator2.page(1)
     except EmptyPage:
-        meh_slice = paginator2.page(paginator.num_pages)
+        meh_slice = paginator2.page(paginator2.num_pages)
+    except Exception:
+        meh_slice = []
 
     try:
         love_slice = paginator1.page(page)
@@ -336,13 +363,19 @@ def forum(request):
         love_slice = paginator1.page(1)
     except EmptyPage:
         love_slice = paginator1.page(paginator1.num_pages)
+    except Exception:
+        love_slice = []
  
+
     try:
         hate_slice = paginator3.page(page)
     except PageNotAnInteger:
         hate_slice = paginator3.page(1)
     except EmptyPage:
         hate_slice = paginator3.page(paginator3.num_pages)
+    except Exception:
+        hate_slice = []
+
 
   
     try:

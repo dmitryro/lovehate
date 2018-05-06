@@ -89,7 +89,7 @@
 
              <div class="col-sm-4">
                  <div class="mehs"><span>Безразличен к</span></div>
-                 <div class=mehs-profile">
+                 <div class="mehs-profile">
                            {% for meh in mehs %}
                                   <div style="text-align:center;"><a href="/topics/{{ meh.id }}">{{ meh.name }} ({% topic_meta meh.id user_id 2 %})</a></div>
                            {% endfor %}

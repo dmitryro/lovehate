@@ -81,6 +81,56 @@ def newcomment(request, post_id):
                                                'logout': logout,
                                                'user_id': user_id})
 
+@csrf_exempt
+def editcomment(request, comment_id):
+    try:
+         comment = Comment.objects.get(id=int(comment_id))
+    except Exception as e:
+         comment = None
+
+
+
+    try:
+        post = Post.objects.get(id=int(comment.post_id))
+    except Exception:
+        post = None
+
+    try:
+        if post:
+            comments = Comment.objects.filter(post=post)
+        else:
+            comments = []
+    except Exception:
+        comments = []
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, 'comment_edit.html',{'home':'comment_edit.html',
+                                               'post': post,
+                                               'comments': comments,
+                                               'comment': comment,
+                                               'user': request.user,
+                                               'username': username,
+                                               'current_page': 'edit_comment',
+                                               'is_authenticated': is_authenticated,
+                                               'logout': logout,
+                                               'user_id': user_id})
+
 
 @csrf_exempt
 def blogcomments(request, post_id):
@@ -207,13 +257,34 @@ def addnewcomment(request):
         title = request.data.get('title', '')
         att = int(request.data.get('attitude', None))
         post_id = int(request.data.get('post_id', None))
+        cid = request.data.get('comment_id', None)
+        if cid:
+            comment_id = int(cid)
+        else:
+            comment_id = 0
+
         attitude = Attitude.objects.get(id=int(att))
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
         post = Post.objects.get(id=post_id)
        
         user = User.objects.get(id=user_id)
-        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post)
+
+        try:
+            if comment_id is not 0:
+                comment = Comment.objects.get(id=comment_id)
+
+            if comment:
+                if not body or len(body) is 0:
+                    comment.delete()
+                else:
+                    comment.attitude = attitude
+                    comment.body = body
+                    comment.save()
+            else:
+                Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post)
+        except Exception as e:
+            Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post)
     except Exception as e:
         log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
         log.save()

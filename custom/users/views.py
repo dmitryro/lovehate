@@ -145,16 +145,13 @@ def registernew(request):
                      "username": username},
                      status=200)
 
+#def user_relations(request, user_id):
+
 def user_profile(request, user_id):
 
 
     try:
-
-        log = Logger(log="LET US TRY ================ {} {} ".format(user_id, request.user))
-        log.save()
-
         profile = Profile.objects.get(user_id=int(user_id))
-
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
         loved_titles = []
 
