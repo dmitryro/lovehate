@@ -162,7 +162,21 @@ button:hover {
         margin-left: 253px;
     }
 
+    #editblogform label {
+        width: 250px;
+    }
+
+    #editblogform label.error, #editblogform input.submit, #editblogform input.button {
+        margin-left: 253px;
+    }
+
     #newblogform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+    #editblogform label.error {
         margin-left: 10px;
         width: auto;
         display: inline;
@@ -807,7 +821,7 @@ span.psw {
    margin-left:1.0em;
    color: #008000;
    font-family: Times New Roman;
-   font-size: 1.4em;
+   font-size: 1.54em;
    font-weight: normal;
 }
 .loves-forum a {
@@ -824,14 +838,14 @@ span.psw {
 .mehs-forum {
    color: #333333;
    font-weight: normal;
-   font-size: 1.4em;
+   font-size: 1.54em;
    font-family: Times New Roman;
 }
 
 .hates-forum {
    color: #8b0000;
    font-weight: normal;
-   font-size: 1.4em;
+   font-size: 1.54em;
    font-family: Times New Roman;
 }
 
@@ -1513,6 +1527,7 @@ span.psw {
             $('#feeling').html('');
             $('#message').html('');
             $('#comment').html($('#comment-body').val());
+            $('#blogedit_post').html($('#blog_body_edit').val());
             $('#bio').html($('#user-bio').val());
             $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
@@ -1860,6 +1875,41 @@ span.psw {
                      }
              });
 
+            $('#editblogform').validate({
+                      rules: {
+                            blogedit_attitude: "required",
+                            blogedit_post: "required",
+                            blogedit_subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           blogedit_subject: {
+                               required: "Введите тему сообщения!",
+                               minlength: "Введите тему сообщения!",
+                           },
+                           blogedit_post: {
+                               required: "Введите текст сообщения!",
+                               minlength: "Введите текст сообщения!",
+                           },
+                           blogedit_attitude: {
+                               required: "Выскажите свое отношение к публикуемому!"
+                           },
+
+
+                     }
+
+            });
+
             $('#newblogform').validate({
                       rules: {
                             blognew_attitude: "required",
@@ -2044,6 +2094,38 @@ span.psw {
 
                           success: function(data){
                               redirect_url('outgoing');
+                          },
+                          error: function(data){
+                              $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+                  }
+              });
+
+
+              $('#blogedit-publish').click(function() {
+
+                  if ($('#editblogform').valid()) {
+                      var arr = {
+                          post: $("#blogedit_post").val(),
+                          attitude: attitude[$('input[type=radio][name=blogedit_attitude]:checked').val()],
+                          subject: $("#blogedit_subject").val(),
+                          link: $("#blogedit_link").val(),
+                          post_id: $('#edited_post_id').val(),
+                          user_id: $("#blog_user_id").val(),
+                      };
+
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/updatepost/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('blog');
                           },
                           error: function(data){
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );

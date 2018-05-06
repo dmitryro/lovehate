@@ -8,9 +8,15 @@ class Topic(models.Model):
     name = models.CharField(max_length=250,
                             blank=True,
                             null=True)
+
     translit_name = models.CharField(max_length=250,
                                      blank=True,
                                      null=True)
+
+    ip_address = models.CharField(max_length=40,
+                            blank=True,
+                            null=True)
+
     time_published = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     creator = models.ForeignKey(User,
@@ -72,6 +78,10 @@ class Emotion(models.Model):
     emotion = models.TextField(blank=True, 
                                null=True)
 
+    ip_address = models.CharField(max_length=40,
+                            blank=True,
+                            null=True)
+
     time_published = models.DateTimeField(auto_now_add=True)
 
     rating =  models.FloatField(default=0, 
@@ -122,16 +132,22 @@ class Message(models.Model):
     subject = models.CharField(max_length=250,
                                blank=True,
                                null=True)
+
     body = models.TextField(blank=True,
                             null=True)
+
     is_sent = models.NullBooleanField(default=False, blank=True, null=True)
+
     is_read = models.NullBooleanField(default=False, blank=True, null=True)
+
     time_sent = models.DateTimeField(auto_now_add=True)
+
     sender = models.ForeignKey(User,
                                blank=True,
                                null=True,
                                related_name='sender',
                                on_delete=models.CASCADE)
+
     receiver =  models.ForeignKey(User,
                                   blank=True,
                                   null=True,
@@ -143,6 +159,10 @@ class Message(models.Model):
                                  related_name='attitude',
                                  on_delete=models.CASCADE)
     importance = models.IntegerField(default=0)
+
+    ip_address = models.CharField(max_length=40,
+                                  blank=True,
+                                  null=True)
 
     @property
     def body_lines(self):

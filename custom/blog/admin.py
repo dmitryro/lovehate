@@ -11,12 +11,16 @@ class PostAdmin(admin.ModelAdmin):
                                     'translit_subject',
                                     'body',
                                     'link',
+                                    'ip_address',
                                     'attitude',
                                     'rating']}),)
 
-    list_display = ('id','author', 'subject', 'body', 'translit_subject', 'link', 'attitude', 'rating',)
-    list_editable = ('author', 'subject', 'body', 'translit_subject', 'link', 'attitude', 'rating',)
-    search_fields = ('author', 'subject', 'body', 'translit_subject', 'link', 'attitude', 'rating',)
+    list_display = ('id','author', 'subject', 'body', 'translit_subject', 
+                    'link', 'attitude', 'rating', 'ip_address',)
+    list_editable = ('author', 'subject', 'body', 'translit_subject', 
+                     'link', 'attitude', 'rating', 'ip_address',)
+    search_fields = ('author', 'subject', 'body', 'translit_subject', 
+                     'link', 'attitude', 'rating', 'ip_address',)
 
     class Meta:
          verbose_name = 'Post'
@@ -28,12 +32,13 @@ class CommentAdmin(admin.ModelAdmin):
                                     'post',
                                     'body',
                                     'link',
+                                    'ip_address',
                                     'rating',
                                     'attitude',]}),)
 
-    list_display = ('id','author', 'title', 'body', 'link', 'attitude', 'rating',)
-    list_editable = ('author', 'title', 'body', 'link', 'attitude', 'rating',)
-    search_fields = ('author', 'title', 'body', 'link', 'attitude', 'rating',)
+    list_display = ('id','author', 'title', 'body', 'ip_address', 'link', 'attitude', 'rating',)
+    list_editable = ('author', 'title', 'body', 'link', 'ip_address', 'attitude', 'rating',)
+    search_fields = ('author', 'title', 'body', 'link', 'ip_address', 'attitude', 'rating',)
 
 
 admin.site.register(Post, PostAdmin)

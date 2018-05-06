@@ -30,10 +30,11 @@ class NotificationTypeAdmin(admin.ModelAdmin):
 class TopicAdmin(admin.ModelAdmin):
     fieldsets = ((None, {'fields': ['name',
                                     'translit_name',
+                                    'ip_address',
                                     'creator',]}),)
-    list_display = ('id', 'name', 'translit_name', 'creator',)
-    list_editable = ('name', 'translit_name', 'creator',)
-    search_fields = ('name', 'translit_name', 'creator',)
+    list_display = ('id', 'name', 'ip_address', 'translit_name', 'creator',)
+    list_editable = ('name', 'ip_address', 'translit_name', 'creator',)
+    search_fields = ('name', 'ip_address', 'translit_name', 'creator',)
 
     class Meta:
          verbose_name = 'Topic'
@@ -57,14 +58,16 @@ class AttitudeAdmin(admin.ModelAdmin):
 
 
 class MessageAdmin(admin.ModelAdmin):
-    fieldsets = ((None, {'fields': ['subject', 'body', 'is_sent','importance','attitude','sender',  'receiver',]}),)
-                      #   'is_read', 'sender',
-                      #   'receiver', 'attitude', 'importance',]}),)
-    list_display = ('id','subject', 'body', 'is_sent', 'is_read', 'importance', 'attitude', 'sender',  'receiver',) 
+    fieldsets = ((None, {'fields': ['subject', 'body', 'is_sent', 'ip_address', 
+                                    'importance', 'attitude', 'sender',  'receiver',]}),)
+    list_display = ('id','subject', 'body', 'is_sent', 'is_read', 
+                    'importance', 'attitude', 'sender',  'receiver', 'ip_address') 
              #       'sender',  'receiver', 'attitude', 'importance',)
-    list_editable = ('subject', 'body', 'is_sent', 'is_read', 'importance','attitude','sender',  'receiver',) 
+    list_editable = ('subject', 'body', 'is_sent', 'is_read', 'importance',
+                     'attitude','sender',  'receiver', 'ip_address',) 
               #       'sender',  'receiver', 'attitude', 'importance',),
-    search_fields = ('subject', 'body', 'is_sent', 'is_read', 'importance','attitude','sender',  'receiver',) 
+    search_fields = ('subject', 'body', 'is_sent', 'is_read', 'importance',
+                     'attitude','sender',  'receiver', 'ip_address',) 
               #       'sender',  'receiver', 'attitude', 'importance',)
 
     class Meta:
@@ -83,11 +86,15 @@ class EmotionAdmin(admin.ModelAdmin):
                                     'emotion',
                                     'topic',
                                     'attitude',
+                                    'ip_address',
                                     'rating']}),)
 
-    list_display = ('id','user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
-    list_editable = ('user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
-    search_fields = ('user', 'subject', 'topic', 'translit_subject', 'emotion', 'attitude', 'rating',)
+    list_display = ('id','user', 'subject', 'topic', 'translit_subject', 
+                    'emotion', 'attitude', 'rating', 'ip_address',)
+    list_editable = ('user', 'subject', 'topic', 'translit_subject', 
+                     'emotion', 'attitude', 'rating', 'ip_address',)
+    search_fields = ('user', 'subject', 'topic', 'translit_subject', 
+                     'emotion', 'attitude', 'rating', 'ip_address',)
 
     class Meta:
          verbose_name = 'Emotion'

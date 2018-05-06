@@ -25,6 +25,7 @@ from rest_framework import exceptions
 
 from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
+from ipware import get_client_ip
 
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
@@ -54,7 +55,6 @@ from custom.forum.serializers import MessagingSettingsSerializer
 from custom.forum.serializers import NotificationSerializer
 from custom.forum.serializers import NotificationTypeSerializer
 from custom.users.serializers import UserSerializer
-
 
 class AttitudeList(generics.ListAPIView):
     queryset = Attitude.objects.all()
@@ -290,6 +290,9 @@ def get_substring_index(orig, search):
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def newmessage(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
     try:
 
         body = request.data.get('message', '')
@@ -329,6 +332,7 @@ def newmessage(request):
                                              attitude=attitude,
                                              importance=1,
                                              body=body,
+                                             ip_address=ip_address,
                                              sender=sender,
                                              receiver=receiver)
             if message:
@@ -359,6 +363,10 @@ def newmessage(request):
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def newemotion(request):
+
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
     try:
         emotion = request.data.get('emotion', '')
         subject = request.data.get('subject', '')
@@ -383,12 +391,16 @@ def newemotion(request):
         try:
             topic = Topic.objects.get(translit_name=trans_subject)
         except Exception as e:
-            topic = Topic.objects.create(name=subject, 
+            topic = Topic.objects.create(name=subject,
+                                         ip_address=ip_address, 
                                          translit_name=trans_subject)
                      
 
         user = User.objects.get(id=user_id)
-        Emotion.objects.create(user=user, topic=topic, attitude=attitude, emotion=emotion, subject=subject, translit_subject=trans_subject)
+        Emotion.objects.create(user=user, topic=topic, attitude=attitude, 
+                               emotion=emotion, subject=subject, 
+                               ip_address=ip_address,
+                               translit_subject=trans_subject)
         
 
     except Exception as e:

@@ -12,12 +12,17 @@ class Post(models.Model):
     subject = models.CharField(max_length=1250, blank=True, null=True)
     body = models.TextField(blank=True, null=True)
     time_published = models.DateTimeField(auto_now_add=True)
+    time_lastedited = models.DateTimeField(blank=True, null=True)
     rating =  models.FloatField(default=0, blank=True, null=True)
     attitude = models.ForeignKey(Attitude, blank=True, null=True, on_delete=models.CASCADE)
     attached_image_path = models.CharField(max_length=1450, blank=True, null=True) 
     translit_subject = models.CharField(max_length=1250,
                                         blank=True,
                                         null=True)
+    ip_address = models.CharField(max_length=40,
+                                  blank=True,
+                                  null=True)
+
     class Meta:
         verbose_name = 'Post'
         verbose_name_plural = 'Posts'
@@ -54,8 +59,10 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, blank=True, null=True,  on_delete=models.CASCADE)
     rating =  models.FloatField(default=0, blank=True, null=True)
     time_published = models.DateTimeField(auto_now_add=True)
+    ip_address = models.CharField(max_length=40,
+                                  blank=True,
+                                  null=True)
     
-
     class Meta:
         verbose_name = 'Comment'
         verbose_name_plural = 'Comments'
