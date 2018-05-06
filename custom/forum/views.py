@@ -125,7 +125,6 @@ def topics(request, topic_id):
                                      'logout': False})
 
 def forum_new(request):
-    redirect = 'forum_new.html'
 
     try:
         if request.user.is_authenticated:
@@ -144,6 +143,11 @@ def forum_new(request):
             user_id = -1
             is_authenticated = False
 
+    if request.user.is_authenticated:
+        redirect = 'forum_new.html'
+    else:
+        redirect = 'forum_new_unauth.html'
+
     return render(request, redirect,{'home':'forum_new.html',
                                      'user': request.user,
                                      'username': username,
@@ -153,8 +157,6 @@ def forum_new(request):
                                      'logout': False})
 
 def forum_add(request, topic_id, attitude_id):
-    redirect = 'forum_add.html'
-
     try:
         if request.user.is_authenticated:
             logout=True
@@ -181,6 +183,11 @@ def forum_add(request, topic_id, attitude_id):
         topic = Topic.objects.get(id=int(topic_id))
     except Exception as e:
         topic = None
+
+    if is_authenticated:
+        redirect = 'forum_add.html'
+    else:
+        redirect = 'forum_add_unauth.html'
 
     return render(request, redirect,{'home':'forum_new.html',
                                      'user': request.user,
@@ -357,6 +364,79 @@ def newmessage(request):
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def newemotion_unauth(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    try:
+        emotion = request.data.get('emotion', '')
+        subject = request.data.get('subject', '')
+        att = int(request.data.get('attitude', None))
+        attitude = Attitude.objects.get(id=int(att))
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+
+        log = Logger(log="EMOTION {} SUBJECT {} ATTITUDE {} USERNANE {} PASSWORD {}".format(emotion, subject, att, username, password))
+        log.save()
+
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"message": "failed to authenticate",
+                             "status": "posted",
+                             "code": 400,
+                             "falure_code": 2}, status=400)
+
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        try:
+            topic = Topic.objects.get(translit_name=trans_subject)
+        except Exception as e:
+            topic = Topic.objects.create(name=subject,
+                                         ip_address=ip_address,
+                                         translit_name=trans_subject)
+
+        log = Logger(log="TOPIC WAS {}".format(topic))
+        log.save()
+
+        Emotion.objects.create(user=user, topic=topic, attitude=attitude,
+                               emotion=emotion, subject=subject,
+                               ip_address=ip_address,
+                               translit_subject=trans_subject)
+
+    except Exception as e:
+        log = Logger(log="UNAUTH FAILED - just did not work out - failed to create a new emotion {}".format(e))
+        log.save()
+
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+
+    return Response({"message": "success - username used",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
+
 
 
 @api_view(['POST', 'GET'])

@@ -68,6 +68,17 @@ input[type=text], input[type=password] {
     padding-bottom: 0.4em;
 }
 
+.forum-errors, .comment-errors {
+    display: none;
+    color: red;
+    text-align:center;
+    font-family: Times New Roman;
+    font-weight: normal;
+    width:100%;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
 .activation-errors {
     display: none;
     color: red;
@@ -125,6 +136,36 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newforumunauthform label {
+        width: 250px;
+    }
+
+    #newforumunauthform label.error, #newforumunauthform input.submit, #newforumunauthform input.button {
+        margin-left: 253px;
+    }
+
+    #newforumunauthform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+
+    #newunauthforumform label {
+        width: 250px;
+    }
+
+    #newunauthforumform label.error, #newunauthforumform input.submit, #newunauthforumform input.button {
+        margin-left: 253px;
+    }
+
+    #newunauthforumform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
     #newmessageform label {
         width: 250px;
     }
@@ -148,6 +189,20 @@ button:hover {
     }
 
     #newcommentform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+    #newcommentunauthform label {
+        width: 250px;
+    }
+
+    #newcommentunauthform label.error, #newcommentunauthform input.submit, #newcommentunauthform input.button {
+        margin-left: 253px;
+    }
+
+    #newcommentunauthform label.error {
         margin-left: 10px;
         width: auto;
         display: inline;
@@ -1754,6 +1809,39 @@ span.psw {
                       }
             }); 
 
+
+            $('#newcommentunauthform').validate({
+                      rules: {
+                            comment_attitude: "required",
+                            comment_username: "required",
+                            comment_password: "required",
+                            comment: "required",
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           comment: {
+                               required: "Введите Ваш Комментарий!",
+                           },
+                           comment_attitude: {
+                               required: "Выскажите свое отношение к опубликованному!",
+                           },
+                           comment_username: {
+                               required: "Введите Ваш Ник!",
+                           },
+                           comment_password: {
+                               required: "Введите Ваш Пароль!",
+                           },
+
+                      }
+            });
+
+
             $('#changepassword').validate({
                       rules: {
                             oldpassword: {
@@ -1874,6 +1962,51 @@ span.psw {
  
                      }
              });
+
+            $('#newunauthforumform').validate({
+                      rules: {
+                            forumnew_attitude: "required",
+                            feeling: "required",
+                            forumnew_username: "required",
+                            forumnew_password: "required",
+                            subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           subject: {
+                               required: "Название темы не может быть пустым!",
+                               minlength: "Название темы не может быть пустым!",
+                           },
+                           feeling: {
+                               required: "Сообщение не может быть пустым!",
+                               minlength: "Сообщение не может быть пустым!",
+                           },
+                           forumnew_attitude: {
+                               required: "Ваше относение к публикуемому должно быть высказано!",
+                           },
+                           forumnew_username: {
+                               required: "Имя Пользователя (Ник) Обязательно для заполнения!",
+                           },
+                           forumnew_password: {
+                               required: "Пароль Обязателен для заполнения!",
+                           }
+
+
+
+
+                     }
+             });
+
 
             $('#editblogform').validate({
                       rules: {
@@ -2020,7 +2153,38 @@ span.psw {
               $('#modal-login-open').click(function() {
                   $('#modal-login').show();
               });
-               
+              
+              $('#newcommentunauth-publish').click(function(event) {
+                  if (  $('#newcommentunauthform').valid() ) {
+                      var arr = {
+                          body: $("#comment").val(),
+                          attitude: attitude[$('input[type=radio][name=comment_attitude]:checked').val()],
+                          title: $("#comment_subject").val(),
+                          user_id: $("#comment_user_id").val(),
+                          post_id: $("#comment_post_id").val(),
+                          comment_id: $("#comment_id").val(),
+                          comment_username:  $("#comment_username").val(),
+                          comment_password:  $("#comment_password").val(),
+                      };                       
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewcommentunauth/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('blog/'+$("#comment_post_id").val()+"/comments");
+                          },
+                          error: function(data){
+                              $(".comment-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+                  }
+              });
+ 
               $('#newcomment-publish').click(function(event) {
                   if ($('#newcommentform').valid()) {
                       var arr = {
@@ -2164,6 +2328,39 @@ span.psw {
 
 
                   }
+              });
+
+              $('#forumnew-unauth-publish').click(function() {
+
+                   if ($('#newunauthforumform').valid()) {
+
+                      var arr = {
+                          emotion: $("#feeling").val(),
+                          attitude: attitude[$('input[type=radio][name=forumnew_attitude]:checked').val()],
+                          subject: $("#subject").val(),
+                          username: $("#forumnew_username").val(),
+                          password: $("#forumnew_password").val(),
+                          user_id: $("#emotion_user_id").val(),
+                      };
+
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewemotionunauth/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_main();
+                          },
+                          error: function(data){
+                              alert("error "+data); 
+                               $(".forum-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+                   }
               });
 
               $('#forumnew-publish').click(function() {

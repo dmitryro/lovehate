@@ -74,15 +74,27 @@ def newcomment(request, post_id):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'comment_new.html',{'home':'comment_new.html',
-                                               'post': post,
-                                               'comments': comments,
-                                               'user': request.user,
-                                               'username': username,
-                                               'current_page': 'new_comment',
-                                               'is_authenticated': is_authenticated,
-                                               'logout': logout,
-                                               'user_id': user_id})
+    if request.user.is_authenticated:
+        return render(request, 'comment_new.html',{'home':'comment_new.html',
+                                                   'post': post,
+                                                   'comments': comments,
+                                                   'user': request.user,
+                                                   'username': username,
+                                                   'current_page': 'new_comment',
+                                                   'is_authenticated': is_authenticated,
+                                                   'logout': logout,
+                                                   'user_id': user_id})
+    else:
+        return render(request, 'comment_new_unauth.html',{'home':'comment_new_unauth.html',
+                                                   'post': post,
+                                                   'comments': comments,
+                                                   'user': request.user,
+                                                   'username': username,
+                                                   'current_page': 'new_comment',
+                                                   'is_authenticated': is_authenticated,
+                                                   'logout': logout,
+                                                   'user_id': user_id})
+
 
 @csrf_exempt
 def editcomment(request, comment_id):
@@ -280,6 +292,47 @@ def newblog(request):
                                             'is_authenticated': is_authenticated,
                                             'logout': logout,
                                             'user_id': user_id})
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def addnewcommentunauth(request):
+    try:
+        body = request.data.get('body', '')
+        title = request.data.get('title', '')
+        att = int(request.data.get('attitude', None))
+        post_id = int(request.data.get('post_id', None))
+        username = request.data.get('comment_username', None)
+        password = request.data.get('comment_password', None)
+        ip, is_routable = get_client_ip(request)
+        ip_address = str(ip)
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"message": "failed to authenticated",
+                             "status": "posted",
+                             "code": 400,
+                             "falure_code": 2}, status=400)
+
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        attitude = Attitude.objects.get(id=int(att))
+        log = Logger(log="BEFORE WE READ POST")
+        log.save()
+        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post_id=post_id, ip_address=ip_address)
+    except Exception as e:
+        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log.save()
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+    return Response({"message": "success - username used",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
+
 
 
 @api_view(['POST', 'GET'])

@@ -54,16 +54,20 @@ from custom.forum.views import EmotionList
 from custom.forum.views import AttitudeDetail
 from custom.forum.views import AttitudeList
 from custom.forum.views import newemotion
+from custom.forum.views import newemotion_unauth
 from custom.forum.views import topics
 from custom.forum.views import newmessage
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
 from custom.blog.views import addnewblog
+from custom.blog.views import updatepost
 from custom.blog.views import newblog
+from custom.blog.views import editblog
 from custom.blog.views import userblog
 from custom.blog.views import blogpost
 from custom.blog.views import newcomment
 from custom.blog.views import addnewcomment
+from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
 from django.contrib import admin
@@ -86,6 +90,7 @@ urlpatterns = [
     path('emotions/', EmotionList.as_view()),
     path('attitudes/', AttitudeList.as_view()),
     path('addnewemotion/', csrf_exempt(newemotion)),
+    path('addnewemotionunauth/', csrf_exempt(newemotion_unauth)),
     path('editcomment/<int:comment_id>/', csrf_exempt(editcomment)),
     path('emotions/<int:pk>/', EmotionDetail.as_view()),
     path('attitudes/<int:pk>/', AttitudeDetail.as_view()),
@@ -108,10 +113,13 @@ urlpatterns = [
     path('newmessage/', newmessage),
     path('outgoing/', outgoing_messages),
     path('incoming/', incoming_messages),
+    path('blog/edit/<int:post_id>/', editblog),
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
     path('addnewblog/', addnewblog),
+    path('updatepost/', updatepost),
     path('addnewcomment/', addnewcomment),
+    path('addnewcommentunauth/', addnewcommentunauth),
     path('changepassword/', changepassword),
     path('blogpost/<int:post_id>/', blogpost),
     path('blog/user/<int:user_id>/', userblog),
