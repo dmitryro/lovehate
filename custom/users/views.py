@@ -29,6 +29,7 @@ from transliterate import detect_language
 
 from custom.gui.views import chunks
 from custom.gui.views import Page
+from custom.blog.views import Post
 from custom.forum.models import Topic
 from custom.forum.models import Emotion
 from custom.users.signals import user_resend_activation
@@ -152,6 +153,7 @@ def user_profile(request, user_id):
 
     try:
         profile = Profile.objects.get(user_id=int(user_id))
+        posts = Post.objects.filter(author=profile.user)
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
         loved_titles = []
 
@@ -203,6 +205,7 @@ def user_profile(request, user_id):
                                          'mehs': meh_topics,
                                          'hates': hate_topics,
                                          'bio': profile.bio,
+                                         'posts': posts,
                                          'user': request.user,
                                          'is_authenticated': is_authenticated,
                                          'current_page': 'user_profile',
@@ -389,10 +392,10 @@ def changepassword(request):
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def auth(request):
+    logout(request)
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
 
-   
     user = authenticate(username=username, password=password)
 
     if not user:
@@ -420,7 +423,7 @@ def auth(request):
                          "reason": "Invalid user"}, 
                          status=400)
     if user.is_active:
-        request.session.set_expiry(1086400) #sets the exp. value of the session 
+        #request.session.set_expiry(1086400) #sets the exp. value of the session 
         login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
 
     return Response({"message": "success",

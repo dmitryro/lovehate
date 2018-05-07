@@ -23,7 +23,7 @@
     
         <div class="col-sm-8">
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-                <form action="editprofile" method="post">
+                <form action="/outgoing/" enctype="multipart/form-data" method="POST">
                     <div class="row">
 
                                             <div class="container-fluid">
@@ -43,7 +43,6 @@
 
                                                        {% for message in outgoing %}
                                                            <div class="row">
-  
                                                             <div  class="col-sm-1">
                                                             </div>
                                                             <div  class="col-sm-1">
@@ -68,13 +67,7 @@
                                                            {% elif message.attitude.id == 3 %}
                                                                   <div class="hates-messages">
                                                            {% endif %}
-                                                         
-
-                                                                
-
-
-                                                                   {{ message.subject }} {{ message.attitude }}
-
+                                                                   {{ message.subject }} 
                                                                    <br/>
                                                   {% for line in message.body_lines %}
                                                           {% if line|slice:"0:1" == '>' %}
@@ -94,9 +87,17 @@
                                                              </div>
                                                             </div>
                                                        {% endfor %}
-                                                      <div class="row">                            
-                                                         <div class="col-sm-4"> 
+                                                      <div class="row">  
+                                                         <div class="col-sm-1">
+
+                                                         <button class="btn4"  type="submit"  style="background:#4a4a4a;min-width:6.00em;margin-top:1.4em;">
+                                                         Удалить
+                                                         </button>
+
+
                                                          </div>
+                                                         <div class="col-sm-3"></div>
+                          
                                                          <div class="col-sm-8">
                                                                       {% bootstrap_paginate outgoing range=10 show_prev_next="false" show_first_last="true" %} 
                                                          </div>

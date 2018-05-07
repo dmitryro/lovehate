@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% load blog_extras %}
 {% load static %}
 {% load bootstrap_pagination %}
+{% load blog_extras %}
 {% block content %}
 
 <div>
@@ -25,25 +25,25 @@
                                <div class="container-fluid">
                                    
                                {% for post in posts %}
-                                     {% if post.attitude.id == 1 %}
-                                            <div class="row loves-messages" style="margin-top:1.5em;">
-                                     {% elif post.attitude.id == 2 %}
-                                            <div class="row mehs-messages" style="margin-top:1.5em;">
-                                     {% elif post.attitude.id == 3 %}
-                                            <div class="row hates-messages" style="margin-top:1.5em;">
-                                     {% endif %}
+                                                           {% if post.attitude.id == 1 %}
+                                                                 <div class="row loves-messages" style="margin-top:1.5em;">
+                                                           {% elif post.attitude.id == 2 %}
+                                                                  <div class="row mehs-messages" style="margin-top:1.5em;">
+                                                           {% elif post.attitude.id == 3 %}
+                                                                  <div class="row hates-messages" style="margin-top:1.5em;">
+                                                           {% endif %}
 
                                      <div class="col-sm-2">
-                                         <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
+                                         {{ post.author_nick }}
                                      </div>
                                      <div class="col-sm-10">
                                          <strong> {{ post.subject }}</strong>
                                      </div>  
-
-                                    </div>
-
-                                     <div class="row">                                     
-                                         <div class="col-sm-12">
+                             
+                                      </div>
+                                     <div class="row neutral-messages">
+        
+                                     <div class="col-sm-12">
 
                                                   {% for line in post.body_lines %}
                                                           {% if line|slice:"0:1" == '>' %}
@@ -58,34 +58,36 @@
                                                            <br/>
                                                   {% endfor %}
 
-                                         </div> 
+                                     </div> 
                                      </div>
 
-                                     {% if post.link %}
-                                     <div class="row">
-                                         <div class="col-sm-12">
-                                              <a href="{{ post.link }}">{{ post.link }}</a>
-                                         </div>
+                                     
+
+                                      {% if post.link %}
+                                     <div class="row neutral-messages">
+                                     <div class="col-sm-12">
+                                          <a href="{{ post.link }}">{{ post.link }}</a>
                                      </div>
-                                     {% endif %}
-                                     <div class="row">
+                                     </div>
+                                    {% endif %}
+                                     <div class="row neutral-messages">
                                      <div class="col-sm-4">
-                                          <a href="/blog/{{ post.id }}/comments">>
-Читать комментарии
-                                          </a>
-                                     </div>
-                                     <div class="col-sm-3">
                                           <a href="/blog/{{ post.id }}/comments">
-Комментировать
-
- {% post_meta post.id 1 %}
+Читать комментарии
+({% post_meta post.id 1 %})
                                           </a>
                                      </div>
-                                     <div class="col-sm-5"></div>
+                                     <div class="col-sm-4">
+                                          <a href="/blogcomment/{{ post.id }}">
+Комментировать
+                            
+              </a>
+                                     </div>
+                                     <div class="col-sm-4"></div>
 
 
 
-                                                            </div>
+                            </div>
                                {% endfor %}
                                </div>
                          </div>

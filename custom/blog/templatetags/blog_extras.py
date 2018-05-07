@@ -30,7 +30,11 @@ logger = logging.getLogger('sorl.thumbnail')
 def post_meta(post_id, attitude_id,  *args, **kwargs):
     try:
         comments = Comment.objects.filter(post_id=int(post_id))
-        return len(comments)
+        if len(comments) > 0:
+            total = "({})".format(len(comments))
+        else:
+            total = ""
+        return total
     except Exception as e:
         logging.error("Unable to calculate totals ...")
-        return 0
+        return ""

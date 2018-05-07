@@ -68,7 +68,7 @@ input[type=text], input[type=password] {
     padding-bottom: 0.4em;
 }
 
-.forum-errors, .comment-errors {
+.forum-errors, .comment-errors, .blognew-errors {
     display: none;
     color: red;
     text-align:center;
@@ -216,6 +216,24 @@ button:hover {
     #newblogform label.error, #newblogform input.submit, #newblogform input.button {
         margin-left: 253px;
     }
+    #newblogform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+    #newblogunauthform label {
+        width: 250px;
+    }
+
+    #newblogunauthform label.error, #newblogunauthform input.submit, #newblogunauthform input.button {
+        margin-left: 253px;
+    }
+    #newblogunauthform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
 
     #editblogform label {
         width: 250px;
@@ -225,11 +243,6 @@ button:hover {
         margin-left: 253px;
     }
 
-    #newblogform label.error {
-        margin-left: 10px;
-        width: auto;
-        display: inline;
-    }
 
     #editblogform label.error {
         margin-left: 10px;
@@ -652,24 +665,34 @@ span.psw {
 
 .loves-messages {
    color: #008000;
-   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
 
 .mehs-messages {
    color: #333333;
-   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
 
 .hates-messages {
    color: #8b0000;
-   font-size:1.0em;
    font-weight: normal;
    font-family: Times New Roman;
 }
+.loves-messages a, .mehs-messages a, .hates-messages a, .neutral-messages a {
+   color:#00008b;
+   font-weight:bold;
+   text-decoration: none;
+}
+
+.loves-messages a:hover, .mehs-messages a:hover, .hates-messages a:hover, .neutral-messages a:hover {
+   color:#00008b;
+   font-weight:bold;
+   text-decoration: underline;
+}
+
+
 .mehs {
    color: #333333;
    font-weight: normal;
@@ -765,7 +788,17 @@ span.psw {
    font-weight: normal;
    font-size: 1.2em;
 }
+.loves-topic a, .hates-topic a, .mehs-topic a{
+   color:#00008b;
+   font-weight:bold;
+   text-decoration: none;
+}
 
+.loves-topic a:hover, .hates-topic a:hover, .mehs-topic a:hover {
+   color:#00008b;
+   font-weight:bold;
+   text-decoration: underline;
+}
 
 
 .hates-topic {
@@ -872,6 +905,18 @@ span.psw {
    font-family: Times New Roman;
 }
 
+.links-profile a {
+   color: #333333;
+   text-decoration:none;
+   font-weight:bold;
+}
+.links-profile a:hover {
+   color: #333333;
+   text-decoration:underline;
+   font-weight:bold;
+}
+
+
 .loves-forum {
    margin-left:1.0em;
    color: #008000;
@@ -880,13 +925,13 @@ span.psw {
    font-weight: normal;
 }
 .loves-forum a {
-   color: #008000;
+   color: #00008b;
    text-decoration:none;
    font-weight:bold;
 }
 .loves-forum a:hover {
-   color: #008000;
-   text-decoration:underlined;
+   color: #00008b;
+   text-decoration:underline;
    font-weight:bold;
 }
 
@@ -897,11 +942,33 @@ span.psw {
    font-family: Times New Roman;
 }
 
+.mehs-forum a {
+   color: #00008b;
+   text-decoration:none;
+   font-weight:bold;
+}
+.mehs-forum a:hover {
+   color: #00008b;
+   text-decoration:underline;
+   font-weight:bold;
+}
+
 .hates-forum {
    color: #8b0000;
    font-weight: normal;
    font-size: 1.54em;
    font-family: Times New Roman;
+}
+
+.hates-forum a {
+   color: #00008b;
+   text-decoration:none;
+   font-weight:bold;
+}
+.hates-forum a:hover {
+   color: #00008b;
+   text-decoration:underline;
+   font-weight:bold;
 }
 
 .logo-age {
@@ -1128,8 +1195,8 @@ span.psw {
 }
 
 .form-row {
-   padding-top: 0.2em; 
-   padding-bottom: 0.2em;
+   padding-top: 0.0em; 
+   padding-bottom: 0.0em;
    display:block;
 }
 .comment-form-row {
@@ -1246,7 +1313,6 @@ span.psw {
                <div class = "row header-pan-bottom">
                   <div class="col-sm-6" style="margin-left:20em;;min-width:41.00em;">
                                  <div id="submenu-main">
-                                          Главная
                                   
                                  </div>
 
@@ -1276,20 +1342,19 @@ span.psw {
                                      <div class="submenu-item">
                                             <a href="/blog">Общий дневник</a>
                                      </div>
-
-                        {% if user.is_authenticated %}
+                            {% if user.is_authenticated %}
                                      <div class="submenu-item">
                                             <a href="/blog/user/{{ user.id }}">
                                             Ваш дневник
                                             </a>
                                      </div>
+                           {% endif %}
 
                                      <div class="submenu-item">
                                             <a href="/blog/new">
 Добавить запись в дневник
                                             </a>
                                      </div>
-                        {% endif %}
 
                                      <div class="submenu-item">
                                          <a href="/rss">
@@ -1364,7 +1429,7 @@ span.psw {
                                                {% endif %}
                                                {% if user.is_authenticated %}
                                                    <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}" />
-                                                   <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/private">
+                                                   <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/incoming">
                                                          Приваты
  
                                                          </a> | <a id="session-exit" href="/signout">Выйти</a>
@@ -2078,6 +2143,47 @@ span.psw {
              });
 
 
+            $('#newblogunauthform').validate({
+                      rules: {
+                            blognew_attitude: "required",
+                            blognew_post: "required",
+                            blognew_username: "required",
+                            blognew_password: "required",
+                            blognew_subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           blognew_subject: {
+                               required: "Тема сообщеняи обязательна!",
+                               minlength: "Тема сообщеняи обязательна!",
+                           },
+                           blognew_post: {
+                               required: "Текст сообщения обязателен!",
+                               minlength: "Текст сообщения обязателен!",
+                           },
+                           blognew_attitude: {
+                               required: "Выскажите свое отношение к публикуемому!",
+                           },
+                           blognew_username: {
+                               required: "Ник (имя пользователя) обязателен!",
+                           },
+                           blognew_password: {
+                               required: "Пароль обязателен!",
+                           }
+
+                     }
+             });
+
             $('#registration').validate({
                       rules: {
                             register_username: {
@@ -2298,6 +2404,37 @@ span.psw {
 
 
                   }
+              });
+
+              $('#blognew-unauth-publish').click(function() {
+                   if ($('#newblogunauthform').valid()) {
+                      var arr = {
+                          post: $("#blognew_post").val(),
+                          attitude: attitude[$('input[type=radio][name=blognew_attitude]:checked').val()],
+                          subject: $("#blognew_subject").val(),
+                          link: $("#blognew_link").val(),
+                          username: $("#blognew_username").val(),
+                          password: $("#blognew_password").val(),
+                      };
+
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/addnewblogunauth/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('blog');
+                          },
+                          error: function(data){
+                               $(".blognew-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+ 
+ 
+                   }
               });
 
               $('#blognew-publish').click(function() {

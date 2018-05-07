@@ -36,6 +36,7 @@ from custom.gui.views import logout
 from custom.gui.views import forum
 from custom.gui.views import mylh
 from custom.gui.views import private
+from custom.gui.views import cleanmessages
 from custom.gui.views import statistics
 from custom.gui.views import simple_signin
 from custom.users.views import UserList
@@ -59,7 +60,9 @@ from custom.forum.views import topics
 from custom.forum.views import newmessage
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
+from custom.forum.views import answer_private
 from custom.blog.views import addnewblog
+from custom.blog.views import addnewblogunauth
 from custom.blog.views import updatepost
 from custom.blog.views import newblog
 from custom.blog.views import editblog
@@ -103,7 +106,9 @@ urlpatterns = [
     path('signout/', logout),
     path('statistics/', statistics),
     path('register/', register),
+    path('cleanmessages/', cleanmessages),
     path('private/', private),
+    path('private/answer/<int:message_id>/', answer_private),
     path('topics/', forum),
     path('forum/', forum),
     path('mylh/', mylh),
@@ -111,12 +116,13 @@ urlpatterns = [
     path('blogs/', blog),
     path('registernew/', registernew),
     path('newmessage/', newmessage),
-    path('outgoing/', outgoing_messages),
-    path('incoming/', incoming_messages),
+    path('outgoing/', csrf_exempt(outgoing_messages)),
+    path('incoming/', csrf_exempt(incoming_messages)),
     path('blog/edit/<int:post_id>/', editblog),
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
     path('addnewblog/', addnewblog),
+    path('addnewblogunauth/', addnewblogunauth),
     path('updatepost/', updatepost),
     path('addnewcomment/', addnewcomment),
     path('addnewcommentunauth/', addnewcommentunauth),

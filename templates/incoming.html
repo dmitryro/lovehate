@@ -16,8 +16,10 @@
     
         <div class="col-sm-8">
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-                <form action="editprofile" method="post">
-                    <div class="row">
+                <form action="/incoming/" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+
+                             <div class="row">
 
                                             <div class="container-fluid">
 
@@ -37,8 +39,6 @@
                                                            <div class="row">
   
                                                             <div  class="col-sm-1">
-                                                            </div>
-                                                            <div  class="col-sm-1">
                                                                  <input type="checkbox" name="incoming_delete" value="{{ message.id }}" />
                                                             </div>
 
@@ -51,7 +51,7 @@
                                                            {% endif %}
                                                                   {{ message.date_time_sent }}
                                                             </div>
-                                                            <div class="col-sm-8"> 
+                                                            <div class="col-sm-7"> 
                                                             
                                                            {% if message.attitude.id == 1 %}
                                                                  <div class="loves-messages">
@@ -62,11 +62,15 @@
                                                            {% endif %}
                                                          
 
-                                                                
-
+                                                           {% if not message.is_read %}   
+                                                               <span style="font-weight:bold;">                     
+                                                           {% else %}
+                                                               <span style="font-weight:normal;">
+                                                           {% endif %}
 
                                                                     {{ message.sender.username }} - {{ message.subject }} {{ message.attitude }} 
-
+                                                               </span>
+                                                           
                                                                    <br/>
 
                                                   {% for line in message.body_lines %}
@@ -86,11 +90,32 @@
 
                                                               </div>
                                                              </div>
+
+                                                             <div  class="col-sm-1">
+                                                           {% if not message.is_read %}
+                                                               <span style="font-weight:bold;">
+                                                           {% else %}
+                                                               <span style="font-weight:normal;">
+                                                           {% endif %}
+
+
+                                                                 <a href="/private/answer/{{ message.id}}">Ответить</a>
+                                                            </span>
+                                                             </div>
+                                                             <div  class="col-sm-1">
+                                                             </div>
                                                             </div>
                                                        {% endfor %}
                                                       <div class="row">                            
-                                                         <div class="col-sm-4"> 
+                                                         <div class="col-sm-1"> 
+
+                            <button class="btn4"  type="submit"  style="background:#4a4a4a;min-width:6.00em;margin-top:1.4em;">
+                                 Удалить
+                            </button>
+
+
                                                          </div>
+                                                         <div class="col-sm-3"></div>
                                                          <div class="col-sm-8">
                                                                       {% bootstrap_paginate incoming range=10 show_prev_next="false" show_first_last="true" %} 
                                                          </div>

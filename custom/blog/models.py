@@ -12,7 +12,8 @@ class Post(models.Model):
     subject = models.CharField(max_length=1250, blank=True, null=True)
     body = models.TextField(blank=True, null=True)
     time_published = models.DateTimeField(auto_now_add=True)
-    time_lastedited = models.DateTimeField(blank=True, null=True)
+    time_last_commented = models.DateTimeField(blank=True, null=True)
+    time_last_edited = models.DateTimeField(blank=True, null=True)
     rating =  models.FloatField(default=0, blank=True, null=True)
     attitude = models.ForeignKey(Attitude, blank=True, null=True, on_delete=models.CASCADE)
     attached_image_path = models.CharField(max_length=1450, blank=True, null=True) 
@@ -42,9 +43,12 @@ class Post(models.Model):
         year = dt[0:4]
         month = dt[5:7]
         day = dt[8:10]
-        return "{}/{}/{}".format(day,
-                                 month,
-                                 year)
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_published.hour,
+                                          self.time_published.minute,
+                                          self.time_published.second)
     @property
     def body_lines(self):
         return self.body.splitlines()
@@ -81,3 +85,19 @@ class Comment(models.Model):
     @property
     def body_lines(self):
         return self.body.splitlines()
+
+    @property
+    def date_time_published(self):
+        dt = str(self.time_published)
+        year = dt[0:4]
+        month = dt[5:7]
+        day = dt[8:10]
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_published.hour,
+                                          self.time_published.minute,
+                                          self.time_published.second)
+
+
+

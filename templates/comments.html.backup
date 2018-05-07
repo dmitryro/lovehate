@@ -4,7 +4,7 @@
 {% load blog_extras %}
 {% block content %}
 <div class="container-fluid registration-form">
-    <div class="row" style="font-size:1.20em;">
+    <div class="row">
 
         <div class="col-sm-2">
         </div>
@@ -13,8 +13,9 @@
             <div class="container-fluid">
                 <form action="editprofile" method="post">
                     <div class="row">
-
-                         <div class="col-sm-12">
+                         <div class="col-sm-1">
+                         </div>
+                         <div class="col-sm-10">
                                <div class="container-fluid">
 
 
@@ -26,8 +27,10 @@
                                           <div class="row hates-messages" style="margin-top:1.5em;">
                                       {% endif %}
                
-                                                   <div class="col-sm-11">
-                                                              <a href="/user/{{ post.author.id }}"><strong>{{ post.author_nick }}</strong></a>,
+                                                   <div class="col-sm-3">
+                                                              <a href="/user/{{ post.author.id }}"><strong>{{ post.author_nick }}</strong></a>
+                                                   </div>
+                                                   <div class="col-sm-8">
                                                             <strong> {{ post.subject }}</strong> {{ post.date_time_published }}
                                                    </div>
                                                    <div class="col-sm-1">
@@ -81,8 +84,8 @@
 
                               </div>
                               {% endif %}
-                              <div class="row neutral-messages" stlye="padding-left:1.6em;margin-top:2.22em;">
-                                   <div class="container-fluid" style="margin-left:2.22em;">
+                              <div class="row neutral-messages" stlye="padding-left:1.6em;">
+                                   <div class="container-fluid" style="margin-left:2.0em">
                                                           {% for comment in comments %}
                                                            {% if comment.attitude.id == 1 %}
                                                                  <div class="row loves-messages" style="margin-top:1.5em;">
@@ -148,6 +151,7 @@
 
                     </div>
                     <div class="row neutral-messages"> 
+                       <div class="col-sm-1"></div>
                        <div class="col-sm-4">
                               <br/>
                               <strong>
@@ -168,10 +172,9 @@
                 </form>
            </div>
         </div>
-<!--
        <div class="col-sm-8">
        </div>
- -->       
+        
 
     </div>
 </div>     

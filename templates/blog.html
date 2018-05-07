@@ -19,9 +19,7 @@
             <div class="container-fluid">
                 <form action="editprofile" method="post">
                     <div class="row blog-common-row">
-                         <div class="col-sm-1">
-                         </div>
-                         <div class="col-sm-10">
+                         <div class="col-sm-12">
                                <div class="container-fluid">
                                    
                                {% for post in posts %}
@@ -33,15 +31,11 @@
                                                                   <div class="row hates-messages" style="margin-top:1.6em;">
                                                            {% endif %}
 
-                                     <div class="col-sm-2">
+                                     <div class="col-sm-4">
 
-                                                  {{ post.date_time_published }}
+                                                  {{ post.date_time_published }}, <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
                                      </div>
-
-
-                                     <div class="col-sm-2">
-                                         <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
-                                     </div>
+                                      
 
 
                                      <div class="col-sm-8">
@@ -78,25 +72,25 @@
                                                                             </div> 
                                                                   </div>
                                      {% if post.link %} 
-                                     <div class="row">
+                                     <div class="row neutral-messages">
                                      <div class="col-sm-12">
                                           <a href="{{ post.link }}">{{ post.link }}</a>
                                      </div>
                                      </div>
 
                                     {% endif %}
-                                    <div class="row">
-                                    <div class="col-sm-3" style="font-size: 0.74em;font-weight:bold;">
+                                    <div class="row neutral-messages">
+                                    <div class="col-sm-3">
                                           <a href="/blog/{{ post.id }}/comments">
                                         
 Читать
                                            
-                                             ({% post_meta post.id 1 %})
+                                             {% post_meta post.id 1 %}
 
 
                                             </a>
                                      </div>
-                                     <div class="col-sm-3" style="font-size: 0.74em; font-weight:bold;">
+                                     <div class="col-sm-3">
                                           <a href="/blogcomment/{{ post.id }}">
 Комментировать
                                           </a>
@@ -108,8 +102,6 @@
                                                             </div>
                                {% endfor %}
                                </div>
-                         </div>
-                         <div class="col-sm-1">
                          </div>
 
                     </div>

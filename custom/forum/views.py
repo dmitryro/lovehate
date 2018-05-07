@@ -202,7 +202,18 @@ def forum_add(request, topic_id, attitude_id):
 
 def outgoing_messages(request):
     redirect = 'outgoing.html'
+
+    try:
+        delete_ids = request.POST.getlist('outgoing_delete')
+        for delete_id in delete_ids:
+            message = Message.objects.get(id=int(delete_id))
+            message.delete()
+    except Exception as e:
+        log = Logger(log='Could not delete {}'.format(e))
+        log.save()
+
     page = request.GET.get('page', 1)
+
 
     try:
         if request.user.is_authenticated:
@@ -248,6 +259,13 @@ def incoming_messages(request):
     redirect = 'incoming.html'
     page = request.GET.get('page', 1)
 
+    try:
+        delete_ids = request.POST.getlist('incoming_delete')
+        for delete_id in delete_ids:
+            message = Message.objects.get(id=int(delete_id))
+            message.delete()
+    except Exception as e:
+        pass 
 
     try:
         if request.user.is_authenticated:
@@ -437,6 +455,47 @@ def newemotion_unauth(request):
                      "falure_code": 0}, status=200)
 
 
+
+@csrf_exempt
+def answer_private(request, message_id):
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        message = Message.objects.get(id=int(message_id))
+        message.is_read=True
+        message.save()
+        return render(request, 'answer_private.html',{'home':'answer_private.html',
+                                                      'answer_subject': "RE: {}".format(message.subject),
+                                                      'user': request.user,
+                                                      'recipient': message.sender,
+                                                      'username': username,
+                                                      'current_page': 'private',
+                                                      'is_authenticated': is_authenticated,
+                                                      'logout': logout,
+                                                      'user_id': user_id}) 
+    except Exception as e:
+        return render(request, 'private.html',{'home':'private.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'current_page': 'private',
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
 
 
 @api_view(['POST', 'GET'])

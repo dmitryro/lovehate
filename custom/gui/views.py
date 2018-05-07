@@ -249,6 +249,43 @@ def mylh(request):
                                      'user_id': ''})
 
 @csrf_exempt
+def cleanmessages(request):
+    todelete = request.POST.get('incoming_delete', [])
+    
+    for delete_id in todelete:
+        try:
+            message = Message.objects.get(id=delete_id)
+            message.delete()
+        except Exception as e:
+            pass
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, 'incoming.html',{'home':'incoming.html',
+                                            'user': request.user,
+                                            'username': username,
+                                            'current_page': 'private',
+                                            'is_authenticated': is_authenticated,
+                                            'logout': logout,
+                                            'user_id': user_id})
+
+
+@csrf_exempt
 def private(request):
 
     try:
@@ -530,28 +567,4 @@ def register(request):
 @csrf_exempt
 def logout(request):
     log_out(request)
-
-    if request.user.is_authenticated:
-        logout=True
-        try:
-           user_id = request.user.id
-           username = request.user.username
-           first_name = request.user.first_name
-           last_name = request.user.last_name
-           profile_image_path = ''
-        except Exception as e:
-           user_id = -1
-           username = ''
-           first_name = ''
-           last_name = ''
-           profile_image_path = ''
-
-    else:
-        user_id = -1
-        logout=False
-        username = ''
-        first_name = ''
-        last_name = ''
-        profile_image_path = ''
-
     return HttpResponseRedirect('/')

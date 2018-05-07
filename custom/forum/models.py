@@ -25,16 +25,30 @@ class Topic(models.Model):
                                 on_delete=models.CASCADE)
 
 
-    @property
-    def creator_name(self):
-        return self.creator.username
-
     def __str__(self):
         return self.translit_name
 
     class Meta:
         verbose_name = 'Topic'
         verbose_name_plural = 'Topics'
+
+    @property
+    def date_time_published(self):
+        dt = str(self.time_published)
+        year = dt[0:4]
+        month = dt[5:7]
+        day = dt[8:10]
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_published.hour,
+                                          self.time_published.minute,
+                                          self.time_published.second)
+    @property
+    def creator_name(self):
+        return self.creator.username
+
+
 
 class Attitude(models.Model):
     name = models.CharField(max_length=250, blank=True, null=True)
@@ -115,6 +129,20 @@ class Emotion(models.Model):
         return "{}/{}/{}".format(day,
                                  month,
                                  year)
+
+    @property
+    def date_time_published(self):
+        dt = str(self.time_published)
+        year = dt[0:4]
+        month = dt[5:7]
+        day = dt[8:10]
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_published.hour,
+                                          self.time_published.minute,
+                                          self.time_published.second)
+
     @property
     def publishing_user_id(self):
         try:
@@ -174,9 +202,13 @@ class Message(models.Model):
         year = dt[0:4]
         month = dt[5:7]
         day = dt[8:10]
-        return "{}/{}/{}".format(day,
-                                 month,
-                                 year)
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_sent.hour,
+                                          self.time_sent.minute,
+                                          self.time_sent.second)
+
     def __str__(self):
         return self.subject
 
@@ -224,9 +256,23 @@ class Notification(models.Model):
 
     time_sent = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def date_time_sent(self):
+        dt = str(self.time_sent)
+        year = dt[0:4]
+        month = dt[5:7]
+        day = dt[8:10]
+        return "{}/{}/{} {}:{}:{}".format(day,
+                                          month,
+                                          year,
+                                          self.time_sent.hour,
+                                          self.time_sent.minute,
+                                          self.time_sent.second)
+
     class Meta:
         verbose_name = 'Notification'
         verbose_name_plural = 'Notifications'
+
 
 
 class MessagingSettings(models.Model):

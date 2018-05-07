@@ -285,7 +285,11 @@ def newblog(request):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'blog_new.html',{'home':'blog_new.html',
+    if is_authenticated:
+        redirect = 'blog_new.html'
+    else:
+        redirect = 'blog_new_unauth.html'
+    return render(request, redirect,{'home':redirect,
                                             'user': request.user,
                                             'username': username,
                                             'current_page': 'new_blog',
@@ -446,6 +450,75 @@ def updatepost(request):
                          "falure_code": 1}, status=400)
 
     return Response({"message": "success - post saved",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def addnewblogunauth(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    try:
+        post = request.data.get('post', '')
+        subject = request.data.get('subject', '')
+        att = int(request.data.get('attitude', None))
+        url = request.data.get('link', '')
+        username = request.data.get('username', None)
+        password = request.data.get('password', None)
+        attitude = Attitude.objects.get(id=int(att))
+        attitude = Attitude.objects.get(id=int(att))
+        shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"message": "failed to authenticated",
+                             "status": "posted",
+                             "code": 400,
+                             "falure_code": 2}, status=400)
+
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+
+
+
+        try:
+            link = shortener.short(url)
+        except Exception as e:
+            link = None
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        Post.objects.create(author=user, subject=subject, link=link,
+                            attitude=attitude, body=post,
+                            translit_subject=trans_subject,
+                            ip_address=ip_address)
+
+    except Exception as e:
+        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log.save()
+
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+
+    return Response({"message": "success - username used",
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
