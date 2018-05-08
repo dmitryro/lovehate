@@ -198,6 +198,7 @@ def user_profile(request, user_id):
 
     redirect = 'user.html'
     return render(request, 'user.html', {'home':'user.html',
+                                         'explored_user_id': user_id,
                                          'explored_username': profile.user.username,
                                          'username': profile.user.username,
                                          'is_activated': False,

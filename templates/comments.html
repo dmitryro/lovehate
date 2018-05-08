@@ -73,14 +73,44 @@
 
                               {% if post.link %}
 
-
                               <div class="row neutral-messages">
-                                     <div class="col-sm-12">
-                                          <a href="{{ post.link }}">{{ post.link }}</a>
+                                     <div class="col-sm-11">
+                                               &nbsp;&nbsp;&nbsp; <a href="{{ post.link }}">{{ post.link }}</a>
                                      </div>
 
                               </div>
                               {% endif %}
+                              {% if post.link_two %}
+
+                              <div class="row neutral-messages">
+                                     <div class="col-sm-11">
+                                               &nbsp;&nbsp;&nbsp; <a href="{{ post.link_two }}">{{ post.link_two }}</a>
+                                     </div>
+
+                              </div>
+                              {% endif %}
+
+                              {% if post.link_three %}
+
+                              <div class="row neutral-messages">
+                                     <div class="col-sm-11">
+                                               &nbsp;&nbsp;&nbsp; <a href="{{ post.link_three }}">{{ post.link_three }}</a>
+                                     </div>
+
+                              </div>
+                              {% endif %}
+
+                              {% if post.link_four %}
+
+                              <div class="row neutral-messages">
+                                     <div class="col-sm-11">
+                                               &nbsp;&nbsp;&nbsp; <a href="{{ post.link_four }}">{{ post.link_four }}</a>
+                                     </div>
+
+                              </div>
+                              {% endif %}
+
+
                               <div class="row neutral-messages" stlye="padding-left:1.6em;margin-top:2.22em;">
                                    <div class="container-fluid" style="margin-left:2.22em;">
                                                           {% for comment in comments %}

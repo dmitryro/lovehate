@@ -11,16 +11,26 @@ class PostAdmin(admin.ModelAdmin):
                                     'translit_subject',
                                     'body',
                                     'link',
+                                    'link_two',
+                                    'link_three',
+                                    'link_four',
+                                    'link_five',
                                     'ip_address',
                                     'attitude',
                                     'rating']}),)
 
     list_display = ('id','author', 'subject', 'body', 'translit_subject', 
-                    'link', 'attitude', 'rating', 'ip_address',)
+                    'link',  'link_two',
+                    'link_three','link_four','link_five',
+                    'attitude', 'rating', 'ip_address',)
     list_editable = ('author', 'subject', 'body', 'translit_subject', 
-                     'link', 'attitude', 'rating', 'ip_address',)
+                     'link',  'link_two',
+                    'link_three','link_four','link_five', 
+                    'attitude', 'rating', 'ip_address',)
     search_fields = ('author', 'subject', 'body', 'translit_subject', 
-                     'link', 'attitude', 'rating', 'ip_address',)
+                     'link',  'link_two',
+                     'link_three','link_four','link_five',
+                     'attitude', 'rating', 'ip_address',)
 
     class Meta:
          verbose_name = 'Post'

@@ -14,7 +14,7 @@
     </div>
     <div class="col-sm-8">
      <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-         <div class="row">
+         <div class="row neutral-messages">
              <div class="col-sm-4">
                  Имя пользователя (ник)
              </div>
@@ -24,6 +24,17 @@
              </div>
 
              <div class="col-sm-4">
+                  {% if user.is_authenticated %}
+                  <a href="/private/send/{{ explored_user_id }}">
+                        Отправить приват
+                  </a>
+                  {% else %}
+
+                    <a href="/private/unauth/{{ explored_user_id }}">
+                         Отправить приват
+                    </a>
+
+                  {% endif %}
              </div>
 
          </div>

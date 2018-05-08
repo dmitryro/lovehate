@@ -14,24 +14,13 @@
     <div class="col-sm-8">
      <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
          <div class="row">
+
              <div class="col-sm-4">
-                 Имя пользователя (ник)
+              Тема
              </div>
 
              <div class="col-sm-4">
-                  {{ explored_username }}
-             </div>
-
-             <div class="col-sm-4">
-             </div>
-
-         </div>
-         <div class="row">
-             <div class="col-sm-4">
-                  Полное имя или имя собственное
-             </div>
-             <div class="col-sm-4">
-                 {{ fullname }}
+                  {{ topic.name }}
              </div>
 
              <div class="col-sm-4">
@@ -40,11 +29,13 @@
          </div>
 
          <div class="row">
+ 
              <div class="col-sm-4">
-Пользователь о себе
+                 Создана пользователем
              </div>
+
              <div class="col-sm-4">
-                 {{ bio }}
+                  {{ topic.creator.username }}
              </div>
 
              <div class="col-sm-4">

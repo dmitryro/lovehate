@@ -406,17 +406,51 @@ def updatepost(request):
         body = request.data.get('post', '')
         subject = request.data.get('subject', '')
         att = int(request.data.get('attitude', None))
-        url = request.data.get('link', '')
+        url = request.data.get('link', None)
+        url_two = request.data.get('link_two', None)
+        url_three = request.data.get('link_three', None)
+        url_four = request.data.get('link_four', '')
         user_id = int(request.data.get('user_id', None))
         post_id = int(request.data.get('post_id', None))
         attitude = Attitude.objects.get(id=int(att))
  
         shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
 
+        log = Logger(log="URL1 {} URL2 {} URL3 {} URL4 {}".format(url,url_two, url_three, url_four))
+        log.save()
+
         try:
-            link = shortener.short(url)
+            if url:
+                link = shortener.short(url)
+            else:
+                link = None
         except Exception as e:
             link = None
+
+        try:
+            if url_two:
+                link_two = shortener.short(url_two)
+            else:
+                link_two = None
+        except Exception as e:
+            link_two = None
+
+        try:
+            if url_three:
+                link_three = shortener.short(url_three)
+            else:
+                link_three = None
+        except Exception as e:
+            link_three = None
+
+        try:
+            if url_four:
+                link_four = shortener.short(url_four)
+            else:
+                link_four = None
+        except Exception as e:
+            link_four = None
+
 
         try:
             language = detect_language(str(subject))
@@ -437,6 +471,9 @@ def updatepost(request):
         post.ip_address = ip_address
         post.subject = subject
         post.link = link
+        post.link_two = link_two
+        post.link_three = link_three
+        post.link_four = link_four
         post.attitude = attitude
         post.body = body
         post.translit_subject = trans_subject
@@ -467,6 +504,9 @@ def addnewblogunauth(request):
         subject = request.data.get('subject', '')
         att = int(request.data.get('attitude', None))
         url = request.data.get('link', '')
+        url_two = request.data.get('link_two', '')
+        url_three = request.data.get('link_three', '')
+        url_four = request.data.get('link_four', '')
         username = request.data.get('username', None)
         password = request.data.get('password', None)
         attitude = Attitude.objects.get(id=int(att))
@@ -491,6 +531,21 @@ def addnewblogunauth(request):
             link = None
 
         try:
+            link_two = shortener.short(url_two)
+        except Exception as e:
+            link_two = None
+
+        try:
+            link_three = shortener.short(url_three)
+        except Exception as e:
+            link_three = None
+
+        try:
+            link_four = shortener.short(url_four)
+        except Exception as e:
+            link_four = None
+
+        try:
             language = detect_language(str(subject))
         except Exception as e:
             language = 'en'
@@ -505,6 +560,8 @@ def addnewblogunauth(request):
             trans_subject = str(subject).lower()
 
         Post.objects.create(author=user, subject=subject, link=link,
+                            link_two=lik_two, link_three=link_three, 
+                            link_four=link_four,
                             attitude=attitude, body=post,
                             translit_subject=trans_subject,
                             ip_address=ip_address)
@@ -537,6 +594,10 @@ def addnewblog(request):
         subject = request.data.get('subject', '')
         att = int(request.data.get('attitude', None))
         url = request.data.get('link', '')
+        url_two = request.data.get('link_two', '')
+        url_three = request.data.get('link_three', '')
+        url_four = request.data.get('link_four', '')
+
         user_id = int(request.data.get('user_id', None))
         attitude = Attitude.objects.get(id=int(att))
         user_id = int(request.data.get('user_id', None))
@@ -547,6 +608,21 @@ def addnewblog(request):
             link = shortener.short(url)
         except Exception as e:
             link = None
+
+        try:
+            link_two = shortener.short(url_two)
+        except Exception as e:
+            link_two = None
+
+        try:
+            link_three = shortener.short(url_three)
+        except Exception as e:
+            link_three = None
+
+        try:
+            link_four = shortener.short(url_four)
+        except Exception as e:
+            link_four = None
 
         try:
             language = detect_language(str(subject))
@@ -563,10 +639,13 @@ def addnewblog(request):
             trans_subject = str(subject).lower()
 
         user = User.objects.get(id=user_id)
-        Post.objects.create(author=user, subject=subject, link=link, 
-                            attitude=attitude, body=post, 
+        Post.objects.create(author=user, subject=subject, link=link,
+                            link_two=link_two, link_three=link_three,
+                            link_four=link_four,
+                            attitude=attitude, body=post,
                             translit_subject=trans_subject,
                             ip_address=ip_address)
+
     except Exception as e:
         log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
         log.save()

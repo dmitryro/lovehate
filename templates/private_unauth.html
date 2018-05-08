@@ -7,8 +7,7 @@
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form  name="newmessageform" id="newmessageform">
-{% if user.is_authenticated %}
+<form  name="newmessageunauthform" id="newmessageunauthform">
 
 <div class="row">
 
@@ -24,12 +23,28 @@
                     <div class=container-fluid" style="margin-left:0.4em;">
 
                                <div class="row">
+                                    <div class="message-errors" style="display:none;">
+ 
+Не удалось авторизовать пользователя! Проверьте ник и пароль ещё раз!
+                                    </div>
+
+                               </div>
+                               <div class="row">
                                     <label id="inlineFormInputGroup-recipient-error" class="error" for="recipient"></label>
                                </div>
 
                                <div class="row">
                                     <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
                                </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-messageusername-error" class="error" for="message_username"></label>
+                               </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-messagepassword-error" class="error" for="message_password"></label>
+                               </div>
+
 
                                <div class="row">
                                     <label id="inlineFormInputGroup-messageattitude-error" class="error" for="message_attitude"></label>
@@ -42,6 +57,57 @@
 
              </div>
          </div>
+
+
+
+                 <div class="row private-form-row">
+
+
+                 <div class="col-sm-4">
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Ник (имя пользователя)
+                       </div>
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                       </div>
+
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                                             <div class="form-group">
+                                                       <input type="text" id="message_username" name="message_username" maxlength="100" style="width:100%;" />
+                                             </div>
+
+                 </div>
+
+                 </div>
+
+
+                 <div class="row private-form-row">
+
+
+                 <div class="col-sm-4">
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Пароль
+                       </div>
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                       </div>
+
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                                             <div class="form-group">
+                                                       <input type="password" id="message_password" name="message_password" maxlength="100" style="width:100%;" />
+                                             </div>
+
+                 </div>
+
+                 </div>
 
 
 
@@ -172,7 +238,7 @@
                        </div>
                        <div class="col-sm-2">
 
-                            <button class="btn4" id="message-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                            <button class="btn4" id="message-unauth-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
                                   Отправить
                             </button>
                             
@@ -186,7 +252,6 @@
 </div>
 
 <input type="hidden" id="message_user_id" value="{{ user.id }}" />
-{% endif %}
 </form>
 </div>
 {% endblock %}

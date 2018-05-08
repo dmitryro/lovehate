@@ -36,6 +36,7 @@ from custom.gui.views import logout
 from custom.gui.views import forum
 from custom.gui.views import mylh
 from custom.gui.views import private
+from custom.gui.views import private_unauth
 from custom.gui.views import cleanmessages
 from custom.gui.views import statistics
 from custom.gui.views import simple_signin
@@ -58,6 +59,7 @@ from custom.forum.views import newemotion
 from custom.forum.views import newemotion_unauth
 from custom.forum.views import topics
 from custom.forum.views import newmessage
+from custom.forum.views import newmessage_unauth
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
 from custom.forum.views import answer_private
@@ -108,6 +110,8 @@ urlpatterns = [
     path('register/', register),
     path('cleanmessages/', cleanmessages),
     path('private/', private),
+    path('private/unauth/<int:receiver_id>', private_unauth),
+    path('private/send/<int:receiver_id>', private),
     path('private/answer/<int:message_id>/', answer_private),
     path('topics/', forum),
     path('forum/', forum),
@@ -116,6 +120,7 @@ urlpatterns = [
     path('blogs/', blog),
     path('registernew/', registernew),
     path('newmessage/', newmessage),
+    path('newmessageunauth/', newmessage_unauth),
     path('outgoing/', csrf_exempt(outgoing_messages)),
     path('incoming/', csrf_exempt(incoming_messages)),
     path('blog/edit/<int:post_id>/', editblog),

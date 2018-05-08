@@ -68,7 +68,7 @@ input[type=text], input[type=password] {
     padding-bottom: 0.4em;
 }
 
-.forum-errors, .comment-errors, .blognew-errors {
+.forum-errors, .comment-errors, .blognew-errors, .message-errors {
     display: none;
     color: red;
     text-align:center;
@@ -179,6 +179,21 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newmessageunauthform label {
+        width: 250px;
+    }
+
+    #newmessageunauthform label.error, #newmessageunauthform input.submit, #newmessageunauthform input.button {
+        margin-left: 253px;
+    }
+
+    #newmessageunauthform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
 
     #newcommentform label {
         width: 250px;
@@ -685,7 +700,14 @@ span.psw {
    font-weight:bold;
    text-decoration: none;
 }
-
+.neutral-messages-regular a {
+   color:#00008b;
+   text-decoration: none;
+}
+.neutral-messages-regular a:hover {
+   color:#00008b;
+   text-decoration: underline;
+}
 .loves-messages a:hover, .mehs-messages a:hover, .hates-messages a:hover, .neutral-messages a:hover {
    color:#00008b;
    font-weight:bold;
@@ -1291,12 +1313,14 @@ span.psw {
                                   <div id="submenu-div-3" class="menu-item"> 
                                        <a id="submenu-3" href="/blog">Дневник</a>
                                   </div>
+                              {% if user.is_authenticated %}
                                   <div id="submenu-div-4" class="menu-item">
                                        <a id="submenu-4" href="/mylh/">Мой ЛХ</a>
                                   </div>
                                   <div id="submenu-div-5" class="menu-item"> 
                                        <a id="submenu-5" href="/private">Приваты</a>
                                   </div>
+                              {% endif %}
                                   <div id="submenu-div-6" class="menu-item">
                                        <a id="submenu-6" href="/statistics">Статистика</a>
                                   </div>
@@ -1600,6 +1624,8 @@ span.psw {
                           <form id="authenticate-form" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
                               {% csrf_token %}
                               <div class="container-fluid">
+                                         
+                                         <div class="row">
                                                  <label for="uname"><b>Имя Пользователя</b></label>
                                                  <input id="username" type="text" placeholder="Имя Пользователя" name="uname" required>
 
@@ -1607,14 +1633,36 @@ span.psw {
                                                         <input id="password" type="password" placeholder="Пароль" name="psw" required>
  
                                                         <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button>
-                                                        <span class="psw">Забыли <a href="#">пароль?</a></span>
-
-                                                        <p>
+                                        </div>
+ <!--
+                                        <div class="row">
+                                                 <div class="col-sm-12">
+                                                       <span class="psw">▒~Wаб▒~Kли <a href="#">па▒~@ол▒~L?</a></span>
+                                                 </div>
+                                        </div>
+-->
+                                         <div class="row">
+                                                    <div class="col-sm-6">
                                                                <a id="modal-register-open" 
                                                                         href="/register" style="color:dodgerblue">Зарегистрироваться
+                                                               </a> 
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                    </div>
+                                         </div>
+                                         <div class="row">
+                                                    <div class="col-sm-8">
+                                                               <a id="modal-forogot-password" href="#">
+                                                                   Забыли пароль?
                                                                </a>
-                                                        </p>
+                                                    </div>
+                                                    <div class="col-sm-4">
 
+                                                    </div>
+                                         </div>
+
+
+                                   </div>
 
                               </div>
                          </form>
@@ -1993,6 +2041,53 @@ span.psw {
 
                      }
              });
+
+            $('#newmessageunauthform').validate({
+                      rules: {
+                            message_attitude: "required",
+                            message: "required",
+                            recipient: "required",
+                            message_username: "required",
+                            message_password: "required",
+                            subject: {
+                                     required: true,
+                                     minlength: 2
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           subject: {
+                               required: "Введите тему сообщения!",
+                               minlength: "Введите тему сообщения!",
+                           },
+                           message: {
+                               required: "Введите текст сообщения!",
+                               minlength: "Введите текст сообщения!",
+                           },
+                           recipient: {
+                               required: "Введите минимум одного получателя сообщения!",
+                               minlength: "Введите минимум одного получателя сообщения!",
+                           },
+                           message_attitude: {
+                               required: "Выскажите Ваше отношение к теме сообщения!",
+                           },
+                           "message_username": {
+                               required: "Введите ник (имя пользователя)!",
+                           },
+                           "message_password": {
+                               required: "Введите пароль!",
+                           }
+
+                     }
+             });
+
 
             $('#newforumform').validate({
                       rules: {
@@ -2375,6 +2470,39 @@ span.psw {
               });
 
 
+              $('#message-unauth-publish').click(function() {
+
+                  if ($('#newmessageunauthform').valid()) {
+                      var arr = {
+                          message: $("#message").val(),
+                          attitude: attitude[$('input[type=radio][name=message_attitude]:checked').val()],
+                          subject: $("#subject").val(),
+                          recipients: $("#recipient").val(),
+                          sender_id: $("#message_user_id").val(),
+                          username: $("#message_username").val(),
+                          password: $("#message_password").val(),
+                      };
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/newmessageunauth/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('outgoing');
+                          },
+                          error: function(data){
+                               $(".message-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+                  }
+              });
+
+
+
               $('#blogedit-publish').click(function() {
 
                   if ($('#editblogform').valid()) {
@@ -2383,6 +2511,9 @@ span.psw {
                           attitude: attitude[$('input[type=radio][name=blogedit_attitude]:checked').val()],
                           subject: $("#blogedit_subject").val(),
                           link: $("#blogedit_link").val(),
+                          link_two: $("#blogedit_link_two").val(),
+                          link_three: $("#blogedit_link_three").val(),
+                          link_four: $("#blogedit_link_four").val(),
                           post_id: $('#edited_post_id').val(),
                           user_id: $("#blog_user_id").val(),
                       };
@@ -2413,6 +2544,9 @@ span.psw {
                           attitude: attitude[$('input[type=radio][name=blognew_attitude]:checked').val()],
                           subject: $("#blognew_subject").val(),
                           link: $("#blognew_link").val(),
+                          link_two: $("#blognew_link_2").val(),
+                          link_three: $("#blognew_link_3").val(),
+                          link_four: $("#blognew_link_4").val(),
                           username: $("#blognew_username").val(),
                           password: $("#blognew_password").val(),
                       };
@@ -2445,6 +2579,9 @@ span.psw {
                           attitude: attitude[$('input[type=radio][name=blognew_attitude]:checked').val()],
                           subject: $("#blognew_subject").val(),
                           link: $("#blognew_link").val(),
+                          link_two: $("#blognew_link_2").val(),
+                          link_three: $("#blognew_link_3").val(),
+                          link_four: $("#blognew_link_4").val(),
                           user_id: $("#blog_user_id").val(),
                       };
 

@@ -286,8 +286,16 @@ def cleanmessages(request):
 
 
 @csrf_exempt
-def private(request):
+def private(request, receiver_id=None):
+    receiver_username = None
 
+    if receiver_id:
+        try:
+            receiver = User.objects.get(id=int(receiver_id))
+            receiver_username = receiver.username
+        except Exception as e:
+            pass
+ 
     try:
         if request.user.is_authenticated:
             logout=True
@@ -309,10 +317,48 @@ def private(request):
                                          'user': request.user,
                                          'username': username,
                                          'current_page': 'private',
+                                         'receiver_username': receiver_username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
 
+
+@csrf_exempt
+def private_unauth(request, receiver_id=None):
+    receiver_username = None
+
+    if receiver_id:
+        try:
+            receiver = User.objects.get(id=int(receiver_id))
+            receiver_username = receiver.username
+        except Exception as e:
+            pass
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, 'private_unauth.html',{'home':'private_unauth.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'current_page': 'private',
+                                         'receiver_username': receiver_username,
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
 
 @csrf_exempt
 def forum(request):

@@ -383,6 +383,101 @@ def newmessage(request):
                      "code": 200,
                      "falure_code": 0}, status=200)
 
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def newmessage_unauth(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    try:
+
+        body = request.data.get('message', '')
+        subject = request.data.get('subject', '')
+        recipients = request.data.get('recipients', '')
+        attitude = int(request.data.get('attitude', None))
+
+        attitude = Attitude.objects.get(id=attitude)
+        username = request.data.get('username', '')
+        password = request.data.get('password', '')
+
+        user = authenticate(username=username, password=password)
+        if not user:
+            return Response({"message": "failed to authenticate",
+                             "status": "posted",
+                             "code": 400,
+                             "falure_code": 2}, status=400)
+
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        sender_id = user.id
+        log = Logger(log="BODY {} SUBJ {} RECIP {} ATTITUDE {} SENDER_ID {} username {} password {}".format(body,
+                                                                                                            subject, recipients, attitude,
+                                                                                                            sender_id, username, password))
+ 
+        log.save()
+
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+
+        receivers = list(set(recipients.split(',')))
+
+        for i, receiver in enumerate(receivers):
+            receivers[i] = receiver.strip()
+
+        #receiver = User.objects.get(id=receiver_id)
+        sender = User.objects.get(id=sender_id)
+
+        recipients = User.objects.filter(username__in=receivers)
+        for receiver in recipients:
+            message = Message.objects.create(subject=subject,
+                                             attitude=attitude,
+                                             importance=1,
+                                             body=body,
+                                             ip_address=ip_address,
+                                             sender=sender,
+                                             receiver=receiver)
+            if message:
+                message_sent.send(sender = sender,
+                                  receiver = receiver,
+                                  message = message,
+                                  kwargs = None)
+
+            log = Logger(log="MESSAGE SENT {}".format(message))
+            log.save()
+    except Exception as e:
+        log = Logger(log="This just didn't work {}".format(e))
+        log.save()
+
+        return Response({"message": "failure - message was not sent {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 0}, status=400)
+
+
+    return Response({"message": "success - message sent",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
+
+
+
+
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
@@ -397,9 +492,6 @@ def newemotion_unauth(request):
         attitude = Attitude.objects.get(id=int(att))
         username = request.data.get('username', '')
         password = request.data.get('password', '')
-
-        log = Logger(log="EMOTION {} SUBJECT {} ATTITUDE {} USERNANE {} PASSWORD {}".format(emotion, subject, att, username, password))
-        log.save()
 
         user = authenticate(username=username, password=password)
         if not user:
@@ -430,6 +522,7 @@ def newemotion_unauth(request):
         except Exception as e:
             topic = Topic.objects.create(name=subject,
                                          ip_address=ip_address,
+                                         creator=user,
                                          translit_name=trans_subject)
 
         log = Logger(log="TOPIC WAS {}".format(topic))
@@ -527,15 +620,16 @@ def newemotion(request):
         else:
             trans_subject = str(subject).lower()
 
+        user = User.objects.get(id=user_id)
         try:
             topic = Topic.objects.get(translit_name=trans_subject)
         except Exception as e:
             topic = Topic.objects.create(name=subject,
-                                         ip_address=ip_address, 
+                                         ip_address=ip_address,
+                                         creator=user, 
                                          translit_name=trans_subject)
                      
 
-        user = User.objects.get(id=user_id)
         Emotion.objects.create(user=user, topic=topic, attitude=attitude, 
                                emotion=emotion, subject=subject, 
                                ip_address=ip_address,
