@@ -4,7 +4,7 @@
 {% load blog_extras %}
 {% block content %}
 <div class="container-fluid registration-form">
-    <div class="row" style="font-size:1.20em;">
+    <div class="row" style="font-size:1.20em;margin-top:1.6em;">
 
         <div class="col-sm-2">
         </div>
@@ -13,33 +13,36 @@
             <div class="container-fluid">
                 <form action="editprofile" method="post">
                     <div class="row">
-
+         
                          <div class="col-sm-12">
                                <div class="container-fluid">
-
-
                                       {% if post.attitude.id == 1 %}
-                                          <div class="row loves-messages" style="margin-top:1.5em;">
+                                          <div class="row loves-messages">
                                       {% elif post.attitude.id == 2 %}
-                                          <div class="row mehs-messages" style="margin-top:1.5em;">
+                                          <div class="row mehs-messages">
                                       {% elif post.attitude.id == 3 %}
-                                          <div class="row hates-messages" style="margin-top:1.5em;">
+                                          <div class="row hates-messages">
                                       {% endif %}
-               
-                                                   <div class="col-sm-11">
-                                                              <a href="/user/{{ post.author.id }}"><strong>{{ post.author_nick }}</strong></a>,
-                                                            <strong> {{ post.subject }}</strong> {{ post.date_time_published }}
-                                                   </div>
-                                                   <div class="col-sm-1">
+                                      
+ 
+                                                                         <div class="col-sm-11">
+                                                                              <span class="neutral-messages">
+                                                                                <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
+                                                                              </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }}
+                                                                         </div>
+                                                                           
+                                                                         <div class="col-sm-1">
+                                                                         
                                                            {% if user.id is post.author.id %}
                                                                  <span>
                                                                        <a href="/blog/edit/{{ post.id }}">
-Изменить
 
+Изменить
                                                                        </a>
                                                                  </span>
                                                            {% endif %}
-                                                  </div>
+     
+                                                                         </div>
                                             </div>
 
 
@@ -111,7 +114,7 @@
                               {% endif %}
 
 
-                              <div class="row neutral-messages" stlye="padding-left:1.6em;margin-top:2.22em;">
+                              <div class="row neutral-messages" stlye="padding-left:1.6em;margin-top:3.22em;">
                                    <div class="container-fluid" style="margin-left:2.22em;">
                                                           {% for comment in comments %}
                                                            {% if comment.attitude.id == 1 %}
@@ -122,10 +125,10 @@
                                                                   <div class="row hates-messages" style="margin-top:1.5em;">
                                                            {% endif %}
 
-                                     <div class="col-sm-2">
+                                     <div class="col-sm-3">
                                          <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a>
                                      </div>
-                                     <div class="col-sm-10">
+                                     <div class="col-sm-9">
                                          <strong> {{ comment.title }}</strong>
                                      </div>  
                                     

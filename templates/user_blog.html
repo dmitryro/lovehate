@@ -31,21 +31,17 @@
                                                                   <div class="row hates-messages" style="margin-top:1.6em;">
                                                            {% endif %}
 
-                                     <div class="col-sm-3">
+                                                                         <div class="col-sm-12">
+                                                                              <span class="neutral-messages">
+                                                                                <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
+                                                                              </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }}
+                                                                         </div>
 
-                                                  {{ post.date_time_published }}
+
                                      </div>
-                                      
-
-                                     <div class="col-sm-3">
-                                         <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
-                                     </div>
 
 
-                                     <div class="col-sm-6">
-                                         <strong> {{ post.subject }}</strong>
-                                     </div>  
-                                     </div>
+
 
                                                            {% if post.attitude.id == 1 %}
                                                                  <div class="row loves-messages">
@@ -81,10 +77,30 @@
                                           <a href="{{ post.link }}">{{ post.link }}</a>
                                      </div>
                                      </div>
-
+                                     {% endif %}
+                                     {% if post.link_two %}
+                                     <div class="row neutral-messages">
+                                     <div class="col-sm-12">
+                                          <a href="{{ post.link_two }}">{{ post.link_two }}</a>
+                                     </div>
+                                     </div>
+                                     {% endif %}
+                                     {% if post.link_three %}
+                                     <div class="row neutral-messages">
+                                     <div class="col-sm-12">
+                                          <a href="{{ post.link_three }}">{{ post.link_three }}</a>
+                                     </div>
+                                     </div>
+                                     {% endif %}
+                                     {% if post.link_four %}
+                                     <div class="row neutral-messages">
+                                     <div class="col-sm-12">
+                                          <a href="{{ post.link_four }}">{{ post.link_four }}</a>
+                                     </div>
+                                     </div>
                                     {% endif %}
                                     <div class="row neutral-messages">
-                                    <div class="col-sm-3">
+                                    <div class="col-sm-12">
                                           <a href="/blog/{{ post.id }}/comments">
                                         
 Читать
@@ -92,14 +108,11 @@
                                              {% post_meta post.id 1 %}
 
 
-                                            </a>
-                                     </div>
-                                     <div class="col-sm-3">
+                                            </a> &nbsp;
                                           <a href="/blogcomment/{{ post.id }}">
 Комментировать
                                           </a>
                                      </div>
-                                     <div class="col-sm-6"></div>
 
 
 
