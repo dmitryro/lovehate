@@ -33,8 +33,10 @@ from custom.blog.views import Post
 from custom.forum.models import Topic
 from custom.forum.models import Emotion
 from custom.users.signals import user_resend_activation
+from custom.users.signals import user_send_reset_password_link
 from custom.users.serializers import UserSerializer
 from custom.users.callbacks import resend_activation_handler
+from custom.users.callbacks import reset_password_link
 from custom.users.models import Profile
 from custom.utils.models import Logger
 
@@ -83,6 +85,52 @@ def resendactivationbyuser(request):
                      "username": username},
                      status=200)
 
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def resend_password_link(request):
+    username = request.data.get('username', '')
+    email = request.data.get('email', '')
+    user = None
+
+    try:
+        user = User.objects.get(username=username, email=email)
+    except ObjectDoesNotExist:
+        return Response({"message": "failure - username not found",
+                         "status": "registered",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1,
+                         "email": email,
+                         "username": username},
+                         status=400)
+    try:
+        user_send_reset_password_link.send(sender = user,
+                                           instance = user,
+                                           kwargs = None)
+    except Exception as e:
+        log = Logger(log="Could not send reset link {}".format(e))
+        log.save()
+        return Response({"message": "failure - username not found",
+                         "status": "registered",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1,
+                         "email": email,
+                         "username": username},
+                         status=400)
+
+
+    return Response({"message": "success",
+                     "status": "registered",
+                     "code": 200,
+                     "user_id": 1,
+                     "username": username},
+                     status=200)
+
+
+
+
 
 
 @api_view(['POST', 'GET'])
@@ -93,9 +141,6 @@ def registernew(request):
     password = request.data.get('password', '')
     email = request.data.get('email', '')
     user = None
-
-    log = Logger(log='OUR CREDS {} {} {}'.format(username, password, email))
-    log.save()
 
     try:
         user = User.objects.get(username=username)
@@ -217,6 +262,126 @@ def user_profile(request, user_id):
                                          'user_id': profile.user.id})
 
 
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def reset(request, reset_key):
+    page = request.GET.get('page')
+    loves = None
+    mehs = None
+    hates = None
+
+    try:
+        loves = Emotion.objects.filter(attitude_id=1)
+        mehs = Emotion.objects.filter(attitude_id=2)
+        hates = Emotion.objects.filter(attitude_id=3)
+        total_loves = len(loves)
+        total_mehs = len(mehs)
+        total_hates = len(hates)
+    except Exception as e:
+        pass
+
+    loves_chunked = list(chunks(loves, 10))
+    loves_chunked_length = len(loves_chunked)
+    mehs_chunked = list(chunks(mehs, 10))
+    mehs_chunked_length = len(mehs_chunked)
+    hates_chunked = list(chunks(hates, 10))
+    hates_chunked_length = len(hates_chunked)
+    index = max([loves_chunked_length, mehs_chunked_length, hates_chunked_length])
+
+    pages = []
+    pages_loves = []
+    pages_hates = []
+    pages_mehs = []
+
+    for i in range(0, index):
+        try:
+            pages_loves.append(loves_chunked[i])
+        except Exception as e:
+            pages_loves.append([])
+        try:
+            pages_mehs.append(mehs_chunked[i])
+        except Exception as e:
+            pages_mehs.append([])
+        try:
+            pages_hates.append(hates_chunked[i])
+        except Exception as e:
+            pages_hates.append([])
+
+    for i in range(0, index):
+        p = Page(pages_loves[i], pages_mehs[i], pages_hates[i])
+        pages.append(p)
+
+    paginator = Paginator(pages, 1) # Show 25 contacts per page
+
+    paginator1 = Paginator(loves, 10)
+    paginator2 = Paginator(mehs, 10)
+    paginator3 = Paginator(hates, 10)
+
+
+    try:
+        meh_slice = paginator2.page(page)
+    except PageNotAnInteger:
+        meh_slice = paginator2.page(1)
+    except EmptyPage:
+        meh_slice = paginator2.page(paginator.num_pages)
+
+    try:
+        love_slice = paginator1.page(page)
+    except PageNotAnInteger:
+        love_slice = paginator1.page(1)
+    except EmptyPage:
+        love_slice = paginator1.page(paginator1.num_pages)
+
+    try:
+        hate_slice = paginator3.page(page)
+    except PageNotAnInteger:
+        hate_slice = paginator3.page(1)
+    except EmptyPage:
+        hate_slice = paginator3.page(paginator3.num_pages)
+
+
+    try:
+        pages_slice = paginator.page(page)
+    except PageNotAnInteger:
+        pages_slice = paginator.page(1)
+    except EmptyPage:
+        pages_slice = paginator.page(paginator4.num_pages)
+
+
+    try:
+
+        profile = Profile.objects.get(password_recovery_key=reset_key)
+        redirect = 'index.html'
+        login(request, profile.user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+      
+        return render(request, redirect,{'home':'index.html',
+                                         'user': profile.user,
+                                         'pages': pages_slice,
+                                         'loves': love_slice,
+                                         'mehs': meh_slice,
+                                         'hates': hate_slice,
+                                         'username': profile.user.username,
+                                         'is_reset_required': True,
+                                         'is_reset_possible': True,
+                                         'logout': False,
+                                         'user_id': profile.user.id})
+
+    except Exception as e:
+        log = Logger(log="Reset failed {} - {} ".format(e, reset_key))
+        log.save()
+        redirect = 'index.html'
+        return render(request, redirect,{'home':'index.html',
+                                         'user': '',
+                                         'username': '',
+                                         'pages': pages_slice,
+                                         'loves': love_slice,
+                                         'mehs': meh_slice,
+                                         'hates': hate_slice,
+                                         'is_reset_required': True,
+                                         'is_reset_possible': False,  
+                                         'logout': False,
+                                         'user_id': ''})
 
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
@@ -346,6 +511,49 @@ def activate(request, activation_key):
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
+def recoverpassword(request):
+    password = str(request.data.get('password', ''))
+    user_id = request.data.get('user_id', '')
+
+    try:
+        user = User.objects.get(id=int(user_id))
+        if user:
+             authenticate(username=user.username, password=user.password)
+             #login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
+        user.password = password
+        user.save()
+
+      #  user = authenticate(username=user.username, password=user.password)
+      #  login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged i
+
+
+    except Exception as e:
+        log = Logger(log='FAILED READING USER {}'.format(e))
+        log.save()
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+    return Response({"message": "success",
+                     "status": "authenticated",
+                     "code": 200,
+                     "not_activated": False,
+                     "user_id": user.id,
+                     "username": user.username,
+                     "log_out": True},
+                     status=200)
+
+
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
 def changepassword(request):
     oldpassword = str(request.data.get('oldpassword', ''))
     newpassword = str(request.data.get('newpassword', ''))
@@ -436,4 +644,5 @@ def auth(request):
                      "log_out": True},
                      status=200)
 
+user_send_reset_password_link.connect(reset_password_link)
 user_resend_activation.connect(resend_activation_handler)

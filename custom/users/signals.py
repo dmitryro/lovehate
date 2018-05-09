@@ -1,6 +1,8 @@
 from django.dispatch import Signal
 
 register_redirect = Signal(providing_args=["user"])
+user_reset_password = Signal(providing_args=["user"])
+user_send_reset_password_link = Signal(providing_args=["user"])  
 user_send_email = Signal(providing_args=["user"])
 user_resend_activation = Signal(providing_args=["user"])
 user_pending_activation = Signal(providing_args=["user"])

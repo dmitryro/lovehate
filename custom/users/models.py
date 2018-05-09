@@ -46,6 +46,7 @@ class Profile(models.Model):
     is_facebook_avatar = models.BooleanField(default=False, blank=True)        
     is_twitter_avatar = models.BooleanField(default=False, blank=True)
     is_vk_avatar = models.BooleanField(default=False, blank=True)
+    password_recovery_key = models.CharField(max_length=250, blank=True, null=True,default='')
     activation_key =  models.CharField(max_length=250, blank=True, null=True,default='')
 
     class Meta:

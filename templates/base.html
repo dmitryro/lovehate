@@ -269,20 +269,22 @@ button:hover {
         width: 250px;
     }
 
-    .change-success {
+    .change-success, .sent-success, .recover-success {
         display:none;
         color: #3c763d;
         background-color: #dff0d8;
         border-color: #d6e9c6;
     }
 
+    .sent-errors label.error, sent-errors input.submit, .sent-errors input.button,
     .change-errors label.error, .change-errors input.submit, .change-errors input.button, 
     #changepassword label.error, #changepassword input.submit, #changepassword input.button {
+        color: #ff0000;
         font-size:0.9em;
         margin-left: 253px;
     }
 
-    #changepassword label.error, .change-errors label-error {
+    #changepassword label.error, .change-errors label-error, sent-errors label-error {
         margin-left: -0.5em;
         width: auto;
         min-width: 30.00em;
@@ -391,6 +393,9 @@ span.psw {
     display:none;
 }
 
+.reset-password-modal {
+    display:none;
+}
 /* Add Zoom Animation */
 .animate {
     -webkit-animation: animatezoom 0.6s;
@@ -1331,6 +1336,9 @@ span.psw {
 
                          </div>
                          <input type="hidden" value="{{ current_page }}" id="current_page" />
+                         <input type="hidden" value="{{ is_reset_required }}" id="is_reset_required" />
+                         <input type="hidden" value="{{ is_reset_possible }}" id="is_reset_possible" />
+                         <input type="hidden" value="{{ user_id }}" id="reset_user_id" />
                          </form>
 
                </div>   
@@ -1522,6 +1530,176 @@ span.psw {
                     </div>
                </div>
 
+               <div class="modal-login modaldialogue"  id="send-reset-link-modal">
+
+                         <div class="modal-header">
+                             <div class="container-fluid">
+                                <div class="row">
+                                     <div class="col-sm-10">
+                                      <label><b>
+                                      <span>
+Восстановить Пароль
+                                      </span>
+                                      </b></label>
+                                     </div>
+                                     <div class="col-sm-2" id="send-reset-link-modal-close"><div style="float:right;">x</div><div class="clear"></div></div>
+                                </div>
+                             </div>
+                        </div>
+                          <form id="recover-password" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+
+
+                          <div class="modal-body">
+                               <div class="container-fluid">
+                                      <div class="row">
+                                             <div class="col-sm-12">
+
+                                                               <div class="success sent-success" id="sent-success">
+                                                              Вам выслана ссылка! Используйте ее для восстановления пароля!
+                                                               </div>
+
+                                                               <div class="sent-errors" id="sent-errors" style="display:none;color:#ff0000;font-weight:bold;">
+                                                               Учётная запись не найдена!
+                                                               </div>
+
+
+                                                          </div>
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-username-error" class="error" for="recover_username"></label>
+                                                          </div>
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-email-error" class="error" for="recover_email"></label>
+                                                          </div>
+
+
+                                             </div>
+                                      </div>
+                               </div>
+
+                              <div class="container-fluid">
+                                                 <label for="reset_username"><b>Введите Ваш ник (имя пользователя)</b></label>
+                                                 <input id="reset_username" name="reset_username" type="text" required />
+
+                                                 <label for="reset_email"><b>Введите Ваш адрес эл.почты (имейл)</b><label>
+                                                        <input id="reset_email" type="text" placeholder="" name="reset_email" required>
+
+
+
+
+                                                        <button id="send-reset-link" style="background:#4a4a4a;" type="button">
+                                                        Получить ссылку
+                                                        </button>
+
+
+
+                                                     
+                                  </label>
+
+                              </div>
+
+
+                   </form>
+
+                   
+               </div>
+
+              {% if  is_reset_required %}
+               <div class="modal-login modaldialogue"  id="reset-password-modal" style="display:block;">
+
+                         <div class="modal-header">
+                             <div class="container-fluid">
+                                <div class="row">
+                                     <div class="col-sm-10">
+                                      <label><b>
+                                      <span>
+Восстановить пароль
+                                      </span>
+                                      </b></label>
+                                     </div>
+                                     <div class="col-sm-2" id="reset-password-modal-close"><div style="float:right;">x</div><div class="clear"></div></div>
+                                </div>
+                             </div>
+                        </div>
+
+                          <form id="recover-password-steptwo" name="recover-password-steptwo" enctype="multipart/form-data" method="POST">
+                              {% csrf_token %}
+
+
+                    <div class="modal-body">
+                            <div class="container-fluid">
+                                      <div class="row">
+                                             <div class="col-sm-12">
+                                                    <div class="container-fluid" style="margin-left:0.4em;">
+                                                          <div class="row">
+
+                                                               <div class="success recover-success" id="recover-success">
+                                                                       Пароль успешно изменён!
+                                                               </div>
+
+                                                               <div class="errors recover-errors" id="recover-errors" style="display:none;color:#ff0000;font-weight:bold;">
+                                                                       Не удалось восстановить пароль!
+                                                               </div>
+
+
+
+                                                               <div class="success change-success" id="change-success">
+                                                                      С▒~Bа▒~@▒~Kй па▒~@ол▒~L ▒~C▒~Aпе▒~Hно измен▒~Qн!
+                                                               </div>
+
+
+                                                               <div class="change-errors" id="change-errors" style="display:none;">
+                                                                      С▒~Bа▒~@▒~Kй па▒~@ол▒~L не найден!
+                                                               </div>
+                                                          </div>
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-newpassword_recover-error" class="error" for="newpassword_recover"></label>
+                                                          </div>
+
+                                                          <div class="row">
+                                                               <label id="inlineFormInputGroup-newpassword_recover_confirmed-error" class="error" for="newpassword_recover_confirmed"></label>
+                                                          </div>
+                                                   </div>
+                                            </div>
+                                     </div>
+                          </div>
+
+
+
+                              <div class="container-fluid">
+
+                                                 <label for="newpassword_recover"><b>Введите новый пароль</b></label>
+                                                        <input id="newpassword_recover" type="password" placeholder="" name="newpassword_recover" required>
+                                                 <label for="newpassword_recover_confirmed"><b> 
+                                                         Подтвердите новый пароль
+                                                        </b></label>
+                                                        <input id="newpassword_recover_confirmed" type="password" placeholder="" name="newpassword_recover_confirmed" required>
+
+
+
+
+                                                        <button id="password-recover-publish" style="background:#4a4a4a;" type="button">
+                                                         Сохранить
+                                                        </button>
+
+
+
+                              </div>
+                    </div>
+
+                   </form>
+
+               </div>
+
+                {% endif %}
+
+
+
+
+
+
+
+
                <div class="modal-login modaldialogue"  id="change-password-modal">
 
                          <div class="modal-header">
@@ -1652,7 +1830,7 @@ span.psw {
                                          </div>
                                          <div class="row">
                                                     <div class="col-sm-8">
-                                                               <a id="modal-forogot-password" href="#">
+                                                               <a id="send-reset-link-modal-open" href="#">
                                                                    Забыли пароль?
                                                                </a>
                                                     </div>
@@ -1713,10 +1891,24 @@ span.psw {
             $('#change_password').click(function(event) {
                 $('#change-password-modal').show();
             });
+           
+            $('#reset-password-modal-close').click(function(event) {
+                   $("#reset-password-modal").hide();
+            });
+
+            $('#send-reset-link-modal-open').click(function(event) {
+                   $('#modal-login').hide();
+                   $('#send-reset-link-modal').show();
+            });
+
+            $('#send-reset-link-modal-close').click(function(event) {
+                  $('#send-reset-link-modal').hide();
+            });
 
             $('#change-password-modal-close').click(function(event) {
                 $('#change-password-modal').hide();
             });
+
 
             if ($('#current_page').val()==='mylh') {
                        $('#submenu-main').hide();
@@ -1953,6 +2145,83 @@ span.psw {
 
                       }
             });
+
+            $("#recover-password").validate({
+
+                      rules: {
+                            reset_username: {
+                                     required: true,
+                                     minlength: 1
+                            },
+                            reset_email: {
+                                     required: true,
+                                     email: true
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+
+                           reset_username: {
+                               required: "Введите имя пользователя!",
+                               minlength: "Имя пользователя минимум 1 символ!",
+                           },
+                           reset_email: {
+                               required:"Введите адрес электронной почты!", 
+                               email: "Неверный формат электронной почты!", 
+                           },
+
+                      }
+
+
+
+            });
+
+            $('#recover-password-steptwo').validate({
+                   rules: {
+                            newpassword_recover: {
+                                     required: true,
+                                     minlength: 8
+                            },
+                            newpassword_recover_confirmed: {
+                                     required: true,
+                                     minlength: 8,
+                                     equalTo: "#newpassword_recover"
+                            }
+
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+
+                           newpassword_recover_confirmed: {
+                               required: "Подтвердите новый пароль!",
+                               minlength: "Пароль должен быть минимум 8 символов!",
+                               equalTo:  "Подтверждение должно быть идентично!",
+                           },
+                           newpassword_recover: {
+                               required: "Введите новый пароль!",
+                               minlength: "Пароль должен быть минимум 8 символов!",
+                           },
+
+
+
+                      }
+
+            });
+
 
 
             $('#changepassword').validate({
@@ -2354,7 +2623,74 @@ span.psw {
               $('#modal-login-open').click(function() {
                   $('#modal-login').show();
               });
-              
+             
+
+              $('#send-reset-link').click(function() {
+                     if($("#recover-password").valid()) {
+
+                         var arr = {
+                          username: $("#reset_username").val(),
+                          email: $("#reset_email").val(),
+                         };
+
+                         $.ajax({
+                             type: "POST",
+                             url: "https://lovehate.io/recoverpassword/",
+                             data: JSON.stringify(arr),
+                             dataType: 'json',
+                             contentType: "application/json; charset=utf-8",
+                             success: function(data){
+                                 $( ".sent-success" ).fadeIn(300).delay(1000).fadeOut(300).promise().done(function() {
+                                         wait(1000);
+                                         $('#send-reset-link-modal').hide();
+                                 });
+                             },
+                             error: function(data){
+                                 $( ".sent-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                             }
+
+                         });
+
+
+
+                     }
+              });
+
+                
+              $('#password-recover-publish').click(function(event) {
+                   if ($('#recover-password-steptwo').valid()) {
+
+                      var arr = {
+                          password: $("#newpassword_recover").val(),
+                          user_id: $("#reset_user_id").val(),
+                      };
+
+         
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/updatepassword/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              $( ".recover-success" ).fadeIn(300).delay(1000).fadeOut(300).promise().done(function() {
+                                     wait(1000);
+
+                                     $('#reset-password-modal').hide();
+                              });
+                          },
+                          error: function(data){
+
+                              $( ".recover-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+
+
+
+                  }
+
+              });
               $('#newcommentunauth-publish').click(function(event) {
                   if (  $('#newcommentunauthform').valid() ) {
                       var arr = {
@@ -2407,7 +2743,6 @@ span.psw {
                               redirect_url('blog/'+$("#comment_post_id").val()+"/comments");
                           },
                           error: function(data){
-                              alert(data.message+" "+data.code);
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                           }
                       }); // end ajax call
@@ -2628,7 +2963,6 @@ span.psw {
                               redirect_main();
                           },
                           error: function(data){
-                              alert("error "+data); 
                                $(".forum-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
                           }
                       }); // end ajax call
