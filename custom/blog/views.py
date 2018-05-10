@@ -564,8 +564,6 @@ def updatepost(request):
         post.translit_subject = trans_subject
         post.save()
     except Exception as e:
-        log = Logger(log="SOME SHIT HAPPENED {}".format(e))
-        log.save()
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,

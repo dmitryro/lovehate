@@ -260,7 +260,7 @@ def new_account_notify(instance, email):
     except ObjectDoesNotExist:
         pass
     except Exception as R:
-        log = Logger(log='SOME SHIT PREVENTED US FROM SENDING '+str(R))
+        log = Logger(log='An unexcpected error prevented us frpm sending - {} '+str(R))
         log.save()
 
 
@@ -274,8 +274,6 @@ def send_activation_link(instance):
     try:
         activation_key = utils.create_activation_key(instance)
         link = settings.BASE_URL+'/activate/%s'%activation_key
-        log = Logger(log='USER ACTIVATION KEY IS {}'.format(activation_key))
-        log.save()
         user_profile = instance.profile
         user_profile.activation_key = activation_key
         user_profile.save()
