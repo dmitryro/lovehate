@@ -75,6 +75,10 @@ from custom.blog.views import addnewcomment
 from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
+from custom.users.views import saveprofile
+from custom.users.views import recoverpassword
+from custom.users.views import resend_password_link
+from custom.users.views import reset
 from django.contrib import admin
 
 urlpatterns = [
@@ -87,8 +91,10 @@ urlpatterns = [
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
+    path('saveprofile/', saveprofile),
     path('topics/<int:topic_id>/', topics),
     path('activate/<activation_key>/', activate),
+    path('reset/<reset_key>/', reset),
     path('api-auth/', include('rest_framework.urls')),      
     path('rest-auth/', include('rest_auth.urls')),
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
@@ -104,7 +110,6 @@ urlpatterns = [
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
     path('logout/', Logout.as_view()),
-    path('signin/', home),
     path('signout/', logout),
     path('statistics/', statistics),
     path('register/', register),
@@ -119,8 +124,8 @@ urlpatterns = [
     path('blog/', blog),
     path('blogs/', blog),
     path('registernew/', registernew),
-    path('newmessage/', newmessage),
-    path('newmessageunauth/', newmessage_unauth),
+    path('newmessage/', csrf_exempt(newmessage)),
+    path('newmessageunauth/', csrf_exempt(newmessage_unauth)),
     path('outgoing/', csrf_exempt(outgoing_messages)),
     path('incoming/', csrf_exempt(incoming_messages)),
     path('blog/edit/<int:post_id>/', editblog),
@@ -137,5 +142,7 @@ urlpatterns = [
     path('blogcomment/<int:post_id>/', newcomment),
     path('blog/<int:post_id>/', blogcomments),
     path('blog/<int:post_id>/comments/', blogcomments),
+    path('recoverpassword/', resend_password_link),
+    path('updatepassword/', recoverpassword),
     path('resendactivationbyuser/', resendactivationbyuser),
 ]

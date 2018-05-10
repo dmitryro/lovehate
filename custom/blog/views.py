@@ -14,6 +14,9 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.timezone import now
+from django.utils import timezone
+from datetime import datetime
 from ipware import get_client_ip
 
 from rest_framework.response import Response
@@ -39,6 +42,10 @@ from settings import settings
 from custom.blog.models import Comment
 from custom.blog.models import Post
 from custom.forum.models import Attitude
+from pytz import timezone as pytz
+
+tz = pytz('Europe/Moscow')
+
 
 @csrf_exempt
 def newcomment(request, post_id):
@@ -105,10 +112,20 @@ def editcomment(request, comment_id):
          comment = None
 
 
-
+     
     try:
         post = Post.objects.get(id=int(comment.post_id))
-    except Exception:
+        post_id = post.id
+        post.time_last_commented = timezone.now().replace(tzinfo=tz)
+        comment.time_last_edited = timezone.now().replace(tzinfo=tz)
+  #      post.time_last_edited = str(now)
+        post.save()
+        comment.save()
+    except Exception as e:
+        log = Logger(log="Something went wrong {}".format(e))
+        log.save()
+
+        post_id = -1
         post = None
 
     try:
@@ -138,6 +155,7 @@ def editcomment(request, comment_id):
 
     return render(request, 'comment_edit.html',{'home':'comment_edit.html',
                                                'post': post,
+                                               'post_id': post_id,
                                                'comments': comments,
                                                'comment': comment,
                                                'user': request.user,
@@ -311,7 +329,46 @@ def addnewcommentunauth(request):
         password = request.data.get('comment_password', None)
         ip, is_routable = get_client_ip(request)
         ip_address = str(ip)
+        post = Post.objects.get(id=post_id)
+
         user = authenticate(username=username, password=password)
+
+        if not user:
+            try:
+                user = User.objects.get(username=username, password=password)
+            except Exception as e:
+                pass
+
+        if user and not user.profile.is_activated:
+            return Response({"message": 'success',
+                             "code":200,
+                             "user_id": user.id,
+                             "username": username,
+                             "log_out": False,
+                             "not_activated": True,
+                             "status": "notactivated",
+                             "reason": "User is not activated"},
+                             status=200)
+        if not user:
+            return Response({"message": 'failure',
+                             "code":400,
+                             "log_out": False,
+                             "status": "unauthenticated",
+                             "not_activated": False,
+                             "reason": "Invalid user"},
+                             status=400)
+        #request.session.set_expiry(1086400) #sets the exp. value of the session
+        login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+
+
+
+        log = Logger(log="USER IS {} {}".format(username, password))
+        log.save()
+
+        log = Logger(log="USER IS {} {} {}".format(username, password, user))
+        log.save()
+
+
         if not user:
             return Response({"message": "failed to authenticated",
                              "status": "posted",
@@ -319,13 +376,14 @@ def addnewcommentunauth(request):
                              "falure_code": 2}, status=400)
 
 
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
         attitude = Attitude.objects.get(id=int(att))
         log = Logger(log="BEFORE WE READ POST")
         log.save()
-        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post_id=post_id, ip_address=ip_address)
+     
+        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
+        
     except Exception as e:
-        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log = Logger(log="Error in blogs- failed to create a new unauth post {}".format(e))
         log.save()
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
@@ -333,6 +391,7 @@ def addnewcommentunauth(request):
                          "falure_code": 1}, status=400)
     return Response({"message": "success - username used",
                      "status": "posted",
+                     "post_id": post_id,
                      "code": 200,
                      "falure_code": 0}, status=200)
 
@@ -347,8 +406,14 @@ def addnewcomment(request):
         body = request.data.get('body', '')
         title = request.data.get('title', '')
         att = int(request.data.get('attitude', None))
-        post_id = int(request.data.get('post_id', None))
+        post_id = request.data.get('post_id', None)
         cid = request.data.get('comment_id', None)
+        user_id = int(request.data.get('user_id', None))
+ 
+ 
+        log = Logger(log="BODY {} TITLE {} att {} post_id {} cid {} UID {}".format(body, title, att, post_id, cid, user_id))
+        log.save()
+
         ip, is_routable = get_client_ip(request)
         ip_address = str(ip)
         if cid:
@@ -357,10 +422,16 @@ def addnewcomment(request):
             comment_id = 0
 
         attitude = Attitude.objects.get(id=int(att))
-        user_id = int(request.data.get('user_id', None))
-        attitude = Attitude.objects.get(id=int(att))
-        post = Post.objects.get(id=post_id)
-       
+        post = Post.objects.get(id=int(post_id))
+        try:
+            post.time_last_commented = timezone.now().replace(tzinfo=tz) #datetime.now().strftime("YYYY-MM-DD HH:MM:ss")
+            post.save()
+        except Exception as e:
+            log = Logger(log="Error updating post {} {}".format(e, post_id))
+            log.save()
+     
+ 
+ 
         user = User.objects.get(id=user_id)
 
         try:
@@ -380,7 +451,7 @@ def addnewcomment(request):
         except Exception as e:
             Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
     except Exception as e:
-        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log = Logger(log="Error in blogs - this just did not work out - failed to create a new comment {}".format(e))
         log.save()
 
         return Response({"message": "failed - {}".format(e),
@@ -414,6 +485,19 @@ def updatepost(request):
         post_id = int(request.data.get('post_id', None))
         attitude = Attitude.objects.get(id=int(att))
  
+
+        try:
+            if len(body) < 1:
+                post = Post.objects.get(id=post_id)
+                post.delete()
+                return Response({"message": "success - post deleted",
+                                 "status": "deleted",
+                                 "code": 200,
+                                 "falure_code": 0}, status=200)
+        except Exception as e:
+            log = Logger(log="Some error - {}".format(e))
+            log.save()
+
         shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
 
         log = Logger(log="URL1 {} URL2 {} URL3 {} URL4 {}".format(url,url_two, url_three, url_four))
@@ -476,6 +560,7 @@ def updatepost(request):
         post.link_four = link_four
         post.attitude = attitude
         post.body = body
+        post.time_last_edited = str(now)
         post.translit_subject = trans_subject
         post.save()
     except Exception as e:
@@ -560,8 +645,10 @@ def addnewblogunauth(request):
             trans_subject = str(subject).lower()
 
         Post.objects.create(author=user, subject=subject, link=link,
-                            link_two=lik_two, link_three=link_three, 
+                            link_two=link_two, link_three=link_three, 
                             link_four=link_four,
+                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_edited=timezone.now().replace(tzinfo=tz),
                             attitude=attitude, body=post,
                             translit_subject=trans_subject,
                             ip_address=ip_address)
@@ -643,6 +730,8 @@ def addnewblog(request):
                             link_two=link_two, link_three=link_three,
                             link_four=link_four,
                             attitude=attitude, body=post,
+                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_edited=timezone.now().replace(tzinfo=tz),
                             translit_subject=trans_subject,
                             ip_address=ip_address)
 
@@ -661,14 +750,12 @@ def addnewblog(request):
                      "falure_code": 0}, status=200)
 
 
-
-
 @csrf_exempt
 def userblog(request, user_id):
     page = request.GET.get('page')
 
     try:
-        posts = Post.objects.filter(author_id=int(user_id)).order_by('-time_published')
+        posts = Post.objects.filter(author_id=int(user_id)).order_by('-time_last_commented')
 
         paginator = Paginator(posts, 10)
 

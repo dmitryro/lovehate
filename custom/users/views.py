@@ -129,8 +129,109 @@ def resend_password_link(request):
                      status=200)
 
 
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def saveprofile(request):
+    username = request.data.get('username', '')
+    user_id =  request.data.get('user_id', '')
+    session_username = request.data.get('session_username', '')
+    first_name = request.data.get('first_name', '')
+    last_name = request.data.get('last_name', '')
+    email = request.data.get('email', '')
+    bio = request.data.get('bio', '')
+    log = Logger(log="TWO USERNAMES {} {} {}".format(username, session_username, user_id))
+    log.save()
 
 
+    try:
+        existing_user = User.objects.get(username=username)
+            
+        if existing_user.id != int(user_id):
+                return Response({"message": "failure - username used",
+                                 "status": "registered",
+                                 "code": 400,
+                                 "falure_code": 1,
+                                 "user_id": -1,
+                                 "email": email,
+                                 "username": username},
+                                 status=400)
+
+    except Exception as e:
+        log = Logger(log="Failed to get existing {}".format(e))
+        log.save()
+
+    try:
+        existing_user = User.objects.get(email=email)
+
+        if existing_user.id != int(user_id):
+                return Response({"message": "failure - username used",
+                                 "status": "registered",
+                                 "code": 400,
+                                 "falure_code": 1,
+                                 "user_id": -1,
+                                 "email": email,
+                                 "username": username},
+                                 status=400)
+
+    except Exception as e:
+        log = Logger(log="Failed to get existing {}".format(e))
+        log.save()
+
+
+    try:
+        user = User.objects.get(username=session_username)
+    except Exception as e:
+        log = Logger(log="Failed to read user {}".format(e))
+        log.save()
+
+        return Response({"message": "failure - user not found",
+                         "status": "registered",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1,
+                         "email": email,
+                         "username": username},
+                         status=400)
+
+    try:
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+
+        user.profile.username = username
+        user.profile.first_name = first_name
+        user.profile.bio = bio
+        user.profile.email = email
+
+        user.save()
+        user.profile.save()
+    except Exception as e:
+        log = Logger(log="Failed to save user {}".format(e))
+        log.save()
+
+        return Response({"message": "failure - failed to save",
+                             "status": "registered",
+                             "code": 400,
+                             "falure_code": 1,
+                             "user_id": -1,
+                             "email": email,
+                             "username": username},
+                             status=400) 
+
+
+    return Response({"message": "success",
+                     "status": "updated",
+                     "code": 200,
+                     "user_id": user.id,
+                     "username": username},
+                     status=200)
+   
+ 
+
+    
+#    'social.backends.instagram.InstagramOAuth2',
 
 
 @api_view(['POST', 'GET'])
@@ -598,20 +699,24 @@ def changepassword(request):
 
 
 @api_view(['POST', 'GET'])
-@renderer_classes((JSONRenderer,))
-@permission_classes([AllowAny,])
+#@renderer_classes((JSONRenderer,))
+#@permission_classes([AllowAny,])
 def auth(request):
-    logout(request)
+#    logout(request)
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
 
-    user = authenticate(username=username, password=password)
+   # user = authenticate(username=username, password=password)
 
-    if not user:
-        try:
-            user = User.objects.get(username=username, password=password)
-        except Exception as e:
-            pass
+    try:
+        user = User.objects.get(username=username)
+        authenticate(username=username, password=password)
+    except Exception as e:
+        user = authenticate(username=username, password=password)
+
+    log = Logger(log="USER AUTHENTICATED {}".format(user))
+    log.save()
+   
 
     if user and not user.profile.is_activated:
         return Response({"message": 'success',
@@ -631,9 +736,9 @@ def auth(request):
                          "not_activated": False,
                          "reason": "Invalid user"}, 
                          status=400)
-    if user.is_active:
-        #request.session.set_expiry(1086400) #sets the exp. value of the session 
-        login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+#    if user.is_active:
+    request.session.set_expiry(1086400) #sets the exp. value of the session 
+    login(request, user,  backend='allauth.account.auth_backends.AuthenticationBackend') #the user is now logged in
 
     return Response({"message": "success",
                      "status": "authenticated",

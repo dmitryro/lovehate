@@ -63,6 +63,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post, blank=True, null=True,  on_delete=models.CASCADE)
     rating =  models.FloatField(default=0, blank=True, null=True)
     time_published = models.DateTimeField(auto_now_add=True)
+    time_last_edited = models.DateTimeField(blank=True, null=True)
     ip_address = models.CharField(max_length=40,
                                   blank=True,
                                   null=True)

@@ -180,6 +180,21 @@ button:hover {
         display: inline;
     }
 
+    #editprofileform label {
+        width: 250px;
+    }
+
+    #editprofileform label.error, #editprofileform input.submit, #editprofileform input.button {
+        margin-left: 253px;
+    }
+
+    #editprofileform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+
     #newmessageunauthform label {
         width: 250px;
     }
@@ -269,14 +284,17 @@ button:hover {
         width: 250px;
     }
 
-    .change-success, .sent-success, .recover-success {
+    .change-success, .sent-success, .recover-success, .profile-success., .registration-success {
         display:none;
         color: #3c763d;
         background-color: #dff0d8;
         border-color: #d6e9c6;
     }
 
-    .sent-errors label.error, sent-errors input.submit, .sent-errors input.button,
+    .registration-errors label.error, .registration-errors input.submit, 
+    .registration-errors input.button,
+    .profile-errors label.error, .profile-errors input.submit, .profile-errors input.button, 
+    .sent-errors label.error, .sent-errors input.submit, .sent-errors input.button,
     .change-errors label.error, .change-errors input.submit, .change-errors input.button, 
     #changepassword label.error, #changepassword input.submit, #changepassword input.button {
         color: #ff0000;
@@ -1335,6 +1353,7 @@ span.psw {
 
 
                          </div>
+                         <input type="hidden" value="{{ user.username }}" id="session_username" />
                          <input type="hidden" value="{{ current_page }}" id="current_page" />
                          <input type="hidden" value="{{ is_reset_required }}" id="is_reset_required" />
                          <input type="hidden" value="{{ is_reset_possible }}" id="is_reset_possible" />
@@ -1461,6 +1480,7 @@ span.psw {
                                                {% endif %}
                                                {% if user.is_authenticated %}
                                                    <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}" />
+                                                   <input type="hidden" id="session_user_name" name="session_user_name" value="{{ username }}" />
                                                    <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/incoming">
                                                          Приваты
  
@@ -1552,8 +1572,8 @@ span.psw {
 
                           <div class="modal-body">
                                <div class="container-fluid">
-                                      <div class="row">
-                                             <div class="col-sm-12">
+                                                        <div class="row">
+                                                         <div class="col-sm-12">
 
                                                                <div class="success sent-success" id="sent-success">
                                                               Вам выслана ссылка! Используйте ее для восстановления пароля!
@@ -1799,7 +1819,7 @@ span.psw {
                           <div class="errors" id="modal-error"><span><a href="#" id="retry-activation" class="error">Активировать?</a></span> </div>
                     </div>
                     <div class="modal-body">
-                          <form id="authenticate-form" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+                          <form id="authenticate-form" action="https://lovehate.io/" enctype="multipart/form-data" method="POST">
                               {% csrf_token %}
                               <div class="container-fluid">
                                          
@@ -1874,7 +1894,7 @@ span.psw {
             $('#message').html('');
             $('#comment').html($('#comment-body').val());
             $('#blogedit_post').html($('#blog_body_edit').val());
-            $('#bio').html($('#user-bio').val());
+            $('#bio').html($('#profile_bio').val());
             $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
@@ -2114,6 +2134,36 @@ span.psw {
                       }
             }); 
 
+            $('#editprofileform').validate({
+                      rules: {
+                            profile_username: {
+                                     required: true,
+                                     minlength: 1
+                            },
+                            profile_email: {
+                                     required: true,
+                                     email: true
+                            }
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           profile_email: {
+                               required: "Введите адрес электронной почты!",
+                               email: "Неверный формат электронной почты!",
+                           },
+                           profile_username: {
+                               required: "Введите ник (имя пользователя)!",
+                           },
+                      }                          
+      
+            });
 
             $('#newcommentunauthform').validate({
                       rules: {
@@ -2440,7 +2490,7 @@ span.psw {
             $('#editblogform').validate({
                       rules: {
                             blogedit_attitude: "required",
-                            blogedit_post: "required",
+                //            blogedit_post: "required",
                             blogedit_subject: {
                                      required: true,
                                      minlength: 2
@@ -2459,10 +2509,12 @@ span.psw {
                                required: "Введите тему сообщения!",
                                minlength: "Введите тему сообщения!",
                            },
+/*
                            blogedit_post: {
                                required: "Введите текст сообщения!",
                                minlength: "Введите текст сообщения!",
                            },
+*/
                            blogedit_attitude: {
                                required: "Выскажите свое отношение к публикуемому!"
                            },
@@ -2656,7 +2708,40 @@ span.psw {
                      }
               });
 
-                
+              
+              $('#editprofile-publish').click(function(event) {
+                   if($('#editprofileform').valid()) {
+
+                      var arr = {
+                          user_id: $('#user_id').val(),
+                          username: $("#profile_username").val(),
+                          session_username:  $("#session_user_name").val(),
+                          first_name: $("#first_name").val(),
+                          last_name: $("#last_name").val(),
+                          email: $("#profile_email").val(),
+                          bio: $("#bio").val(),
+                      };
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/saveprofile/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              $( ".profile-success" ).fadeIn(300).delay(1000).fadeOut(300).promise().done(function() {
+                                     wait(1000);
+                                     redirect_url('mylh/');
+                              });
+                          },
+                          error: function(data){
+                              $( ".profile-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+                      }); // end ajax call
+                } 
+
+              });  
+
               $('#password-recover-publish').click(function(event) {
                    if ($('#recover-password-steptwo').valid()) {
 
@@ -2724,6 +2809,7 @@ span.psw {
  
               $('#newcomment-publish').click(function(event) {
                   if ($('#newcommentform').valid()) {
+
                       var arr = {
                           body: $("#comment").val(),
                           attitude: attitude[$('input[type=radio][name=comment_attitude]:checked').val()],
@@ -2732,6 +2818,7 @@ span.psw {
                           post_id: $("#comment_post_id").val(),
                           comment_id: $("#comment_id").val()
                       };
+
                       $.ajax({
                           type: "POST",
                           url: "https://lovehate.io/addnewcomment/",
@@ -2769,7 +2856,6 @@ span.psw {
                               redirect_url('blog/'+$("#comment_post_id").val()+"/comments");
                           },
                           error: function(data){
-                              alert(data.message+" "+data.code);
                               $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                           }
                       }); // end ajax call
@@ -2793,6 +2879,7 @@ span.psw {
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){
+                             
                               redirect_url('outgoing');
                           },
                           error: function(data){
@@ -2825,6 +2912,8 @@ span.psw {
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){
+                              auth($("#message_username").val(), 
+                                   $("#message_password").val()); 
                               redirect_url('outgoing');
                           },
                           error: function(data){
@@ -3046,12 +3135,17 @@ span.psw {
                           data: JSON.stringify(arr),
                           dataType: 'json',
                           contentType: "application/json; charset=utf-8",
+
                           success: function(data){
-                              $("#registration-success" ).fadeIn( 200 ).delay( 1200 ).fadeOut( 300 );   
-                          },      
+                              $( ".registration-success" ).fadeIn(300).delay(1000).fadeOut(300).promise().done(function() {
+                                     wait(1000);
+                                     redirect_url('/');
+                              });
+                          },
                           error: function(data){
-                              $( "#registration-error" ).fadeIn( 200 ).delay( 700 ).fadeOut( 300 );  
-                          }                
+                              $( ".registration-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                          }
+
                       });
                   }       
               });
@@ -3124,6 +3218,10 @@ span.psw {
 
        function redirect_login(data) {
            $("#authenticate-form").submit();
+       }
+
+       function auth(username, password) {
+            $('#newmessageunauthform').submit();
        }
 
        function wait(ms){

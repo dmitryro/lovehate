@@ -87,6 +87,10 @@ def reset_password_link(sender, instance, **kwargs):
         server.login(USER, PASSWORD)
         server.sendmail(FROM, TO, msg)
         server.quit()
+
+        instance.profile.activation_key = activation_key
+        instance.profile.save()
+        instance.save()
     except Exception as R:
         log = Logger(log='Failed resetting {}'.format(str(R)))
         log.save()
@@ -183,7 +187,7 @@ def new_account_notify(instance, email):
         today = len(usrs)
 
         profile = ProfileMetaProp.objects.get(pk=1)
-        FROM = str('Любовь и Ненависть <info@lovehate.io>')
+        FROM = '<strong>Восстановление доступа - Любовь и Ненависть'
         USER = profile.user_name
         PASSWORD = profile.password
         PORT = profile.smtp_port

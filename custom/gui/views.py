@@ -537,7 +537,7 @@ def blog(request):
     page = request.GET.get('page')
 
     try:
-        posts = Post.objects.all().order_by('-time_published')
+        posts = Post.objects.all().order_by('-time_last_commented')
 
         paginator = Paginator(posts, 10)
 

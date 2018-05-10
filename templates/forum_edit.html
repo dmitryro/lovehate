@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div>
+<br />
+<br />
+<br />
+</div>
+<div class="container-fluid registration-form">
+<form  name="editforumform" id="newforumform">
+<div class="row">
+
+    <div class="col-sm-2">
+    </div>
+    <div class="col-sm-8">
+     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+         <div class="row">
+             <div class="col-sm-4">&nbsp;
+             </div>
+             <div class="col-sm-8">&nbsp;
+             </div>
+         </div>
+
+         <div class="row">
+             <div class="col-sm-4">
+             </div>
+             <div class="col-sm-8">
+                    <div class=container-fluid" style="margin-left:0.4em;">
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
+                               </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="forumedit_attitude"></label>
+                               </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-feeling-error" class="error" for="feeling"></label>
+                               </div>
+                    </div>
+
+             </div>
+         </div>
+
+
+
+                 <div class="row">
+
+
+                 <div class="col-sm-4">
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+
+Название темы
+                       </div>
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                       </div>
+
+                       <div class="clear"></div>
+
+                 </div>
+                 <div class="col-sm-8">
+
+                                             <div class="form-group">
+                                                       <input type="text" id="subject" name="subject" maxlength="100" size="56"  />
+                                             </div>
+
+                 </div>
+
+                 </div>
+
+         <div class="row">
+             <div class="col-sm-4">
+
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">
+Ваше отношение
+                       </div>
+
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                       </div>
+
+                       <div class="clear"></div>
+
+             </div>
+
+             <div class="col-sm-8">
+                       <div class="container-fluid">
+
+                               <div class="row">
+                                       <div class="col-sm-4">
+                                                      <input type="radio" name="forumedit_attitude" value="love" />
+                                                       
+                                                       <span class="loves-profile">
+                                                              Любовь
+                                                       </span>
+                                       </div>
+
+                                                            
+
+                                       <div class="col-sm-4">
+                                                       <input type="radio" name="forumedit_attitude" value="indifferent" />
+                                                          
+                                                       <span class="mehs-profile">
+Безразличие
+
+                                                       </span>
+                                       </div>
+
+
+
+                                       <div class="col-sm-4">
+                                                       <input type="radio" name="forumedit_attitude" value="hate" /> 
+                                                       <span class="hates-profile">
+Ненависть                  
+                                                       </span>
+                                       </div>
+                                        
+ 
+
+                               </div>
+                       </div>                 
+             </div>
+
+
+         </div>
+         <div class="row">
+
+                       <div class="col-sm-4">
+
+                       </div>
+                       <div class="col-sm-8">
+                                    <div class="form-group">
+                                            <textarea name="feeling" id="feeling" cols="10" rows="8" style="width:100%;"
+                                             placeholder="Пишите что хотите (но по теме)..." value="">
+                                            </textarea>
+                                    </div>
+                       </div>
+          </div>
+         <div class="row">
+                       <div class="col-sm-4">
+                       </div>
+                       <div class="col-sm-2">
+
+                            <button class="btn4" id="forumedit-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                                  Отправить
+                            </button>
+                            
+                       </div>
+
+                       <div class="col-sm-4">
+                       </div>                       
+         </div>
+     </div>
+    </div>
+</div>
+<input type="hidden" id="emotion_user_id" value="{{ user.id }}" />
+</form>
+</div>
+{% endblock %}
+

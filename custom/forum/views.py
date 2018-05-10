@@ -205,6 +205,7 @@ def outgoing_messages(request):
 
     try:
         delete_ids = request.POST.getlist('outgoing_delete')
+
         for delete_id in delete_ids:
             message = Message.objects.get(id=int(delete_id))
             message.delete()
@@ -213,7 +214,6 @@ def outgoing_messages(request):
         log.save()
 
     page = request.GET.get('page', 1)
-
 
     try:
         if request.user.is_authenticated:
@@ -402,7 +402,11 @@ def newmessage_unauth(request):
         username = request.data.get('username', '')
         password = request.data.get('password', '')
 
+
         user = authenticate(username=username, password=password)
+        log = Logger(log="AFTER WE TRIED {} {} {}".format(user, username, password))
+        log.save()
+
         if not user:
             return Response({"message": "failed to authenticate",
                              "status": "posted",
@@ -410,14 +414,23 @@ def newmessage_unauth(request):
                              "falure_code": 2}, status=400)
 
 
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in    
+   
+        try:
+            user = User.objects.get(username=username)
+        except Exception as e:
+            return Response({"message": 'failure',
+                             "code":400,
+                             "log_out": False,
+                             "status": "unauthenticated",
+                             "not_activated": False,
+                             "reason": "Invalid user"},
+                             status=400)
+        #request.session.set_expiry(1086400) #sets the exp. value of the session
         sender_id = user.id
-        log = Logger(log="BODY {} SUBJ {} RECIP {} ATTITUDE {} SENDER_ID {} username {} password {}".format(body,
-                                                                                                            subject, recipients, attitude,
-                                                                                                            sender_id, username, password))
- 
-        log.save()
 
+        log = Logger(log="SO FAR SO GOOD {}".format(user, user.is_authenticated))
+        log.save()
 
         try:
             language = detect_language(str(subject))

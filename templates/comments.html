@@ -113,9 +113,13 @@
                               </div>
                               {% endif %}
 
+                              <div class="row neutral-messages">
+                                     <div class="col-sm-12" style="border-bottom:1px #333333 solid; opacity: 0.3;margin-top:1.1em;margin-left:1.9em;">
+                                     </div>
+                              </div>
 
-                              <div class="row neutral-messages" stlye="padding-left:1.6em;margin-top:3.22em;">
-                                   <div class="container-fluid" style="margin-left:2.22em;">
+                              <div class="row neutral-messages" style="margin-top:0.6em;margin-left:0.0em;margin-top:-0.4em;">
+                                   <div class="container-fluid">
                                                           {% for comment in comments %}
                                                            {% if comment.attitude.id == 1 %}
                                                                  <div class="row loves-messages" style="margin-top:1.5em;">
@@ -125,11 +129,9 @@
                                                                   <div class="row hates-messages" style="margin-top:1.5em;">
                                                            {% endif %}
 
-                                     <div class="col-sm-3">
-                                         <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a>
-                                     </div>
-                                     <div class="col-sm-9">
-                                         <strong> {{ comment.title }}</strong>
+                                     <div class="col-sm-12">
+                                         <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a> &nbsp;
+                                         <strong> {{ comment.title }}</strong> &nbsp; {{ comment.date_time_published }}
                                      </div>  
                                     
                                      </div>
