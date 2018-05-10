@@ -121,6 +121,7 @@ urlpatterns = [
     path('private/unauth/<int:receiver_id>', private_unauth),
     path('private/send/<int:receiver_id>', private),
     path('private/answer/<int:message_id>/', answer_private),
+    path('signin/', home),
     path('topics/', forum),
     path('forum/', forum),
     path('mylh/', mylh),

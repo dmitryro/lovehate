@@ -55,11 +55,10 @@ def home(request):
     loves = None
     mehs = None
     hates = None
-
     try:
-        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published').order_by('-time_last_edited')
-        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published').order_by('-time_last_edited')
-        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published').order_by('-time_last_edited')
+        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published')
+        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published')
+        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published')
         total_loves = len(loves)
         total_mehs = len(mehs)
         total_hates = len(hates)
@@ -180,8 +179,13 @@ def home(request):
     log = Logger(log="PAGES SLICE IS {} and NUMBER OF PAGES {}".format(pages_slice, paginator.num_pages))
     log.save()
 
+    try:
+       user_id = request.user.id
+       user = User.objects.get(id=user_id)
+    except Exception as e:
+       user = request.user
     return render(request, 'index.html',{'home':'index.html', 
-                                         'user': request.user,
+                                         'user': user,
                                          'pages': pages_slice,
                                          'loves': love_slice,
                                          'mehs': meh_slice,
@@ -368,9 +372,9 @@ def forum(request):
     hates = None
 
     try:
-        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published').order_by('-time_last_edited')
-        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published').order_by('-time_last_edited')    
-        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published').order_by('-time_last_edited')
+        loves = Emotion.objects.filter(attitude_id=1).order_by('-time_published')
+        mehs = Emotion.objects.filter(attitude_id=2).order_by('-time_published')
+        hates = Emotion.objects.filter(attitude_id=3).order_by('-time_published')
         total_loves = len(loves)
         total_mehs = len(mehs)
         total_hates = len(hates)

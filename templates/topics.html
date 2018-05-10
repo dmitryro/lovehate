@@ -77,7 +77,7 @@
                 <div class="loves-topic">
 
                            {% for love in lovers %}
-                                  <div style="text-align:left;">
+                                  <div class="forum-entry">
                                            <a href="/user/{{ love.user.id }}">{{ love.user.username }}</a>:
                                                                             {% for line in love.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
@@ -89,8 +89,23 @@
                                                                                                {{ line|slice:"0:" }}
                                                                                       {% endif %}
                                                                                               </span>
-                                                                                               <br/>
+                                                                                      {% if not forloop.last %}
+                                                                                             <br/>
+                                                                                      {% endif %}
+
                                                                                {% endfor %}
+
+                                                                            {% if user.is_authenticated %}
+                                                                                {% if love.user.id is user.id %}
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
+                                                                                       <a href="/topics/{{ love.topic.id}}/emotion/{{ love.id }}/edit">
+                                                                                       Править>>
+                                                                                       </a>
+                                                                                 </span>
+
+                                                                                {% endif %}
+                                                                            {% endif %}
+
                                   </div>
                            {% endfor %}
 
@@ -102,7 +117,7 @@
                  <div class="mehs"><span><a href="/topics/{{ topic.id }}/attitude/2">Я тоже плевал на  {{ topic.name }}</a></span></div>
                  <div class="mehs-topic">
                            {% for meh in mehs %}
-                                  <div style="text-align:left;">
+                                  <div class="forum-entry">
                                           <a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a>:
                                                                             {% for line in meh.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
@@ -114,8 +129,22 @@
                                                                                                {{ line|slice:"0:" }}
                                                                                       {% endif %}
                                                                                               </span>
-                                                                                               <br/>
+                                                                                      {% if not forloop.last %}
+                                                                                            <br/>
+                                                                                      {% endif %}
+
                                                                                {% endfor %}
+                                                                            {% if user.is_authenticated %}
+                                                                                {% if meh.user.id is user.id %}
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
+                                                                                       <a href="/topics/{{ meh.topic.id}}/emotion/{{ meh.id }}/edit">
+                                                                                       Править>>
+                                                                                       </a>
+                                                                                 </span>
+
+                                                                                {% endif %}
+                                                                            {% endif %}
+
                                   </div>
                            {% endfor %}
                  </div>
@@ -133,7 +162,7 @@
                  <div class="hates-topic">
 
                            {% for hate in haters %}
-                                  <div style="text-align:left;">
+                                  <div class="forum-entry">
                                          <a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a>: 
                                                                             {% for line in hate.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
@@ -145,8 +174,22 @@
                                                                                                {{ line|slice:"0:" }}
                                                                                       {% endif %}
                                                                                               </span>
+                                                                                              {% if not forloop.last %}
                                                                                                <br/>
+                                                                                              {% endif %}
+
                                                                                {% endfor %}
+                                                                            {% if user.is_authenticated %}
+                                                                                {% if hate.user.id is user.id %}
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
+                                                                                       <a href="/topics/{{ hate.topic.id}}/emotion/{{ hate.id }}/edit">
+                                                                                       Править>>
+                                                                                       </a>
+                                                                                 </span>
+
+                                                                                {% endif %}
+                                                                            {% endif %}
+
                                   </div>
                            {% endfor %}
 

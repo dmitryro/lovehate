@@ -699,55 +699,35 @@ def changepassword(request):
 
 
 @api_view(['POST', 'GET'])
-#@renderer_classes((JSONRenderer,))
-#@permission_classes([AllowAny,])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
 def auth(request):
-#    logout(request)
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
 
-   # user = authenticate(username=username, password=password)
 
     try:
         user = User.objects.get(username=username)
-        authenticate(username=username, password=password)
-    except Exception as e:
-        user = authenticate(username=username, password=password)
-
-    log = Logger(log="USER AUTHENTICATED {}".format(user))
-    log.save()
-   
-
-    if user and not user.profile.is_activated:
+        login(request, user,  backend='custom.users.backends.LocalBackend')
         return Response({"message": 'success',
                          "code":200,
                          "user_id": user.id,
                          "username": username,
                          "log_out": False,
-                         "not_activated": True,
-                         "status": "notactivated",
-                         "reason": "User is not activated"},
+                         "not_activated": False,
+                         "status": "activated",
+                         "reason": "User is activated"},
                          status=200)
-    if not user:
-        return Response({"message": 'failure',
+
+    except Exception as e:
+        return Response({"message": 'failure {} for username {}'.format(e, username),
                          "code":400,
                          "log_out": False,
                          "status": "unauthenticated",
                          "not_activated": False,
-                         "reason": "Invalid user"}, 
+                         "reason": "Invalid user"},
                          status=400)
-#    if user.is_active:
-    request.session.set_expiry(1086400) #sets the exp. value of the session 
-    login(request, user,  backend='allauth.account.auth_backends.AuthenticationBackend') #the user is now logged in
 
-    return Response({"message": "success",
-                     "status": "authenticated",
-                     "code": 200,
-                     "not_activated": False,
-                     "user_id": user.id,
-                     "username": user.username,
-                     "log_out": True},
-                     status=200)
 
 user_send_reset_password_link.connect(reset_password_link)
 user_resend_activation.connect(resend_activation_handler)

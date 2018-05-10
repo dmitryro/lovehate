@@ -38,6 +38,19 @@ class Post(models.Model):
         return self.author.profile.username
 
     @property
+    def long_article(self):
+        return len(self.body) > 334
+
+    @property
+    def teaser_lines(self):
+        body = str(self.body)
+        if len(body) > 334:
+            teaser = "{}...".format(body[:330])
+        else:
+            teaser = body
+        return teaser.splitlines()
+
+    @property
     def date_time_published(self):
         dt = str(self.time_published)
         year = dt[0:4]

@@ -44,7 +44,7 @@
                                                                             {% endfor %}
                                                                             {% if user.is_authenticated %}
                                                                                 {% if love.user.id is user.id %}
-                                                                                 <span class="neutral-messages" style="font-size:0.6em;">
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ love.topic.id}}/emotion/{{ love.id }}/edit">
                                                                                        Править>>
                                                                                        </a>
@@ -92,7 +92,7 @@
 
                                                                             {% if user.is_authenticated %}
                                                                                 {% if meh.user.id is user.id %}
-                                                                                 <span class="neutral-messages" style="font-size:0.6em;">
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ meh.topic.id}}/emotion/{{ meh.id }}/edit">
                                                                                        Править>>
                                                                                        </a>
@@ -138,7 +138,7 @@
 
                                                                             {% if user.is_authenticated %}
                                                                                 {% if hate.user.id is user.id %}
-                                                                                 <span class="neutral-messages" style="font-size:0.6em;">
+                                                                                 <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ hate.topic.id}}/emotion/{{ hate.id }}/edit">
                                                                                        Править>>
                                                                                        </a>
