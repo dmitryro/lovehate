@@ -51,11 +51,13 @@ from custom.users.views import Logout
 from custom.users.views import changepassword
 from custom.forum.views import forum_new
 from custom.forum.views import forum_add
+from custom.forum.views import forum_edit
 from custom.forum.views import EmotionDetail
 from custom.forum.views import EmotionList
 from custom.forum.views import AttitudeDetail
 from custom.forum.views import AttitudeList
 from custom.forum.views import newemotion
+from custom.forum.views import editemotion
 from custom.forum.views import newemotion_unauth
 from custom.forum.views import topics
 from custom.forum.views import newmessage
@@ -86,6 +88,7 @@ urlpatterns = [
     path('', home),
     path('add/', forum_new),
     path('topics/<int:topic_id>/attitude/<int:attitude_id>/', forum_add),
+    path('topics/<int:topic_id>/emotion/<int:emotion_id>/edit/', forum_edit),
     path('admin/', admin.site.urls),
     path('authenticate/', csrf_exempt(auth)),
     path('users/', UserList.as_view()),
@@ -125,6 +128,7 @@ urlpatterns = [
     path('blogs/', blog),
     path('registernew/', registernew),
     path('newmessage/', csrf_exempt(newmessage)),
+    path('editemotion/', editemotion),
     path('newmessageunauth/', csrf_exempt(newmessage_unauth)),
     path('outgoing/', csrf_exempt(outgoing_messages)),
     path('incoming/', csrf_exempt(incoming_messages)),

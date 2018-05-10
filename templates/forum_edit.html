@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-
 <div>
 <br />
 <br />
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form  name="editforumform" id="newforumform">
+<form  name="editforumform" id="editforumform">
 <div class="row">
 
     <div class="col-sm-2">
@@ -28,7 +27,14 @@
              <div class="col-sm-8">
                     <div class=container-fluid" style="margin-left:0.4em;">
                                <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="subject"></label>
+                                                               <div class="forum-errors" style="display:none;">
+                                                               Не удалось отредактировать или удалить сообщение!
+                                                               </div>
+
+                               </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-subject-error" class="error" for="forumedit_subject"></label>
                                </div>
 
                                <div class="row">
@@ -36,7 +42,7 @@
                                </div>
 
                                <div class="row">
-                                    <label id="inlineFormInputGroup-feeling-error" class="error" for="feeling"></label>
+                                    <label id="inlineFormInputGroup-feeling-error" class="error" for="forumedit_feeling"></label>
                                </div>
                     </div>
 
@@ -63,7 +69,7 @@
                  <div class="col-sm-8">
 
                                              <div class="form-group">
-                                                       <input type="text" id="subject" name="subject" maxlength="100" size="56"  />
+                                                       <input type="text" id="forumedit_subject" name="forumedit_subject" maxlength="100" size="56" value="{{ emotion.subject }}"  />
                                              </div>
 
                  </div>
@@ -90,17 +96,34 @@
 
                                <div class="row">
                                        <div class="col-sm-4">
+
+                                                  {% if emotion.attitude.id is 1 %}
+                                                      <input type="radio" name="forumedit_attitude" value="love" checked />
+                                                   {% else %}
                                                       <input type="radio" name="forumedit_attitude" value="love" />
-                                                       
+                                                   {% endif %}
+
+
                                                        <span class="loves-profile">
                                                               Любовь
                                                        </span>
                                        </div>
 
                                                             
-
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumedit_attitude" value="indifferent" />
+
+                                                   {% if emotion.attitude.id is 2 %}
+                                                      <input type="radio" name="forumedit_attitude" value="indifferent" checked />
+                                                   {% else %}
+                                                         {% if not emotion %}
+                                                              <input type="radio" name="forumedit_attitude" value="indifferent" checked />
+                                                         {% else %}
+
+                                                             <input type="radio" name="forumedit_attitude" value="indifferent" />
+                                                         {% endif %}
+                                                   {% endif %}
+
+
                                                           
                                                        <span class="mehs-profile">
 Безразличие
@@ -111,7 +134,14 @@
 
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="forumedit_attitude" value="hate" /> 
+
+                                                   {% if emotion.attitude.id is 3 %}
+                                                      <input type="radio" name="forumedit_attitude" value="hate" checked />
+                                                   {% else %}
+                                                      <input type="radio" name="forumedit_attitude" value="hate" />
+                                                   {% endif %}
+
+
                                                        <span class="hates-profile">
 Ненависть                  
                                                        </span>
@@ -132,8 +162,8 @@
                        </div>
                        <div class="col-sm-8">
                                     <div class="form-group">
-                                            <textarea name="feeling" id="feeling" cols="10" rows="8" style="width:100%;"
-                                             placeholder="Пишите что хотите (но по теме)..." value="">
+                                            <textarea name="forumedit_feeling" id="forumedit_feeling" cols="10" rows="8" style="width:100%;"
+                                             placeholder="Пишите о чём угодно, но по теме...">
                                             </textarea>
                                     </div>
                        </div>
@@ -154,9 +184,32 @@
          </div>
      </div>
     </div>
+
+
 </div>
-<input type="hidden" id="emotion_user_id" value="{{ user.id }}" />
+<input type="hidden" id="emotion_emotion" value="{{ emotion.emotion }}" />
+<input type="hidden" id="forumedit_emotion_id" value="{{ emotion.id }}" />
+<input type="hidden" id="forumedit_user_id" value="{{ user.id }}" />
 </form>
+</div>
+
+<div class="container-fluid">
+         <div class="row comment-form-row neutral-messages" style="font-weight:bold; font-family:Times New Roman;">
+                       <div class="col-sm-2">
+                       </div>
+                       <div class="col-sm-6">
+
+                              <br/>
+                              <strong>
+                            &nbsp;  &nbsp; &nbsp;<a href="/forum" style="text-decoration:underline;">
+                              Вернуться
+                               </a>
+                              </strong>
+
+                       </div>
+
+         </div>
+
 </div>
 {% endblock %}
 

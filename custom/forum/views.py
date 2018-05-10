@@ -26,6 +26,12 @@ from rest_framework import exceptions
 from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
 from ipware import get_client_ip
+from django.utils import timezone
+from datetime import datetime
+from pytz import timezone as pytz
+
+tz = pytz('Europe/Moscow')
+
 
 from custom.users.signals import user_resend_activation
 from custom.users.serializers import UserSerializer
@@ -83,17 +89,17 @@ class EmotionViewSet(viewsets.ModelViewSet):
 def topics(request, topic_id):
     redirect = 'topics.html'
     try:
-        lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id)
+        lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id).order_by('-time_last_edited')
     except Exception as e:
        lovers = []
 
     try:
-        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id)
+        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id).order_by('-time_last_edited')
     except Exception as e:
         mehs = []
  
     try:
-        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id)
+        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id).order_by('-time_last_edited')
     except Exception as e:
         haters = []
     
@@ -198,6 +204,48 @@ def forum_add(request, topic_id, attitude_id):
                                      'current_page': 'new_feeling',
                                      'username': request.user.username,
                                      'logout': False})
+
+
+def forum_edit(request, topic_id, emotion_id):
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        emotion = Emotion.objects.get(id=int(emotion_id))
+    except Exception as e:
+        amotion = None
+
+    try:
+        topic = Topic.objects.get(id=int(topic_id))
+    except Exception as e:
+        topic = None
+
+    redirect = 'forum_edit.html'
+
+    return render(request, redirect,{'home':'forum_new.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'emotion': emotion,
+                                     'topic': topic,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'new_feeling',
+                                     'username': request.user.username,
+                                     'logout': False})
+
 
 
 def outgoing_messages(request):
@@ -602,6 +650,88 @@ def answer_private(request, message_id):
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
                                          'user_id': user_id})
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def editemotion(request):
+
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    try:
+        feeling = request.data.get('feeling', '')
+        emotion_id =  int(request.data.get('emotion_id', None))
+        subject = request.data.get('subject', '')
+        att = int(request.data.get('attitude', None))
+        user_id = int(request.data.get('user_id', None))
+        attitude = Attitude.objects.get(id=int(att))
+        
+        log = Logger(log="SO FAR FEELIGN {} EMOTION ID {} SUBJ {} ATT {} USER ID {} ATTRIBUTE {}".format(feeling, emotion_id, subject, att, user_id, attitude))
+        log.save()
+    
+        emotion = Emotion.objects.get(id=emotion_id)
+
+        if not emotion:
+            return Response({"message": "failed",
+                             "status": "posted",
+                             "code": 400,
+                             "falure_code": 1}, status=400)
+             
+        feeling = feeling.strip('')
+        feeling = feeling.strip('\t')
+
+        if not feeling or len(feeling) < 1:
+            emotion.delete()
+            return Response({"message": "success - deleted",
+                             "status": "posted",
+                             "code": 200,
+                             "falure_code": 0}, status=200)
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        user = User.objects.get(id=user_id)
+
+        try:
+            topic = Topic.objects.get(translit_name=trans_subject)
+        except Exception as e:
+            topic = Topic.objects.create(name=subject,
+                                         ip_address=ip_address,
+                                         creator=user,
+                                         translit_name=trans_subject)
+        emotion.time_last_edited = timezone.now().replace(tzinfo=tz)
+        emotion.topic = topic
+        emotion.emotion = feeling
+        emotion.attitude = attitude
+        emotion.subject = subject
+        emotion.translit_subject = trans_subject
+        emotion.save()
+    except Exception as e:
+        log = Logger(log="This just did not work out - failed to create a new topic {}".format(e))
+        log.save()
+
+        return Response({"message": "failed - {}".format(e),
+                         "status": "posted",
+                         "code": 400,
+                         "falure_code": 1}, status=400)
+
+    return Response({"message": "success - username used",
+                     "status": "posted",
+                     "code": 200,
+                     "falure_code": 0}, status=200)
+
 
 
 @api_view(['POST', 'GET'])

@@ -98,6 +98,9 @@ class Emotion(models.Model):
 
     time_published = models.DateTimeField(auto_now_add=True)
 
+    time_last_edited = models.DateTimeField(blank=True,
+                                            null=True)
+
     rating =  models.FloatField(default=0, 
                                 blank=True, 
                                 null=True)

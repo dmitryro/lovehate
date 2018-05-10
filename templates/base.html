@@ -137,6 +137,21 @@ button:hover {
         display: inline;
     }
 
+    #editforumform label {
+        width: 250px;
+    }
+
+    #editforumform label.error, #editforumform input.submit, #editforumform input.button {
+        margin-left: 253px;
+    }
+
+    #editforumform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+
     #newforumunauthform label {
         width: 250px;
     }
@@ -1895,6 +1910,7 @@ span.psw {
             $('#comment').html($('#comment-body').val());
             $('#blogedit_post').html($('#blog_body_edit').val());
             $('#bio').html($('#profile_bio').val());
+            $('#forumedit_feeling').html($('#emotion_emotion').val());
             $('#blognew_post').html('');
             $("#activation-success" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
             $("#activation-failure" ).fadeIn( 200 ).delay( 500 ).fadeOut( 300 );
@@ -2408,13 +2424,13 @@ span.psw {
              });
 
 
+
             $('#newforumform').validate({
                       rules: {
                             forumnew_attitude: "required",
                             feeling: "required",
                             subject: {
                                      required: true,
-                                     minlength: 2
                             },
 
                       },
@@ -2428,7 +2444,6 @@ span.psw {
                       messages: {
                            subject: {
                                required: "Название темы не может быть пустым!",
-                               minlength: "Название темы не может быть короче двух символов!"
                            },
                            feeling: {
                                required: "Ваше сообщение не может быть пустым!",
@@ -2439,6 +2454,35 @@ span.psw {
                            },
 
  
+                     }
+             });
+
+            $('#editforumform').validate({
+                      rules: {
+                            forumedit_attitude: "required",
+                            forumedit_subject: {
+                                     required: true,
+                                     minlength: 1
+                            },
+
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                           forumedit_subject: {
+                               required: "Название темы не может быть пустым!",
+                               minlength: "Название темы не может быть короче одного символа!",
+                           },
+                           forumedit_attitude: {
+                               required: "Ваше отношение должно быть высказано!",
+                           },
+
+
                      }
              });
 
@@ -3058,6 +3102,35 @@ span.psw {
 
 
                    }
+              });
+
+              $('#forumedit-publish').click(function() {
+                     if ($('#editforumform').valid()) {
+                        var arr = {
+                          feeling: $("#forumedit_feeling").val(),
+                          attitude: attitude[$('input[type=radio][name=forumedit_attitude]:checked').val()],
+                          subject: $("#forumedit_subject").val(),
+                          user_id: $("#forumedit_user_id").val(),
+                          emotion_id: $("#forumedit_emotion_id").val(),
+                        };
+            
+                      $.ajax({
+                          type: "POST",
+                          url: "https://lovehate.io/editemotion/",
+                          data: JSON.stringify(arr),
+                          dataType: 'json',
+                          contentType: "application/json; charset=utf-8",
+
+                          success: function(data){
+                              redirect_url('forum');
+                          },
+                          error: function(data){
+                              $( ".forum-errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
+                          }
+                       });
+
+
+                     }
               });
 
               $('#forumnew-publish').click(function() {
