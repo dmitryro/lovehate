@@ -244,26 +244,57 @@ def registernew(request):
     user = None
 
     try:
-        user = User.objects.get(username=username)
-        if not user:
-            user = User.objects.get(email=email)
-    except ObjectDoesNotExist:
-        pass
+        username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
+        profile = Profile.objects.get(username_transliterated=username_transliterated)
+            
+        return Response({"message": "failure - username used",
+                         "status": "username_used",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1,
+                         "email": email,
+                         "username": username},
+                         status=400)
+
+    except ObjectDoesNotExist as e:
+        log = Logger(log="Search by username gave no results {}".format(e))
+        log.save()
+
 
     try:
-        if user is not None:
-            return Response({"message": "failure - username used",
-                             "status": "registered",
-                             "code": 400,
-                             "falure_code": 1,
-                             "user_id": -1,
-                             "email": email,
-                             "username": username},
-                             status=400)
+        user = User.objects.get(email=email)
+
+        return Response({"message": "failure - email used",
+                         "status": "email_used",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1,
+                         "email": email,
+                         "username": username},
+                         status=400)
+    except ObjectDoesNotExist as e:
+        log = Logger(log="Search by email gave no result {}".format(e))
+        log.save()
+
+    except Exception as e:
+        log = Logger(log="EMAIL error {}".format(e))
+        log.save()
+
+        return Response({"message": "failure - email used",
+                         "status": "email_used",
+                          "code": 400,
+                          "falure_code": 1,
+                          "user_id": -1,
+                          "email": email,
+                          "username": username},
+                          status=400)
+
+
+    try:
         user = User.objects.create(username=username,
                                    email=email,
                                    password=password)
-        if user is not None:
+        if user:
             profile = Profile.objects.create(user=user,
                                              username=username,
                                              email=email,
@@ -275,8 +306,6 @@ def registernew(request):
                                         instance = user,
                                         kwargs = None)
     except Exception as e:
-        log = Logger(log='READING USER FAILED {}'.format(e))
-        log.save()
         return Response({"message": "failure",
                          "status": "registered",
                          "code": 400,
@@ -621,12 +650,8 @@ def recoverpassword(request):
         user = User.objects.get(id=int(user_id))
         if user:
              authenticate(username=user.username, password=user.password)
-             #login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
         user.password = password
         user.save()
-
-      #  user = authenticate(username=user.username, password=user.password)
-      #  login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged i
 
 
     except Exception as e:

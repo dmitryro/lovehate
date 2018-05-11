@@ -62,10 +62,10 @@ class ProfileAdmin(admin.ModelAdmin):
                     'user', 'email', 'first_name', 'last_name', 
                     'date_joined', 'is_new',  'bio', 'phone')
 
-    list_editable = ('username',  'username_transliterated', 
-                     'user', 'email', 'first_name', 'last_name', 
-                     'is_new', 'phone', 'bio')
-    search_fields = ('username',  'username_transliterated', 
+#    list_editable = ('username', 'username_transliterated', 
+#                     'user', 'email', 'first_name', 'last_name', 
+#                     'is_new', 'phone', 'bio')
+    search_fields = ('username', 'username_transliterated', 
                      'first_name', 'last_name','email','phone', 
                      'bio')
 
@@ -73,6 +73,14 @@ class ProfileAdmin(admin.ModelAdmin):
     class Meta:
          verbose_name = 'User Profile'
          verbose_name_plural = 'User Profiles'
+
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileAdmin, self).__init__(*args, **kwargs)
+        self.list_display_links = ('username',  'username_transliterated',
+                                   'user', 'email', 'first_name', 'last_name',
+                                   'date_joined', 'is_new',  'bio', 'phone')
+
 
 admin.site.register(Relationship, RelationshipAdmin)
 admin.site.register(Peer, PeerAdmin)
