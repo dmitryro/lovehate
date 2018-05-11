@@ -560,10 +560,12 @@ def updatepost(request):
         post.link_four = link_four
         post.attitude = attitude
         post.body = body
-        post.time_last_edited = str(now)
+        post.time_last_edited = timezone.now().replace(tzinfo=tz)
         post.translit_subject = trans_subject
         post.save()
     except Exception as e:
+        log = Logger(log='Failed saving the post {}'.format(e))
+        log.save()
         return Response({"message": "failed - {}".format(e),
                          "status": "posted",
                          "code": 400,

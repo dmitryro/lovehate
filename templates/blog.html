@@ -15,19 +15,18 @@
         <div class="col-sm-2">
         </div>
     
+
         <div class="col-sm-8">
             <div class="container-fluid">
                 <form action="editprofile" method="post">
                     <div class="row blog-common-row">
                          <div class="col-sm-12">
                                <div class="container-fluid">
-                                   
+
                                {% for post in posts %}
 
 
-                                     <div class="row neutral-messages">
-                                          <div class="col-sm-12">
-
+                                             
                                                            {% if post.attitude.id == 1 %}
                                                                  <div class="row loves-messages">
                                                            {% elif post.attitude.id == 2 %}
@@ -41,21 +40,18 @@
                                                                                 <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
                                                                               </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }}
                                                                          </div>
-                                      
 
-
-                                     </div>
+                                                                 </div>
 
                                                            {% if post.attitude.id == 1 %}
-                                                                 <div class="row loves-messages">
+                                                                 <div class="row loves-messages" style="padding-left:0.8em;">
                                                            {% elif post.attitude.id == 2 %}
-                                                                  <div class="row mehs-messages">
+                                                                  <div class="row mehs-messages"  style="padding-left:0.8em;">
                                                            {% elif post.attitude.id == 3 %}
-                                                                  <div class="row hates-messages">
+                                                                  <div class="row hates-messages"  style="padding-left:0.8em;">
                                                            {% endif %}
                                  
  
-                                                                            <div class="col-sm-12">
 
                                                                             {% for line in post.teaser_lines %}
                                                                                 {% if not forloop.last %}
@@ -64,26 +60,32 @@
                                                                                       {% if line|slice:"0:1" == '>' %}
                                                                                               <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
-                                                                                              {{ line|slice:"1:" }}
+
+                                                                                                             {% for l in line|slice:"1:"|split:" " %}
+                                                                                                             {% if 'http' in l  %}<br/>
+                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                   {% else %}
+                                                                                                                {{ l }}
+                                                                                                             {% endif %}
+                                                                                                             {% endfor %}
+
                                                                                       {% else %}
                                                                                               <span style="font-style:normal;">
-                                                                                               {{ line|slice:"0:" }}
+
+                                                                                                             {% for l in line|slice:"0:"|split:" " %}
+                                                                                                             {% if 'http' in l  %}<br/>
+                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                   {% else %}
+                                                                                                                {{ l }}
+                                                                                                             {% endif %}
+                                                                                                             {% endfor %}
+
                                                                                       {% endif %}
                                                                                               </span>
 
-                                                                                               <br/>
                                                                                 {% elif  forloop.last %}
 
                                                                             
-                                                                                      {% if line|slice:"0:1" == '>' %}
-                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
-                                                                                              <span style="font-style:italic;">
-                                                                                              {{ line|slice:"1:" }}
-                                                                                      {% else %}
-                                                                                              <span style="font-style:normal;">
-                                                                                               {{ line|slice:"0:" }}
-                                                                                      {% endif %}
-                                                                                              </span>
                                                                                       {% if  post.long_article %}
 
 
@@ -102,33 +104,43 @@
 
                                                                                       {% else %}
 
-
                                                                                               {% if line|slice:"0:1" == '>' %}
-                                                                                                       <span style="font-weight:bold; font-size:1.2em;"> | </span>
+
+
+                             
+                                                                                                      <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                                        <span style="font-style:italic;">
-                                                                                                       {{ line|slice:"1:" }}
+
+                                                                                                             {% for l in line|slice:"1:"|split:" " %}
+                                                                                                             {% if 'http' in l  %}<br/>
+                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                   {% else %}
+                                                                                                                {{ l }}
+                                                                                                             {% endif %}
+                                                                                                             {% endfor %}
+
+
                                                                                               {% else %}
-                                                                                                        <span style="font-style:normal;">
-                                                                                                          {{ line|slice:"0:" }}
-                                                                                              {% endif %}
-
-
-
-
-                                                                                      {% endif %}
-
-
-                                                                                               <br/>
-                                                                                     
+                                                                                                                  <span style="font-style:normal;">
+                                                                                                                      {% for l in line|slice:"0:"|split:" " %}
+                                                                                                                               {% if 'http' in l  %}<br/>
+                                                                                                                                    <a href="{{ l }}">{{ l }}</a>
+                                                                                                                               {% else %}
+                                                                                                                                       {{ l }}
+                                                                                                                               {% endif %}
+                                                                                                                      {% endfor %}
+                                                                                               {% endif %}
+                                                                               </span>
 
 
                                                                                 {% endif %}
-                                                                            {% endfor %}
 
 
 
-                                                                            </div> 
-                                                                  </div>
+                                                                                              {% endif %}
+
+                                                         {% endfor %}
+                                           </div>
                                      {% if post.link %} 
                                      <div class="row neutral-messages">
                                      <div class="col-sm-12">
@@ -163,7 +175,7 @@
 
                                     {% endif %}
                                     <div class="row neutral-messages">
-                                    <div class="col-sm-12" style="margin-bottom:3.60em;">
+                                    <div class="col-sm-12" style="margin-bottom:1.80em;">
                                           <a href="/blog/{{ post.id }}/comments">
                                         
 Читать
@@ -177,36 +189,40 @@
                                           </a>
                                      </div>
 
+                                                       
 
 
-                                                            </div>
+                                             </div>
                                {% endfor %}
                                </div>
                          </div>
 
                     </div>
+
+
                 </form>
            </div>
         </div>
        <div class="col-sm-8">
        </div>
-        
+
 
     </div>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-5">
         </div>
 
-        <div class="col-sm-4">
+        <div class="col-sm-2">
               {% bootstrap_paginate posts range=5 show_prev_next="false" show_first_last="true" %}
         </div>
 
 
-        <div class="col-sm-4">
-        </div>        
+        <div class="col-sm-5">
+        </div>
 
     </div>
-</div>     
+</div>
 
 
 {% endblock %}
+

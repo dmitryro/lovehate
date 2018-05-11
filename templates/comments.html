@@ -60,10 +60,23 @@
                                                                 {% if line|slice:"0:1" == '>' %}
                                                                                <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                <span style="font-style:italic;">
-                                                                                  {{ line|slice:"1:" }}
+                                                                                   {% for l in line|slice:"1:"|split:" " %}
+                                                                                    {% if 'http' in l  %}
+                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                    {% else %}
+                                                                                        {{ l }}
+                                                                                    {% endif %}
+                                                                                   {% endfor %}
+
                                                                 {% else %}
                                                                                    <span style="font-style:normal;">
-                                                                                      {{ line|slice:"0:" }}
+                                                                                   {% for l in line|slice:"0:"|split:" " %}
+                                                                                    {% if 'http' in l  %}
+                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                    {% else %}
+                                                                                        {{ l }}
+                                                                                    {% endif %}
+                                                                                   {% endfor %}
                                                                 {% endif %}
                                                                                </span>
                                                                   <br/>
@@ -149,12 +162,29 @@
                                                           {% if line|slice:"0:1" == '>' %}
                                                                   <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                   <span style="font-style:italic;">
-                                                                  {{ line|slice:"1:" }}
-                                                          {% else %}
-                                                                  <span style="font-style:normal;"> 
-                                                                  {{ line|slice:"0:" }}
-                                                          {% endif %} 
-                                                                  </span>    
+
+                                                                                   {% for l in line|slice:"1:"|split:" " %}
+                                                                                    {% if 'http' in l  %}
+                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                    {% else %}
+                                                                                        {{ l }}
+                                                                                    {% endif %}
+                                                                                   {% endfor %}
+
+
+                                                                {% else %}
+                                                                                   <span style="font-style:normal;">
+                                                                                   {% for l in line|slice:"0:"|split:" " %}
+                                                                                    {% if 'http' in l  %}
+                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                    {% else %}
+                                                                                        {{ l }}
+                                                                                    {% endif %}
+                                                                                   {% endfor %}
+                                                                {% endif %}
+                                                                               </span>
+
+
                                                            <br/> 
                                                   {% endfor %}  
                                               </div> 
