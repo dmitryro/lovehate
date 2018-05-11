@@ -40,7 +40,8 @@ class RelationshipAdmin(admin.ModelAdmin):
 ########################################
 
 class ProfileAdmin(admin.ModelAdmin):
-    fieldsets = ((None, {'fields': ['username',
+    fieldsets = ((None, {'fields': [
+                                    'username',
                                     'email', 
                                     'user',
                                     'is_cleared',
@@ -57,10 +58,16 @@ class ProfileAdmin(admin.ModelAdmin):
                                     'phone',
                                     'profile_image_path']}),)
 
-    list_display = ('id','username','user','email','first_name','last_name','date_joined','is_new', 'bio','phone')
+    list_display = ('username', 'username_transliterated', 
+                    'user', 'email', 'first_name', 'last_name', 
+                    'date_joined', 'is_new',  'bio', 'phone')
 
-    list_editable = ('username', 'user', 'email', 'first_name', 'last_name', 'is_new', 'phone', 'bio')
-    search_fields = ('username', 'first_name', 'last_name','email','phone', 'bio')
+    list_editable = ('username',  'username_transliterated', 
+                     'user', 'email', 'first_name', 'last_name', 
+                     'is_new', 'phone', 'bio')
+    search_fields = ('username',  'username_transliterated', 
+                     'first_name', 'last_name','email','phone', 
+                     'bio')
 
 
     class Meta:

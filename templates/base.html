@@ -6,11 +6,28 @@
 {% load bootstrap3 %}
 <html lang="ru">
 <head>
+<link rel="apple-touch-icon" sizes="57x57" href="/media/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/media/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/media/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/media/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/media/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/media/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/media/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/media/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/media/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="/media/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/media/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/media/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/media/favicon-16x16.png">
+<link rel="manifest" href="/media/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <meta http-equiv="content-language" content="ru">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -1650,8 +1667,16 @@ span.psw {
                               {% csrf_token %}
                               <div class="container-fluid">
                                                       <br/><br/>
-                                                        <button id="user-resend-activation" style="background:#4a4a4a;" type="button">Переслать Ссылку</button
-                                                        <span class="psw">Забыли <a href="#">пароль?</a></span>
+                                                        <button id="user-resend-activation" style="background:#4a4a4a;" type="button">
+
+                                                       Переслать Ссылку
+                                                       </button>
+                                                        <p>
+                                                              <a href="#" id="send-reset-link-modal-open-activate">
+                                                                    Забыли пароль?
+                                                              </a>
+                                                        </p>                              
+
                                                         <p>
                                                                <a id="modal-activation-register-open"
                                                                         href="/register" style="color:dodgerblue">Зарегистрироваться
@@ -2029,6 +2054,11 @@ span.psw {
            
             $('#reset-password-modal-close').click(function(event) {
                    $("#reset-password-modal").hide();
+            });
+
+            $('#send-reset-link-modal-open-activate').click(function(event) {
+                   $('#modal-send-activation').hide();
+                   $('#send-reset-link-modal').show();
             });
 
             $('#send-reset-link-modal-open').click(function(event) {
@@ -3350,7 +3380,6 @@ span.psw {
                       dataType: 'json',
                       contentType: "application/json; charset=utf-8",
                       success: function(data){
-                             
                             $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
                             $('#modal-login').hide();
                             if (data.code===200) {

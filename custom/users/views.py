@@ -1,5 +1,5 @@
+import cyrtranslit
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
@@ -140,12 +140,11 @@ def saveprofile(request):
     last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
     bio = request.data.get('bio', '')
-    log = Logger(log="TWO USERNAMES {} {} {}".format(username, session_username, user_id))
-    log.save()
 
 
     try:
-        existing_user = User.objects.get(username=username)
+        username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
+        existing_user = User.objects.get(username_transliterated=username_transliterated)
             
         if existing_user.id != int(user_id):
                 return Response({"message": "failure - username used",
@@ -195,6 +194,7 @@ def saveprofile(request):
                          status=400)
 
     try:
+        username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
         user.username = username
         user.first_name = first_name
         user.last_name = last_name
@@ -204,7 +204,7 @@ def saveprofile(request):
         user.profile.first_name = first_name
         user.profile.bio = bio
         user.profile.email = email
-
+        user.profile.username_transliterated = username_transliterated
         user.save()
         user.profile.save()
     except Exception as e:
@@ -267,6 +267,7 @@ def registernew(request):
             profile = Profile.objects.create(user=user,
                                              username=username,
                                              email=email,
+                                             username_transliterated=cyrtranslit.to_latin(username, 'ru').lower(),
                                              is_activated=False,
                                              is_cleared=False,
                                              is_new=False)
@@ -704,17 +705,22 @@ def changepassword(request):
 def auth(request):
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
-
+    not_activated = False
 
     try:
         user = User.objects.get(username=username)
         login(request, user,  backend='custom.users.backends.LocalBackend')
+
+        if not user.profile.is_activated:
+            not_activated = True
+            logout(request)
+
         return Response({"message": 'success',
                          "code":200,
                          "user_id": user.id,
                          "username": username,
                          "log_out": False,
-                         "not_activated": False,
+                         "not_activated": not_activated,
                          "status": "activated",
                          "reason": "User is activated"},
                          status=200)
@@ -724,7 +730,7 @@ def auth(request):
                          "code":400,
                          "log_out": False,
                          "status": "unauthenticated",
-                         "not_activated": False,
+                         "not_activated": not_activated,
                          "reason": "Invalid user"},
                          status=400)
 

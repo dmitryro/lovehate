@@ -25,6 +25,7 @@ configparser==3.5.0
 coreapi==2.3.3
 coreschema==0.0.4
 cryptography==1.9
+cyrtranslit==0.4
 defusedxml==0.5.0
 django-admin-tools==0.8.1
 django-allauth==0.35.0
@@ -43,6 +44,7 @@ django-ipware==2.1.0
 django-jinja==2.4.1
 django-jinja-bootstrap-form==4.2.3
 django-oauth-toolkit==1.1.0
+django-redis==4.9.0
 django-registration-rest-framework==0.2.2
 django-rest-auth==0.9.3
 djangorestframework==3.8.2
@@ -74,6 +76,7 @@ python-apt===0.9.3.5ubuntu2
 python-social-auth==0.3.6
 python3-openid==3.1.0
 pytz==2018.4
+redis==2.10.6
 requests==2.18.1
 requests-oauthlib==0.8.0
 six==1.11.0

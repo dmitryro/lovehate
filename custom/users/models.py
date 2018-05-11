@@ -9,22 +9,23 @@ from datetime import date
 
 class Profile(models.Model):
     user = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=250, blank=True, null=True)
-    last_name = models.CharField(max_length=250, blank=True, null=True)
-    email = models.CharField(max_length=250, blank=True, null=True)
-    username = models.CharField(max_length=250, blank=True, null=True)
+    first_name = models.CharField(max_length=256, blank=True, null=True)
+    last_name = models.CharField(max_length=256, blank=True, null=True)
+    email = models.CharField(max_length=256, blank=True, null=True)
+    username = models.CharField(max_length=256, blank=True, null=True)
+    username_transliterated = models.CharField(max_length=256, blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     avatar = models.ImageField(upload_to='avatars')
     avatar_thumbnail = ImageSpecField(source='avatar',
                                       processors=[ResizeToFill(100, 50)],
                                       format='JPEG',
                                       options={'quality': 60})
-    profile_image_path = models.CharField(max_length=250, blank=True, 
+    profile_image_path = models.CharField(max_length=256, blank=True, 
                                           null=True, 
                                           default='/media/avatars/default.png')
-    title = models.CharField(max_length=250, blank=True, null=True,default='')
+    title = models.CharField(max_length=256, blank=True, null=True,default='')
     bio = models.TextField(blank=True, null=True,default='') 
-    phone = models.CharField(max_length=250, blank=True, null=True,default='')
+    phone = models.CharField(max_length=256, blank=True, null=True,default='')
     is_new = models.NullBooleanField(default=True, blank=True, null=True)
     activation_sent = models.NullBooleanField(default=False, blank=True, null=True)
     is_activated = models.NullBooleanField(default=False, blank=True, null=True)
