@@ -85,7 +85,8 @@ input[type=text], input[type=password] {
     padding-bottom: 0.4em;
 }
 
-.forum-errors, .comment-errors, .blognew-errors, .message-errors {
+.forum-errors, .comment-errors, .blognew-errors, .message-errors,
+.friend-errors, .enemy-errors {
     display: none;
     color: red;
     text-align:center;
@@ -197,6 +198,35 @@ button:hover {
         width: auto;
         display: inline;
     }
+
+    #newfriendform label {
+        width: 250px;
+    }
+
+    #newfriendform label.error, #newfriendform input.submit, #newfriendform input.button {
+        margin-left: 253px;
+    }
+
+    #newfriendform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
+    #newenemyform label {
+        width: 250px;
+    }
+
+    #newenemyform label.error, #newenemyform input.submit, #newenemyform input.button {
+        margin-left: 253px;
+    }
+
+    #newenemyform label.error {
+        margin-left: 10px;
+        width: auto;
+        display: inline;
+    }
+
 
     #newmessageform label {
         width: 250px;
@@ -321,6 +351,12 @@ button:hover {
         color: #3c763d;
         background-color: #dff0d8;
         border-color: #d6e9c6;
+    }
+
+    .service-box {
+        background:#f6f6f6;
+        border: 1px #979797 solid;
+        display:block;
     }
 
     .registration-errors label.error, .registration-errors input.submit, 
@@ -679,6 +715,14 @@ span.psw {
    overflow: hidden;
 }
 
+.love-rel {
+   color: #008000;
+   font-weight:bold;
+}
+.hate-rel {
+   color: #8b0000;
+   font-weight:bold;
+}
 
 .loves {
    margin-left:1.0em;
@@ -1556,7 +1600,7 @@ span.psw {
                                      </div>
 
                                      <div class="submenu-item">
-                                            <a href="#">
+                                            <a href="/relationships/{{ user.id }}">
 Друзья / Враги
 </a>
                                      </div>
@@ -2072,10 +2116,18 @@ span.psw {
 
             $('#change-password-modal-close').click(function(event) {
                 $('#change-password-modal').hide();
-            });
+           });
 
-
-            if ($('#current_page').val()==='mylh') {
+            if ($('#current_page').val()==='relationships') {
+                       $('#submenu-main').hide();
+                       $('#submenu-forum').hide();
+                       $('#submenu-blog').hide();
+                       $('#submenu-mylh').show();
+                       $('#submenu-statistics').hide();
+                       $('#submenu-private-messages').hide();
+                       $('.active').removeClass('active');
+                       $('#submenu-div-4').addClass('active');
+            } else if ($('#current_page').val()==='mylh') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -2255,7 +2307,50 @@ span.psw {
                        $('.active').removeClass('active');
                        $('#submenu-div-2').addClass('active');
             }
+            
+            $('#newfriendform').validate({
 
+                      rules: {
+                //            friend_username: "required",
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                  //         friend_username: {
+                   //            required: "Введите ник будущего друга!"
+                    //       }
+                      }
+
+
+
+            });
+
+            $('#newenemyform').validate({
+
+                      rules: {
+                //            enemy_username: "required",
+                      },
+                      highlight: function (element) {
+                            $(element).closest('.control-group').removeClass('success').addClass('error');
+                      },
+                      success: function (element) {
+                           element.text('').addClass('valid')
+                              .closest('.control-group').removeClass('error').addClass('success');
+                      },
+                      messages: {
+                  //         enemy_username: {
+                  //             required: "Введите ник будущего врага!"
+                  //        }
+                      }
+
+
+
+            });
 
             $('#newcommentform').validate({
                       rules: {
@@ -2849,6 +2944,77 @@ span.psw {
                   $('#modal-login').show();
               });
              
+              $('#newfriendform-publish').click(function() {
+                  if($("#newfriendform").valid()) {
+                         var friends_check_box_values = $('#newfrienddeleteform [name="friends_delete"]:checked').map(function () {
+                             return this.value;
+                         }).get();
+
+
+                         var user_id = $("#friend_user_id").val();
+
+
+                         var arr = {
+                              username: $("#friend_username").val(),
+                              user_id: user_id,
+                              friends_delete: friends_check_box_values,
+                         };
+
+
+                         $.ajax({
+                             type: "POST",
+                             url: "https://lovehate.io/addnewfriend/",
+                             data: JSON.stringify(arr),
+                             dataType: 'json',
+                             contentType: "application/json; charset=utf-8",
+                             success: function(data){
+                                 redirect_url('relationships'+'/'+user_id+'/');
+                             },
+                             error: function(data){
+                                 $( ".friend-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                             }
+
+                         });
+
+
+
+                  }
+              });
+
+              $('#newenemyform-publish').click(function() {
+
+                  var enemies_check_box_values = $('#newenemydeleteform [name="enemies_delete"]:checked').map(function () {
+                             return this.value;
+                  }).get();
+
+                  if($("#newenemyform").valid()) {
+     
+                         var user_id = $("#user_id").val();
+                         var arr = {
+                              username: $("#enemy_username").val(),
+                              user_id: user_id,
+                              enemies_delete: enemies_check_box_values,
+                         };
+
+                         $.ajax({
+                             type: "POST",
+                             url: "https://lovehate.io/addnewenemy/",
+                             data: JSON.stringify(arr),
+                             dataType: 'json',
+                             contentType: "application/json; charset=utf-8",
+                             success: function(data){
+                                 redirect_url('relationships'+'/'+user_id+'/');
+                             },
+                             error: function(data){
+                                 $( ".enemy-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
+                             }
+
+                         });
+
+
+                  }
+              });
+
 
               $('#send-reset-link').click(function() {
                      if($("#recover-password").valid()) {
@@ -3416,7 +3582,6 @@ span.psw {
           window.location.href = url;
        }
         
-
        function redirect_login(data) {
            $("#authenticate-form").submit();
        }

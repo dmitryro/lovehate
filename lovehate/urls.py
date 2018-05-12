@@ -49,6 +49,8 @@ from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
 from custom.users.views import changepassword
+from custom.users.views import addnewfriend
+from custom.users.views import addnewenemy
 from custom.forum.views import forum_new
 from custom.forum.views import forum_add
 from custom.forum.views import forum_edit
@@ -77,6 +79,9 @@ from custom.blog.views import addnewcomment
 from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
+from custom.users.views import processrivals
+from custom.users.views import processfriends
+from custom.users.views import user_relationships
 from custom.users.views import saveprofile
 from custom.users.views import recoverpassword
 from custom.users.views import resend_password_link
@@ -95,6 +100,7 @@ urlpatterns = [
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
     path('saveprofile/', saveprofile),
+    path('relationships/<int:user_id>/',  user_relationships),
     path('topics/<int:topic_id>/', topics),
     path('activate/<activation_key>/', activate),
     path('reset/<reset_key>/', reset),
@@ -150,4 +156,9 @@ urlpatterns = [
     path('recoverpassword/', resend_password_link),
     path('updatepassword/', recoverpassword),
     path('resendactivationbyuser/', resendactivationbyuser),
+    path('processrivals/', processrivals),
+    path('processfriends/', processfriends),
+    path('addnewfriend/', addnewfriend),
+    path('addnewenemy/', addnewenemy),
+
 ]

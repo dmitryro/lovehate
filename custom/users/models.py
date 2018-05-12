@@ -63,6 +63,8 @@ class Relationship(models.Model):
         verbose_name = 'Relationship'
         verbose_name_plural = 'Relationships'
 
+    def __str__(self):
+        return self.code
 
 class Peer(models.Model):
     strength = models.FloatField(default=0.0)

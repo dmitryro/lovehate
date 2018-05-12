@@ -32,6 +32,8 @@ from custom.gui.views import Page
 from custom.blog.views import Post
 from custom.forum.models import Topic
 from custom.forum.models import Emotion
+from custom.users.models import Relationship
+from custom.users.models import Peer
 from custom.users.signals import user_resend_activation
 from custom.users.signals import user_send_reset_password_link
 from custom.users.serializers import UserSerializer
@@ -230,10 +232,6 @@ def saveprofile(request):
    
  
 
-    
-#    'social.backends.instagram.InstagramOAuth2',
-
-
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
@@ -322,7 +320,239 @@ def registernew(request):
                      "username": username},
                      status=200)
 
-#def user_relations(request, user_id):
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def addnewfriend(request):
+    username = request.data.get('username', '')
+    user_id = request.data.get('user_id', '')
+    friends_delete = request.data.get('friends_delete', '')
+
+    if len(friends_delete)> 0:
+        for friend_id in friends_delete:
+            try:
+                f_id = int(friend_id)
+                peer = Peer.objects.get(acceptor_id=f_id)
+                peer.delete()
+            except Exception as e:
+                return Response({"message": "Failed to delete peer {}".format(e),
+                                 "code":400,
+                                 "message_error": str(e),
+                                 "log_out": False,
+                                 "status": "unauthenticated",
+                                 "not_activated": False,
+                                 "reason": "invalid user id"},
+                                 status=400)
+        return Response({"message": "success",
+                         "status": "authenticated",
+                         "code": 200,
+                         "not_activated": False,
+                         "user_id": user_id,
+                         "username": username,
+                         "log_out": True},
+                         status=200)
+
+
+    try:
+        acceptor = User.objects.get(username=username)
+    except Exception as e:
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+    try:
+        initiator = User.objects.get(id=int(user_id))
+        relation = Relationship.objects.get(id=1)
+        not_found = False
+    except Exception as e:
+        not_found = True
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+    try:
+        peer = Peer.objects.get(acceptor=acceptor, initiator=initiator)
+        peer.relation = relation
+        peer.save()
+    except ObjectDoesNotExist as e: 
+        peer = Peer.objects.create(relation=relation, acceptor=acceptor, initiator=initiator, strength=1)
+    except Exception as e:
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+
+    return Response({"message": "success",
+                     "status": "authenticated",
+                     "code": 200,
+                     "not_activated": False,
+                     "user_id": initiator.id,
+                     "username": initiator.username,
+                     "log_out": True},
+                     status=200)
+
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def addnewenemy(request):
+    username = request.data.get('username', '')
+    user_id = request.data.get('user_id', '')
+    enemies_delete = request.data.get('enemies_delete', '')
+
+    log = Logger(log="USER TO ADD AS ANEMY {} USER HATING {} ENEMIES {}".format(username, user_id, enemies_delete))
+    log.save()
+
+    if len(enemies_delete)> 0:
+        for enemy_id in enemies_delete:
+            try:
+                f_id = int(enemy_id)
+                peer = Peer.objects.get(acceptor_id=f_id)
+                peer.delete()
+            except Exception as e:
+                return Response({"message": "Failed to delete peer {}".format(e),
+                                 "code":400,
+                                 "message_error": str(e),
+                                 "log_out": False,
+                                 "status": "unauthenticated",
+                                 "not_activated": False,
+                                 "reason": "invalid user id"},
+                                 status=400)
+        return Response({"message": "success",
+                         "status": "authenticated",
+                         "code": 200,
+                         "not_activated": False,
+                         "user_id": user_id,
+                         "username": username,
+                         "log_out": True},
+                         status=200)
+
+    log = Logger(log="SO FAR SO GOOD - {}".format(username))
+    log.save()
+
+    try:
+        acceptor = User.objects.get(username=username)
+    except Exception as e:
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+
+    try:
+        initiator = User.objects.get(id=int(user_id))
+        relation = Relationship.objects.get(id=3)
+        not_found = False
+    except Exception as e:
+        not_found = True
+        return Response({"message": "User was not found",
+                         "code":400,
+                         "message_error": str(e),
+                         "log_out": False,
+                         "status": "unauthenticated",
+                         "not_activated": False,
+                         "reason": "invalid user id"},
+                         status=400)
+
+    try:
+        peer = Peer.objects.get(acceptor=acceptor, initiator=initiator)
+        peer.relation = relation
+        peer.save()
+    except ObjectDoesNotExist as e:
+        peer = Peer.objects.create(relation=relation, acceptor=acceptor, initiator=initiator, strength=1)
+
+
+    return Response({"message": "success",
+                     "status": "authenticated",
+                     "code": 200,
+                     "not_activated": False,
+                     "user_id": initiator.id,
+                     "username": initiator.username,
+                     "log_out": True},
+                     status=200)
+
+
+def processfriends(request):
+    username = request.POST.get('friend_username', '')
+
+    try:
+        user = User.objects.get(username=username)
+        not_found = False
+    except Exception as e:
+        not_found = True  
+    log = Logger(log="REQUESTED NEW FRIEND {}".format(username))
+    log.save()
+
+    return render(request, 'relationships.html', {'not_found': not_found})
+
+
+
+def processrivals(request):
+    username = request.POST.get('rival_username', '')
+    log = Logger(log="REQUESTED NEW RIVAL {}".format(username))
+    log.save()
+    return render(request, 'relationships.html', {})
+
+
+def user_relationships(request, user_id):
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        friends = Peer.objects.filter(initiator=user_id, relation_id=1)
+    except Exception as e:
+        friends = []
+
+    try:
+        enemies = Peer.objects.filter(initiator=user_id, relation_id=3)
+    except Exception as e:
+        enemies = []
+
+    return render(request, 'relationships.html', {"user_id": user_id, 
+                                                  "friends": friends, 
+                                                  "enemies": enemies,
+                                                  "user": request.user,
+                                                  "username": username,
+                                                  "is_authenticated": is_authenticated,
+                                                  "current_page": "relationships",
+                                                  "username": request.user.username,
+                                                  "logout": False,
+                                                  "user_id": ''})
 
 def user_profile(request, user_id):
 
@@ -332,6 +562,13 @@ def user_profile(request, user_id):
         posts = Post.objects.filter(author=profile.user)
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
         loved_titles = []
+        friends = Peer.objects.filter(initiator_id=int(user_id), relation_id=1)
+        enemies = Peer.objects.filter(initiator_id=int(user_id), relation_id=3)
+        friended = Peer.objects.filter(acceptor_id=int(user_id), relation_id=1)
+        enemied = Peer.objects.filter(acceptor_id=int(user_id), relation_id=3) 
+
+        log = Logger(log="FRIENDS!!!! {} ENEMIES {} USER ID {}".format(friended, enemied, user_id))
+        log.save()
 
         for love in loves:
              loved_titles.append(love.translit_subject)
@@ -381,6 +618,10 @@ def user_profile(request, user_id):
                                          'loves': loved_topics,
                                          'mehs': meh_topics,
                                          'hates': hate_topics,
+                                         'friends': friends,
+                                         'friended': friended,
+                                         'enemied': enemied,
+                                         'enemies': enemies,
                                          'bio': profile.bio,
                                          'posts': posts,
                                          'user': request.user,

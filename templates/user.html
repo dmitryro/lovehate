@@ -14,8 +14,8 @@
     </div>
     <div class="col-sm-8">
      <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-         <div class="row neutral-messages">
-             <div class="col-sm-4">
+         <div class="row neutral-messages" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
                  Имя пользователя (ник)
              </div>
 
@@ -38,9 +38,9 @@
              </div>
 
          </div>
-         <div class="row">
-             <div class="col-sm-4">
-                  Полное имя или имя собственное
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+                Имя и Фамилия
              </div>
              <div class="col-sm-4">
                  {{ fullname }}
@@ -51,11 +51,9 @@
 
          </div>
 
-
-
-         <div class="row">
-             <div class="col-sm-4">
-Пользователь о себе
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+             Пользователь о себе:
              </div>
              <div class="col-sm-4">
                  {{ bio }}
@@ -65,6 +63,70 @@
              </div>
 
          </div>
+
+
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+Друзья
+             </div>
+             <div class="col-sm-4">
+                 {% for friend in friends %}
+                    <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> &nbsp;
+                 {% endfor %}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+               Считают другом
+             </div>
+             <div class="col-sm-4">
+                 {% for friend in friended %}
+                    <a href="/user/{{ friend.initiator.id }}/">{{ friend.initiator.username }}</a> &nbsp;
+                 {% endfor %}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+Враги
+             </div>
+             <div class="col-sm-4">
+                 {% for enemy in enemies %}
+                    <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a> &nbsp;
+                 {% endfor %}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+Считают врагом
+             </div>
+             <div class="col-sm-4">
+                 {% for enemy in enemied %}
+                    <a href="/user/{{ enemy.initiator.id }}/">{{ enemy.initiator.username }}</a> &nbsp;
+                 {% endfor %}
+             </div>
+
+             <div class="col-sm-4">
+             </div>
+
+         </div>
+
+
+
 
      </div>
 <div>
@@ -106,7 +168,11 @@
 
          <div class="row">
              <div class="col-sm-4">
-                 <div class="loves"><span>Любит</span></div>
+                 <div class="loves column-header" style="font-size:1.2em;">
+<strong>
+<span>Любит</span>
+</strong>
+</div>
                  <div class="loves-profile">
 
                            {% for love in loves %}
@@ -118,7 +184,13 @@
              
 
              <div class="col-sm-4">
-                 <div class="mehs"><span>Безразличен к</span></div>
+                 <div class="mehs column-header">
+<strong>
+<span>Безразличен к
+</span>
+</strong>
+</div>
+
                  <div class="mehs-profile">
                            {% for meh in mehs %}
                                   <div style="text-align:center;"><a href="/topics/{{ meh.id }}">{{ meh.name }} ({% topic_meta meh.id user_id 2 %})</a></div>
@@ -130,7 +202,14 @@
              
 
              <div class="col-sm-4">
-                 <div class="hates"><span>Ненавидит</span></div>
+                 <div class="hates column-header">
+<strong>
+<span>
+
+Ненавидит
+
+</strong>
+</div>
                  <div class="hates-profile">
 
                            {% for hate in hates %}
