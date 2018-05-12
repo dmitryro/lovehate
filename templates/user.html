@@ -65,65 +65,7 @@
          </div>
 
 
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-Друзья
-             </div>
-             <div class="col-sm-4">
-                 {% for friend in friends %}
-                    <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> &nbsp;
-                 {% endfor %}
-             </div>
 
-             <div class="col-sm-4">
-             </div>
-
-         </div>
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-               Считают другом
-             </div>
-             <div class="col-sm-4">
-                 {% for friend in friended %}
-                    <a href="/user/{{ friend.initiator.id }}/">{{ friend.initiator.username }}</a> &nbsp;
-                 {% endfor %}
-             </div>
-
-             <div class="col-sm-4">
-             </div>
-
-         </div>
-
-
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-Враги
-             </div>
-             <div class="col-sm-4">
-                 {% for enemy in enemies %}
-                    <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a> &nbsp;
-                 {% endfor %}
-             </div>
-
-             <div class="col-sm-4">
-             </div>
-
-         </div>
-
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-Считают врагом
-             </div>
-             <div class="col-sm-4">
-                 {% for enemy in enemied %}
-                    <a href="/user/{{ enemy.initiator.id }}/">{{ enemy.initiator.username }}</a> &nbsp;
-                 {% endfor %}
-             </div>
-
-             <div class="col-sm-4">
-             </div>
-
-         </div>
 
 
 
@@ -162,6 +104,70 @@
 
             </div>
          </div>
+
+        {% if friends.count > 0 %}
+
+         <div class="row">
+            <div class="col-sm-4">
+                   Друзья
+            </div>
+            <div class="col-sm-8">
+                 {% for friend in friends %}
+                    <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> &nbsp;
+                 {% endfor %}
+
+            </div>
+         </div>
+        {% endif %}
+
+
+         {% if friended.count > 0 %}
+         <div class="row">
+            <div class="col-sm-4">
+Считают другом
+            </div>
+            <div class="col-sm-8">
+
+                 {% for friend in friended %}
+                    <a href="/user/{{ friend.initiator.id }}/">{{ friend.initiator.username }}</a> &nbsp;
+                 {% endfor %}
+
+
+            </div>
+         </div>
+         {% endif %}
+        
+         {% if enemies.count > 0 %}
+         <div class="row">
+            <div class="col-sm-4">
+               Враги
+            </div>
+            <div class="col-sm-8">
+                 {% for enemy in enemies %}
+                    <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a> &nbsp;
+                 {% endfor %}
+
+            </div>
+         </div>
+         {% endif %}
+
+
+         {% if enemied.count > 0 %}
+         <div class="row">
+            <div class="col-sm-4">
+Считают врагом
+            </div>
+            <div class="col-sm-8">
+                 {% for enemy in enemied %}
+                    <a href="/user/{{ enemy.initiator.id }}/">{{ enemy.initiator.username }}</a> &nbsp;
+                 {% endfor %}
+
+
+            </div>
+         </div>
+        {% endif %}
+
+
          <div class="row">
                  <br/>
          </div>

@@ -88,6 +88,12 @@ class EmotionViewSet(viewsets.ModelViewSet):
 
 def topics(request, topic_id):
     redirect = 'topics.html'
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
     try:
         lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id).order_by('-time_last_edited')
     except Exception as e:
@@ -123,6 +129,7 @@ def topics(request, topic_id):
                                      'lovers': lovers,
                                      'topic': topic,
                                      'mehs' : mehs,
+                                     'has_private': has_private,
                                      'haters': haters,
                                      'username': username,
                                      'user_id': request.user.id,
@@ -131,6 +138,11 @@ def topics(request, topic_id):
                                      'logout': False})
 
 def forum_new(request):
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
 
     try:
         if request.user.is_authenticated:
@@ -159,10 +171,17 @@ def forum_new(request):
                                      'username': username,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'new_feeling',
+                                     'has_private': has_private,
                                      'username': request.user.username,
                                      'logout': False})
 
 def forum_add(request, topic_id, attitude_id):
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
         if request.user.is_authenticated:
             logout=True
@@ -199,6 +218,7 @@ def forum_add(request, topic_id, attitude_id):
                                      'user': request.user,
                                      'username': username,
                                      'attitude': attitude,
+                                     'has_private': has_private,
                                      'topic': topic,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'new_feeling',
@@ -207,6 +227,12 @@ def forum_add(request, topic_id, attitude_id):
 
 
 def forum_edit(request, topic_id, emotion_id):
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
         if request.user.is_authenticated:
             logout=True
@@ -240,6 +266,7 @@ def forum_edit(request, topic_id, emotion_id):
                                      'user': request.user,
                                      'username': username,
                                      'emotion': emotion,
+                                     'has_private': has_private,
                                      'topic': topic,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'new_feeling',
@@ -250,6 +277,12 @@ def forum_edit(request, topic_id, emotion_id):
 
 def outgoing_messages(request):
     redirect = 'outgoing.html'
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
 
     try:
         delete_ids = request.POST.getlist('outgoing_delete')
@@ -297,15 +330,22 @@ def outgoing_messages(request):
                                      'user': request.user,
                                      'username': username,
                                      'outgoing': outgoing_slice,
+                                     'has_private': has_private,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'outgoing',
                                      'username': request.user.username,
                                      'logout': False})
 
 
+
 def incoming_messages(request):
     redirect = 'incoming.html'
     page = request.GET.get('page', 1)
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
 
     try:
         delete_ids = request.POST.getlist('incoming_delete')
@@ -322,6 +362,8 @@ def incoming_messages(request):
             username = request.user.username
             is_authenticated = True
             incoming = Message.objects.filter(receiver_id=user_id).order_by('-time_sent')
+            if len(incoming) > 0:
+                has_private = True
         else:
             logout=False
             user_id = -1
@@ -347,6 +389,7 @@ def incoming_messages(request):
     return render(request, redirect,{'home':'incoming.html',
                                      'user': request.user,
                                      'username': username,
+                                     'has_private': has_private,
                                      'incoming': incoming_slice,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'incoming',
@@ -612,6 +655,12 @@ def newemotion_unauth(request):
 
 @csrf_exempt
 def answer_private(request, message_id):
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
     try:
         if request.user.is_authenticated:
             logout=True
@@ -636,6 +685,7 @@ def answer_private(request, message_id):
         return render(request, 'answer_private.html',{'home':'answer_private.html',
                                                       'answer_subject': "RE: {}".format(message.subject),
                                                       'user': request.user,
+                                                      'has_private': has_private,
                                                       'recipient': message.sender,
                                                       'username': username,
                                                       'current_page': 'private',
@@ -646,6 +696,7 @@ def answer_private(request, message_id):
         return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
                                          'username': username,
+                                         'has_private': has_private,
                                          'current_page': 'private',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,

@@ -11,6 +11,7 @@ from django.template.defaultfilters import stringfilter
 from custom.utils.models import Logger
 from custom.blog.models import Post
 from custom.blog.models import Comment
+from custom.forum.models import Message
 
 register = template.Library()
 h = html2text.HTML2Text()
@@ -71,6 +72,17 @@ def post_meta(post_id, attitude_id,  *args, **kwargs):
         logging.error("Unable to calculate totals ...")
         return ""
 
+@register.simple_tag
+def incoming_meta(user_id, *args, **kwargs):
+    """
+    Get the topic counts meta
+    """
+
+    try:
+        messages = Message.objects.filter(receiver_id=int(user_id), is_read=False)
+        return len(messages)
+    except Exception as e:
+        return 0
 
 @register.simple_tag
 def link_meta(link,  *args, **kwargs):

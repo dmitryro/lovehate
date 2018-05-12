@@ -52,6 +52,12 @@ def newcomment(request, post_id):
     ip, is_routable = get_client_ip(request)
 
     try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
+    try:
         post = Post.objects.get(id=int(post_id))
     except Exception:
         post = None
@@ -86,6 +92,7 @@ def newcomment(request, post_id):
                                                    'post': post,
                                                    'comments': comments,
                                                    'user': request.user,
+                                                   'has_private': has_private,
                                                    'username': username,
                                                    'current_page': 'new_comment',
                                                    'is_authenticated': is_authenticated,
@@ -95,6 +102,7 @@ def newcomment(request, post_id):
         return render(request, 'comment_new_unauth.html',{'home':'comment_new_unauth.html',
                                                    'post': post,
                                                    'comments': comments,
+                                                   'has_private': has_private,
                                                    'user': request.user,
                                                    'username': username,
                                                    'current_page': 'new_comment',
@@ -106,6 +114,13 @@ def newcomment(request, post_id):
 @csrf_exempt
 def editcomment(request, comment_id):
     ip, is_routable = get_client_ip(request)
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
          comment = Comment.objects.get(id=int(comment_id))
     except Exception as e:
@@ -157,6 +172,7 @@ def editcomment(request, comment_id):
                                                'post': post,
                                                'post_id': post_id,
                                                'comments': comments,
+                                               'has_private': has_private,
                                                'comment': comment,
                                                'user': request.user,
                                                'username': username,
@@ -169,6 +185,13 @@ def editcomment(request, comment_id):
 @csrf_exempt
 def blogcomments(request, post_id):
     comments = []
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
         post = Post.objects.get(id=int(post_id))
     except Exception:
@@ -202,6 +225,7 @@ def blogcomments(request, post_id):
                                              'post': post,
                                              'comments': comments,
                                              'user': request.user,
+                                             'has_private': has_private,
                                              'username': username,
                                              'current_page': 'blog_comments',
                                              'is_authenticated': is_authenticated,
@@ -212,6 +236,13 @@ def blogcomments(request, post_id):
 @csrf_exempt
 def blogpost(request, post_id):
     comments = []
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
         post = Post.objects.get(id=int(post_id))
     except Exception:
@@ -246,6 +277,7 @@ def blogpost(request, post_id):
                                              'post': post,
                                              'comments': comments,
                                              'user': request.user,
+                                             'has_private': has_private,
                                              'username': username,
                                              'current_page': 'blog_post',
                                              'is_authenticated': is_authenticated,
@@ -255,6 +287,12 @@ def blogpost(request, post_id):
 
 @csrf_exempt
 def editblog(request, post_id):
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
     try:
         if request.user.is_authenticated:
             logout=True
@@ -277,6 +315,7 @@ def editblog(request, post_id):
     return render(request, 'blog_edit.html',{'home':'blog_edit.html',
                                             'user': request.user,
                                             'username': username,
+                                            'has_private': has_private,
                                             'post': post,
                                             'current_page': 'edit_blog',
                                             'is_authenticated': is_authenticated,
@@ -286,6 +325,11 @@ def editblog(request, post_id):
 
 @csrf_exempt
 def newblog(request):
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
     try:
         if request.user.is_authenticated:
             logout=True
@@ -311,6 +355,7 @@ def newblog(request):
                                             'user': request.user,
                                             'username': username,
                                             'current_page': 'new_blog',
+                                            'has_private': 'has_private',
                                             'is_authenticated': is_authenticated,
                                             'logout': logout,
                                             'user_id': user_id})
@@ -755,6 +800,12 @@ def userblog(request, user_id):
     page = request.GET.get('page')
 
     try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+
+    try:
         posts = Post.objects.filter(author_id=int(user_id)).order_by('-time_last_commented')
 
         paginator = Paginator(posts, 10)
@@ -788,6 +839,7 @@ def userblog(request, user_id):
                                          'user': request.user,
                                          'username': username,
                                          'posts': posts_slice,
+                                         'has_private': has_private,
                                          'current_page': 'user_blog',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,

@@ -104,17 +104,19 @@ def home(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False  
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
-
+            has_private = False
   
     try:
         paginator1 = Paginator(loves, 50)
@@ -176,16 +178,15 @@ def home(request):
         pages_slice = []
  
 
-    log = Logger(log="PAGES SLICE IS {} and NUMBER OF PAGES {}".format(pages_slice, paginator.num_pages))
-    log.save()
-
     try:
        user_id = request.user.id
        user = User.objects.get(id=user_id)
     except Exception as e:
        user = request.user
+
     return render(request, 'index.html',{'home':'index.html', 
                                          'user': user,
+                                         'has_private': has_private,
                                          'pages': pages_slice,
                                          'loves': love_slice,
                                          'mehs': meh_slice,
@@ -204,18 +205,23 @@ def statistics(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
+
     return render(request, 'statistics.html',{'home':'statistics.html',
                                               'user': request.user,
+                                              'has_private': has_private,
                                               'username': username,
                                               'current_page': 'statistics',
                                               'is_authenticated': is_authenticated,
@@ -231,13 +237,16 @@ def mylh(request):
             logout=True
             user_id = request.user.id
             username = request.user.username
+            has_private = request.user.profile.has_private
             is_authenticated = True
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
+            has_private = False
             username = ''
             logout=False
             user_id = -1
@@ -248,6 +257,7 @@ def mylh(request):
                                      'username': username,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'mylh',
+                                     'has_private': has_private,
                                      'username': request.user.username,
                                      'logout': False,
                                      'user_id': ''})
@@ -269,19 +279,23 @@ def cleanmessages(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
 
     return render(request, 'incoming.html',{'home':'incoming.html',
                                             'user': request.user,
+                                            'has_private': has_private,
                                             'username': username,
                                             'current_page': 'private',
                                             'is_authenticated': is_authenticated,
@@ -306,21 +320,25 @@ def private(request, receiver_id=None):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
 
     return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
                                          'username': username,
                                          'current_page': 'private',
+                                         'has_private': has_private,
                                          'receiver_username': receiver_username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -344,21 +362,25 @@ def private_unauth(request, receiver_id=None):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
 
     return render(request, 'private_unauth.html',{'home':'private_unauth.html',
                                          'user': request.user,
                                          'username': username,
                                          'current_page': 'private',
+                                         'has_private': has_private,
                                          'receiver_username': receiver_username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -420,16 +442,19 @@ def forum(request):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False  
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
 
     paginator1 = Paginator(loves, 50)
     paginator2 = Paginator(mehs, 50)
@@ -479,6 +504,7 @@ def forum(request):
                                          'mehs': meh_slice,
                                          'hates': hate_slice,
                                          'current_page': 'forum',
+                                         'has_private': has_private,
                                          'username': username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -512,11 +538,13 @@ def simple_signin(request):
             user_id = user.id
             username = user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             log = Logger(log="SOMETHING WENT WRONG {}".format(e))
             log.save()
@@ -525,12 +553,14 @@ def simple_signin(request):
             user_id = -1
             user = request.user
             is_authenticated = False
+            has_private = False
 
     return render(request, 'index.html',{'home':'index.html',
                                          'user': user,
                                          'loves': loves,
                                          'mehs': mehs,
                                          'hates': hates,
+                                         'has_private': has_private,
                                          'username': user.username,
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -558,12 +588,15 @@ def blog(request):
             username = request.user.username
             user_id = request.user.id
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
     except Exception as e:
+            has_private = False
             username = ''
             logout=False
             user_id = -1
@@ -573,6 +606,7 @@ def blog(request):
     return render(request, 'blog.html',{'home':'blog.html',
                                          'user': request.user,
                                          'username': username,
+                                         'has_private': has_private,
                                          'posts': posts_slice, 
                                          'current_page': 'blog',
                                          'is_authenticated': is_authenticated,
@@ -590,12 +624,14 @@ def register(request):
             username = request.user.username
             user_id = request.user.id
             is_authenticated = True
+            has_private = request.user.profile.has_private
             redirect = 'index.html'
         else:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
             redirect = 'register.html'
     except Exception as e:
             rediredt = 'register.html'
@@ -603,10 +639,12 @@ def register(request):
             logout=False
             user_id = -1
             is_authenticated = False
+            has_private = False
 
     return render(request, redirect,{'home':'index.html',
                                          'user': request.user,
                                          'username': username,
+                                         'has_private': has_private,
                                          'current_page': 'register',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,

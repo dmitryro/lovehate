@@ -355,8 +355,14 @@ def addnewfriend(request):
 
 
     try:
-        acceptor = User.objects.get(username=username)
+        log = Logger(log="TRYING TO FIND HIM {}".format(username))
+        log.save()
+        username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
+        profile = Profile.objects.get(username_transliterated=username_transliterated)
+        acceptor = profile.user
     except Exception as e:
+        log = Logger(log="FAILED TO FIND HIM {} = {}".format(username, e))
+        log.save()
         return Response({"message": "User was not found",
                          "code":400,
                          "message_error": str(e),
@@ -371,6 +377,8 @@ def addnewfriend(request):
         relation = Relationship.objects.get(id=1)
         not_found = False
     except Exception as e:
+        log = Logger(log="FAILED TO FIND - HIM {} = {} =  {}".format(username, user_id, e))
+        log.save()
         not_found = True
         return Response({"message": "User was not found",
                          "code":400,
@@ -497,6 +505,11 @@ def processfriends(request):
     username = request.POST.get('friend_username', '')
 
     try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+    try:
         user = User.objects.get(username=username)
         not_found = False
     except Exception as e:
@@ -504,7 +517,8 @@ def processfriends(request):
     log = Logger(log="REQUESTED NEW FRIEND {}".format(username))
     log.save()
 
-    return render(request, 'relationships.html', {'not_found': not_found})
+    return render(request, 'relationships.html', {'not_found': not_found, 
+                                                  'has_private': has_private})
 
 
 
@@ -522,17 +536,19 @@ def user_relationships(request, user_id):
             user_id = request.user.id
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             logout=False
             user_id = -1
             username = ''
             is_authenticated = False
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
             is_authenticated = False
-
+            has_private = False
     try:
         friends = Peer.objects.filter(initiator=user_id, relation_id=1)
     except Exception as e:
@@ -548,6 +564,7 @@ def user_relationships(request, user_id):
                                                   "enemies": enemies,
                                                   "user": request.user,
                                                   "username": username,
+                                                  "has_private": has_private,
                                                   "is_authenticated": is_authenticated,
                                                   "current_page": "relationships",
                                                   "username": request.user.username,
@@ -566,9 +583,7 @@ def user_profile(request, user_id):
         enemies = Peer.objects.filter(initiator_id=int(user_id), relation_id=3)
         friended = Peer.objects.filter(acceptor_id=int(user_id), relation_id=1)
         enemied = Peer.objects.filter(acceptor_id=int(user_id), relation_id=3) 
-
-        log = Logger(log="FRIENDS!!!! {} ENEMIES {} USER ID {}".format(friended, enemied, user_id))
-        log.save()
+        has_private = profile.has_private
 
         for love in loves:
              loved_titles.append(love.translit_subject)
@@ -595,26 +610,29 @@ def user_profile(request, user_id):
         hate_topics = Topic.objects.filter(translit_name__in=hate_titles)
 
     except Exception as e:
-
-        return render(request, 'index.html',{'home':'index.html'})
+        
+        return render(request, 'index.html',{'home':'index.html', 'has_private': False})
 
     if request.user:
         if request.user.is_authenticated:
             username = request.user.username
             is_authenticated = True
+            has_private = request.user.profile.has_private
         else:
             username = ''
             is_authenticated = False
+            has_private = False
     else:
         username = ''
         is_authenticated = False
-
+        has_private = False
     redirect = 'user.html'
     return render(request, 'user.html', {'home':'user.html',
                                          'explored_user_id': user_id,
                                          'explored_username': profile.user.username,
                                          'username': profile.user.username,
                                          'is_activated': False,
+                                         'has_private': has_private,
                                          'loves': loved_topics,
                                          'mehs': meh_topics,
                                          'hates': hate_topics,
@@ -665,6 +683,11 @@ def reset(request, reset_key):
     pages_loves = []
     pages_hates = []
     pages_mehs = []
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
 
     for i in range(0, index):
         try:
@@ -732,6 +755,7 @@ def reset(request, reset_key):
                                          'pages': pages_slice,
                                          'loves': love_slice,
                                          'mehs': meh_slice,
+                                         'has_private': has_private,
                                          'hates': hate_slice,
                                          'username': profile.user.username,
                                          'is_reset_required': True,
@@ -750,6 +774,7 @@ def reset(request, reset_key):
                                          'loves': love_slice,
                                          'mehs': meh_slice,
                                          'hates': hate_slice,
+                                         'has_private': has_private,
                                          'is_reset_required': True,
                                          'is_reset_possible': False,  
                                          'logout': False,
@@ -763,6 +788,11 @@ def activate(request, activation_key):
     loves = None
     mehs = None
     hates = None
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
 
     try:
         loves = Emotion.objects.filter(attitude_id=1)
@@ -858,6 +888,7 @@ def activate(request, activation_key):
                                          'loves': love_slice,
                                          'mehs': meh_slice,
                                          'hates': hate_slice,
+                                         'has_private': has_private,
                                          'username': profile.user.username,
                                          'is_activated': True,
                                          'resend_activation': False,
@@ -875,6 +906,7 @@ def activate(request, activation_key):
                                          'loves': love_slice,
                                          'mehs': meh_slice,
                                          'hates': hate_slice,
+                                         'has_private': has_private,
                                          'resend_activation': True,
                                          'is_activated': False,
                                          'logout': False,

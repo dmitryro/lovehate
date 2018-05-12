@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
 from datetime import date
+from custom.forum.models import Message
 
 class Profile(models.Model):
     user = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
@@ -53,6 +54,17 @@ class Profile(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'      
+
+    @property
+    def has_private(self):
+        try:
+            messages = Message.objects.filter(receiver_id=self.user.id, is_read=False)
+            if len(messages) > 0:
+                return True
+        except Exception as e:
+            return False
+          
+        return False
 
 
 class Relationship(models.Model):

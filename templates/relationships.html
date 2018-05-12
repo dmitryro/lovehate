@@ -106,17 +106,15 @@
                                  <div class="row">
                                      <form id="newfriendform"  name="newfriendform"  method="post">
                                               <input type="hidden" value="{{ user_id }}" name="friend_user_id"  id="friend_user_id" />
-                                              <div class="col-sm-9">
+                                              <div class="col-sm-8">
 
  
                                               {% csrf_token %}
                                                         <input type="text" id="friend_username" name="friend_username" 
                                                           placeholder="Ник пользователя - друга" size="16">
                                               </div>
-
-                                              <div class="col-sm-3">
-                                                  <div style="text-align:center;margin-left:-1.2em;" class="search">
-                                                  <button type="button" id="newfriendform-publish"  style="min-width:6.0em;background:#4a4a4a;">Добавить</button>
+                                              <div class="col-sm-4">
+                                                  <button type="button" id="newfriendform-publish" class="btn3" style="width:5.6em;background:#4a4a4a;" >Добавить</button>
                                               </div>
                                    </form>
 
@@ -130,28 +128,34 @@
                                </div>
 
                               </div> <!-- container ends ends  -->
-                              </div>
                      </div>        
-        <div class="col-sm-2">
-        </div>
-                     <div class="col-sm-3 service-box">
-                              <div class="container-fluid">
-                                 <div class="row">
-                                         <form id="newenemyform"  name="newenemyform"  method="post">
-                                              <input type="hidden" value="{{ user_id }}" name="enemy_user_id"  id="enemy_user_id" />
-                                              <div class="col-sm-9">
+                     <div class="col-sm-2">
+                     </div>
 
-{% csrf_token %}
+
+                     <div class="col-sm-3 service-box" style="margin-right:-1.2em;">
+
+
+                              <div class="container-fluid">
+
+                                 <div class="row">
+
+                                         <form id="newenemyform"  name="newenemyform"  method="post">
+
+
+                                              <input type="hidden" value="{{ user_id }}" name="enemy_user_id"  id="enemy_user_id" />
+                                         
+                                      
+                                             <div class="col-sm-8">
+
+                                                        {% csrf_token %}
 
                                                         <input type="text" id="enemy_username" name="enemy_username"
-                                                          placeholder="Ник пользователя - врага" size="16">
-
-                                              </div>
-
-                                              <div class="col-sm-3">
-                                                  <div style="text-align:center;margin-left:-1.2em;" class="search">
-                                                  <button type="button" id="newenemyform-publish"  style="min-width:6.0em;background:#4a4a4a;">Добавить</button>
-                                              </div>
+                                                          placeholder="Ник пользователя - врага"
+                                                          >
+                                             </div>
+                                             <div class="col-sm-4">
+                                                  <button type="button" class="btn3" id="newenemyform-publish"  style="width:5.6em;background:#4a4a4a;">Добавить</button>
                                         </form>
                                  </div> <!-- row ends  -->
 
@@ -161,12 +165,13 @@
                                          Пользователь не найден!
                                         </div>
                                     </div>
-                               </div>
+                                 </div>
+
 
                               </div> <!-- container ends ends  -->
 
                      </div>
-
+</div>
 
 
                      

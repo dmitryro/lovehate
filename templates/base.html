@@ -1,4 +1,5 @@
 {% load static %}
+{% load gui_extras %}
 {% load forum_extras %}
 {% load blog_extras %}
 {% load meta_extras %}
@@ -346,7 +347,7 @@ button:hover {
         width: 250px;
     }
 
-    .change-success, .sent-success, .recover-success, .profile-success., .registration-success {
+    .change-success, .sent-success, .recover-success, .profile-success., .registration-success, .resend-success {
         display:none;
         color: #3c763d;
         background-color: #dff0d8;
@@ -1593,14 +1594,14 @@ span.psw {
                                  </div>
                                  <div id="submenu-mylh">
                                      <div class="submenu-item">
-                                            <a href="#">Профиль</a>
+                                            <a href="/mylh/">Профиль</a>
                                      </div>
                                      <div class="submenu-item">
-                                            <a href="#">Нaстройки</a>
+                                            <a href="/settings/{{ user.id }}/">Нaстройки</a>
                                      </div>
 
                                      <div class="submenu-item">
-                                            <a href="/relationships/{{ user.id }}">
+                                            <a href="/relationships/{{ user.id }}/">
 Друзья / Враги
 </a>
                                      </div>
@@ -1656,10 +1657,18 @@ span.psw {
                                                {% if user.is_authenticated %}
                                                    <input type="hidden" id="user_id" name="user_id" value="{{ user.id }}" />
                                                    <input type="hidden" id="session_user_name" name="session_user_name" value="{{ username }}" />
-                                                   <span style="font-size:0.7em;">{{ username }}</span>  | <a href="/incoming">
-                                                         Приваты
- 
-                                                         </a> | <a id="session-exit" href="/signout">Выйти</a>
+                                                   <span style="font-size:0.9em;">{{ username }}</span>  | 
+                                                            <a href="/incoming">
+                                                                  <span style="font-size:0.9em;">
+Приваты
+
+                                                                   </span>
+                                                                   {% if has_private %}
+                                                                       <span class="red" style="font-size:0.9em;font-weight:bold; ">
+(<span style="font-size:0.8em;color:#ff0000;font-weight:bold;">{% incoming_meta user.id %}</span>)
+                                                                       </span>
+                                                                   {% endif %}
+                                                            </a> | <span style="font-size:0.9em;"><a id="session-exit" href="/signout">Выйти</a></span>
                                                {% endif %}
                                             </form>
                            </div>
@@ -1701,7 +1710,7 @@ span.psw {
                     </div>
                     <div style="height:1.4em;text-align:center; font-weight:0.8em;">
                           <div class="activation-errors" id="resend-activation-errors"><span>Ошибка. Попытайтесь ещё раз.</span> </div>
-                          <div class="success" id="resend-activation-success">
+                          <div class="success resend-success" id="resend-activation-success">
                                          Ссылка для активации выслана.
                           </div>
 
@@ -2053,7 +2062,6 @@ span.psw {
 
 {% block content %}
 {% endblock %}
-
 <!--
 <div class="fluid-container">
     <div class="row">
@@ -2951,7 +2959,7 @@ span.psw {
                          }).get();
 
 
-                         var user_id = $("#friend_user_id").val();
+                         var user_id = $("#user_id").val();
 
 
                          var arr = {
@@ -3526,8 +3534,8 @@ span.psw {
                       dataType: 'json',
                       contentType: "application/json; charset=utf-8",
                       success: function(data){
-                          $("resend-activation-success" ).fadeIn( 100 ).delay( 400 ).fadeOut( 200 );
-                          $('#modal-send-activation').delay( 700 ).hide();
+                          $(".resend-success" ).fadeIn( 100 ).delay( 1500 ).fadeOut( 300 );
+                          $('#modal-send-activation').delay( 1500 ).hide();
                       },
                       error: function(data){
                           $("#resend-activation-errors").fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
