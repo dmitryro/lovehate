@@ -48,6 +48,7 @@ from custom.users.views import user_profile
 from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
 from custom.users.views import Logout
+from custom.users.views import Login
 from custom.users.views import changepassword
 from custom.users.views import addnewfriend
 from custom.users.views import addnewenemy
@@ -119,6 +120,7 @@ urlpatterns = [
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
     path('logout/', Logout.as_view()),
+    path('login/', Login.as_view()),
     path('signout/', logout),
     path('statistics/', statistics),
     path('register/', register),
@@ -160,5 +162,4 @@ urlpatterns = [
     path('processfriends/', processfriends),
     path('addnewfriend/', addnewfriend),
     path('addnewenemy/', addnewenemy),
-
 ]

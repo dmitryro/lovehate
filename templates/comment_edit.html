@@ -109,7 +109,7 @@
 
                                <div class="row">
                                        <div class="col-sm-4">
-                                                   {% if comment.attitude.id is 1 %}
+                                                   {% if comment.attitude.id == 1 %}
                                                       <input type="radio" name="comment_attitude" value="love" checked />
                                                    {% else %}
                                                       <input type="radio" name="comment_attitude" value="love" />
@@ -123,7 +123,7 @@
                                                             
 
                                        <div class="col-sm-4">
-                                                   {% if comment.attitude.id is 2 %}
+                                                   {% if comment.attitude.id == 2 %}
                                                       <input type="radio" name="comment_attitude" value="indifferent" checked />
                                                    {% else %}
                                                          {% if not comment %}
@@ -145,7 +145,7 @@
 
 
                                        <div class="col-sm-4">
-                                                   {% if comment.attitude.id is 3 %}
+                                                   {% if comment.attitude.id == 3 %}
                                                       <input type="radio" name="comment_attitude" value="hate" checked />
                                                    {% else %}
                                                       <input type="radio" name="comment_attitude" value="hate" />
@@ -184,8 +184,9 @@
                        <div class="col-sm-2">
 
                             <button class="btn4" id="editcomment-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
-                                  Отправить
+                            Сохранить
                             </button>
+
                             
                        </div>
 
@@ -208,7 +209,7 @@
 
                               <br/>
                               <strong>
-                            &nbsp;  &nbsp; &nbsp;<a href="/blog" style="text-decoration:underline;">Вернутъся</a>
+                            &nbsp;  &nbsp; &nbsp;<a href="/blog/{{ post.id }}/comments/" style="text-decoration:underline;">Вернутъся</a>
                               </strong>
 
                        </div>

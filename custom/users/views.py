@@ -42,6 +42,24 @@ from custom.users.callbacks import reset_password_link
 from custom.users.models import Profile
 from custom.utils.models import Logger
 
+
+class Login(APIView):
+    def post(self, request):        
+        username = request.data['username']
+        password = request.data['password']
+        
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:              
+                login(request, user)                
+                serializer = UserSerializer(user)
+                return Response(serializer.data)
+            else:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
 class Logout(APIView):
     queryset = User.objects.all()
 
@@ -50,9 +68,11 @@ class Logout(APIView):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
 
+
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
@@ -1007,12 +1027,20 @@ def auth(request):
 
     try:
         user = User.objects.get(username=username)
-        login(request, user,  backend='custom.users.backends.LocalBackend')
+        profile = user.profile
 
-        if not user.profile.is_activated:
+        if not profile.is_activated:
             not_activated = True
-            logout(request)
+            logout(request)  
+      #  else:
+      #      login(request, user, backend='custom.users.backends.LocalBackend')
+        else:
+            login(request, user,  backend='custom.users.backends.LocalBackend')
 
+#        if not user.profile.is_activated:
+#            not_activated = True
+#            logout(request)
+#
         return Response({"message": 'success',
                          "code":200,
                          "user_id": user.id,

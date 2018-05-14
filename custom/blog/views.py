@@ -59,6 +59,8 @@ def newcomment(request, post_id):
 
     try:
         post = Post.objects.get(id=int(post_id))
+        post.time_last_commented = timezone.now().replace(tzinfo=tz)
+        post.save()
     except Exception:
         post = None
 
@@ -375,7 +377,6 @@ def addnewcommentunauth(request):
         ip, is_routable = get_client_ip(request)
         ip_address = str(ip)
         post = Post.objects.get(id=post_id)
-
         user = authenticate(username=username, password=password)
 
         if not user:
@@ -426,7 +427,8 @@ def addnewcommentunauth(request):
         log.save()
      
         Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
-        
+        post.time_last_commented = timezone.now().replace(tzinfo=tz)
+        post.save()
     except Exception as e:
         log = Logger(log="Error in blogs- failed to create a new unauth post {}".format(e))
         log.save()

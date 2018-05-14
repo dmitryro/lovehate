@@ -27,10 +27,7 @@
 <meta name="theme-color" content="#ffffff">
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <meta http-equiv="content-language" content="ru">
-<!--
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
--->
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes, maximum-scale=1, user-scalable=yes">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
@@ -459,9 +456,7 @@ span.psw {
     padding-top: 60px;
     margin: auto;
 }
-.modal-body {
 
-}
 /* Modal Content/Box */
 .modal-content {
 /*
@@ -480,7 +475,6 @@ span.psw {
     min-width:20.00em;
     font-family: Times New Roman;
     font-weight: normal;
-    
 }
 /* The Close Button (x) */
 .close {
@@ -1461,29 +1455,13 @@ span.psw {
    display:block;
 }
 
-@media screen and (max-width: 1024px) {
-   .container-forum {
-      min-width:48.00em;
-   }
+@media screen and (max-width: 1024px) { 
 
-   .container-forum .col-sm-4 {
-       display:block;
-       min-width:48.00em;
-   }
 }
 
-@media screen and (max-width: 1028px) {
-   .container-forum {
-      min-width:48.00em;
-   }
+@media screen and (max-width: 1028px) { 
 
-   .container-forum  .col-sm-4{
-      display:block;
-      min-width:12.00em;
-   }
-}
-
-
+}:
 </style>
 
 </head>
@@ -1584,8 +1562,7 @@ span.psw {
 
                </div>   
                <div class = "row header-pan-bottom">
-                  <div class="col-xs-4"></div>
-                  <div class="col-xs-5">
+                  <div class="col-sm-6" style="margin-left:20em;;min-width:41.00em;">
                                  <div id="submenu-main">
                                   
                                  </div>
@@ -1694,8 +1671,8 @@ span.psw {
                                  </div>
 
                   </div>
-                  <div class="col-xs-3">
-                           <div id="logged-out" style="float:right;width:100%;overflow:hidden;padding-right:1.2em;margin-left:-1.2em;">
+                  <div class="col-sm-2">
+                           <div id="logged-out" style="float:right;width:100%;">
                                             <form method="POST">
                                                {% if not user.is_authenticated %}
                                                    <a id="modal-login-open" href="#">Зайти</a> 
@@ -1705,16 +1682,16 @@ span.psw {
                                                    <input type="hidden" id="session_user_name" name="session_user_name" value="{{ username }}" />
                                                    <span style="font-size:0.9em;">{{ username }}</span>  | 
                                                             <a href="/incoming">
-                                                                  <span style="font-size:0.88em;">
+                                                                  <span style="font-size:0.9em;">
 Приваты
 
                                                                    </span>
                                                                    {% if has_private %}
-                                                                       <span class="red" style="font-size:0.88em;font-weight:bold; ">
-(<span style="font-size:0.88em;color:#ff0000;font-weight:bold;">{% incoming_meta user.id %}</span>)
+                                                                       <span class="red" style="font-size:0.9em;font-weight:bold; ">
+(<span style="font-size:0.8em;color:#ff0000;font-weight:bold;">{% incoming_meta user.id %}</span>)
                                                                        </span>
                                                                    {% endif %}
-                                                            </a> | <span style="font-size:0.88em;"><a id="session-exit" href="/signout">Выйти</a></span>
+                                                            </a> | <span style="font-size:0.9em;"><a id="session-exit" href="/signout">Выйти</a></span>
                                                {% endif %}
                                             </form>
                            </div>
@@ -2036,7 +2013,6 @@ span.psw {
                    </form>
 
                </div>
-
                <div class="modal-login modaldialogue" id="modal-login">
                          <div class="modal-header">
                              <div class="container-fluid">
@@ -2126,6 +2102,7 @@ span.psw {
                          </form>
                     </div>
                </div>
+
 
 {% block content %}
 {% endblock %}

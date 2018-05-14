@@ -3,6 +3,7 @@
 {% load bootstrap_pagination %}
 {% load blog_extras %}
 {% block content %}
+
 <div class="container-fluid registration-form">
     <div class="row" style="font-size:1.20em;margin-top:1.6em;">
 
@@ -33,7 +34,7 @@
                                                                            
                                                                          <div class="col-sm-1">
                                                                          
-                                                           {% if user.id is post.author.id %}
+                                                           {% if user.id == post.author.id %}
                                                                  <span>
                                                                        <a href="/blog/edit/{{ post.id }}">
 
@@ -189,7 +190,7 @@
                                                   {% endfor %}  
                                               </div> 
                                               <div class="col-sm-2" style="font-weight:0.8em;">
-                                                              {% if user.id is comment.author.id %}
+                                                              {% if user.id == comment.author.id %}
                                                                     <a href="/editcomment/{{ comment.id }}/">  
                                                                                          Изменить
                                                                     </a>                                         

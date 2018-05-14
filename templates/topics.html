@@ -9,10 +9,10 @@
 <div class="container-fluid registration-form">
 <div class="row">
 
-    <div class="col-sm-2">
+    <div class="col-sm-1">
     </div>
-    <div class="col-sm-8">
-     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+    <div class="col-sm-10">
+     <div class="container-fluid container-forum" style="background:#f6f6f6;border: 1px #979797 solid;">
          <div class="row">
 
              <div class="col-sm-4">
@@ -45,14 +45,14 @@
 
      </div>
 <div>
-<div class="col-sm-2">
+<div class="col-sm-1">
 </div> 
 
 
 </div> <!-- row ends -->
 </div> <!-- container ends -->
 
-    <div class="col-sm-2"></div>
+    <div class="col-sm-1"></div>
 </div>
 </div>
 
@@ -60,10 +60,10 @@
 <div class="container-fluid registration-form">
 <div class="row">
 
-    <div class="col-sm-2">
+    <div class="col-sm-1">
     </div>
-    <div class="col-sm-8">
-     <div class="container-fluid">
+    <div class="col-sm-10">
+     <div class="container-fluid container-forum">
          <div class="row">
              <div class="col-sm-4">
               
@@ -96,7 +96,7 @@
                                                                                {% endfor %}
 
                                                                             {% if user.is_authenticated %}
-                                                                                {% if love.user.id is user.id %}
+                                                                                {% if love.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ love.topic.id}}/emotion/{{ love.id }}/edit">
                                                                                        Править>>
@@ -135,7 +135,7 @@
 
                                                                                {% endfor %}
                                                                             {% if user.is_authenticated %}
-                                                                                {% if meh.user.id is user.id %}
+                                                                                {% if meh.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ meh.topic.id}}/emotion/{{ meh.id }}/edit">
                                                                                        Править>>
@@ -180,7 +180,7 @@
 
                                                                                {% endfor %}
                                                                             {% if user.is_authenticated %}
-                                                                                {% if hate.user.id is user.id %}
+                                                                                {% if hate.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ hate.topic.id}}/emotion/{{ hate.id }}/edit">
                                                                                        Править>>
@@ -200,14 +200,14 @@
          </div>
      </div>
 <div>
-<div class="col-sm-2">
+<div class="col-sm-1">
 </div> 
 
 
 </div> <!-- row ends -->
 </div> <!-- container ends -->
 
-    <div class="col-sm-2"></div>
+    <div class="col-sm-1"></div>
 </div>
 </div>
 

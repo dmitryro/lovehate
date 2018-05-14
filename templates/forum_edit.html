@@ -97,7 +97,7 @@
                                <div class="row">
                                        <div class="col-sm-4">
 
-                                                  {% if emotion.attitude.id is 1 %}
+                                                  {% if emotion.attitude.id == 1 %}
                                                       <input type="radio" name="forumedit_attitude" value="love" checked />
                                                    {% else %}
                                                       <input type="radio" name="forumedit_attitude" value="love" />
@@ -112,7 +112,7 @@
                                                             
                                        <div class="col-sm-4">
 
-                                                   {% if emotion.attitude.id is 2 %}
+                                                   {% if emotion.attitude.id == 2 %}
                                                       <input type="radio" name="forumedit_attitude" value="indifferent" checked />
                                                    {% else %}
                                                          {% if not emotion %}
@@ -135,7 +135,7 @@
 
                                        <div class="col-sm-4">
 
-                                                   {% if emotion.attitude.id is 3 %}
+                                                   {% if emotion.attitude.id == 3 %}
                                                       <input type="radio" name="forumedit_attitude" value="hate" checked />
                                                    {% else %}
                                                       <input type="radio" name="forumedit_attitude" value="hate" />
