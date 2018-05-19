@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+{% load bootstrap_pagination %}
+{% block content %}
+
+
+<div class="container-fluid registration-form">
+<div class="row forum-row">
+
+    <div class="col-sm-1">
+    </div>
+    <div class="col-sm-10">
+          <div class="container-fluid container-forum">
+             <div class="row">
+                <div class="col-sm-4">
+                    <div class="mehs-column-header">
+                       <strong>
+                       <span>
+Форум
+                       </span>
+                      </strong>
+                    </div>
+
+                    <div class="mehs-forum" style="text-align:center;margin-top:1.4em;">
+                           {% for topic in topics %}
+                                 <a href="/topics/{{ topic.id }}">{{ topic.name }}</a> <br/>
+                           {% endfor %}
+                    </div>
+
+
+
+
+                </div>
+                <div class="col-sm-4">
+                    <div class="mehs-column-header" style="color:black;">
+                        <strong>
+                         <span>
+Дневник
+                        </span>
+                        </strong>
+                    </div>
+                    <div class="mehs-forum"  style="text-align:center;margin-top:1.4em;">
+                           {% for post in posts %}
+                                 <a href="/posts/{{ post.id }}">{{ post.subject }}</a> <br/>
+                           {% endfor %}
+                    </div>
+
+
+                </div>
+                 <div class="col-sm-4">
+                     <div class="mehs-column-header">
+                       <strong>
+                       <span>
+Пользователи
+                       </span>
+                       </strong>
+                     </div>
+                     <div class="mehs-forum"  style="text-align:center;margin-top:1.4em;">
+                           {% for user in users %}
+                                 <a href="/user/{{ user.id }}">{{ user.username }} </a><br/>
+                           {% endfor %}
+                     </div>
+
+                 </div>
+               </div><!-- row ends -->
+               <div class="row">
+                        <div class="col-sm-5">
+                        </div>
+                        <div class="col-sm-2">
+                        </div>          
+                        <div class="col-sm-5">
+                        </div>
+               </div>
+           </div> <!-- container ends -->
+      </div> <!-- col 10 ends -->
+     <div class="col-sm-1">
+     </div>
+</div> <!-- row ends -->
+
+</div>
+
+
+
+
+<div class="success" id="registration-success">
+Создана новая учётная запись. <br/>
+Проверьте вашу эл.почту и перейдите по ссылке для активации.
+</div>
+<!--
+<div style="margin-top:20%;margin-left:30%;width:40%;margin-right:29%;border:1px solid black; text-align:center;">
+Любовь и Ненависть <br/>
+Наберитесь терпения.<br/><br/>
+<br/>
+Ваши профили, сообщения, переписка и история в безопасности.<br/>
+</div>
+-->
+{% endblock %}

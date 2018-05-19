@@ -158,6 +158,33 @@ class Emotion(models.Model):
         verbose_name_plural = 'Emotions'
 
 
+class MessageRule(models.Model):
+    rule = models.CharField(max_length=250,
+                            blank=True,
+                            null=True)
+    code = models.CharField(max_length=15,
+                            blank=True,
+                            null=True)
+    class Meta:
+        verbose_name = 'Message Rule'
+        verbose_name_plural = 'Message Rules'
+
+
+class MessageSettings(models.Model):
+    owner = models.ForeignKey(User,
+                              blank=True,
+                              null=True,
+                              related_name='owner',
+                              on_delete=models.CASCADE)
+    duplicate_to_email = models.NullBooleanField(default=False, 
+                                                 blank=True, 
+                                                 null=True)
+    message_rule = models.ForeignKey(MessageRule,
+                                     blank=True,
+                                     null=True,
+                                     related_name='message_rule',
+                                     on_delete=models.CASCADE)
+
 
 class Message(models.Model):
     subject = models.CharField(max_length=250,

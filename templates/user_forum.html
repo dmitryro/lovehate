@@ -3,20 +3,11 @@
 {% load bootstrap_pagination %}
 {% block content %}
 
+
 <div class="container-fluid registration-form">
 <div class="row forum-row">
-    <div class="col-sm-1"></div>
-    <div class="col-sm-11 relationship" style="font-size:1.2em;padding-left:3.62em;">
-Сейчас на сайте:
-                         {% for onliner in onliners %}
-                                        <a href="https://lovehate.io/user/{{ onliner.user.id }}">{{ onliner.user.username }}</a>&nbsp;&nbsp;
-                         {% endfor %}
-    </div>
 
-</div>
-<div class="row forum-row">
     <div class="col-sm-1">
-
     </div>
     <div class="col-sm-10">
           <div class="container-fluid container-forum">
@@ -27,22 +18,19 @@
                        <span>
 Любовь
                        </span>
-                       </strong>
+                      </strong>
                     </div>
 
                     <div class="loves-forum">
                      {% for page in pages %}
                        {% for love in page.loves %}
-                           <div class="forum-entry"><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span>
-<strong>
-любит
-</strong>
-</span> 
                            
-<a href="/topics/{{ love.topic.id }}">{{ love.subject }}</a> : 
+                           <div class="forum-entry"><a href="/user/{{ love.user.id }}">{{ love.user.username }}</a> <span><strong>любит</strong></span> 
+
+<a href="/topics/{{ love.topic.id }}">{{ love.subject }}</a> :
                                                                             {% for line in love.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
-                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
                                                                                               {{ line|slice:"1:" }}
                                                                                       {% else %}
@@ -50,23 +38,26 @@
                                                                                                {{ line|slice:"0:" }}
                                                                                       {% endif %}
                                                                                               </span>
+
                                                                                               {% if not forloop.last %}
                                                                                                <br/>
                                                                                               {% endif %}
+
                                                                             {% endfor %}
                                                                             {% if user.is_authenticated %}
                                                                                 {% if love.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ love.topic.id}}/emotion/{{ love.id }}/edit">
-                                                                                       Править
-                                                                                       >>
+                                                                                       Править>>
                                                                                        </a>
-                                                                                 </span> 
+                                                                                 </span>
 
                                                                                 {% endif %}
-                                                                            {% endif %}    
-                      </div>
+                                                                            {% endif %}
 
+
+
+ </div>
                          {% endfor %}
                        {% endfor %}
                     </div>
@@ -76,7 +67,7 @@
 
                 </div>
                 <div class="col-sm-4">
-                    <div class="mehs-column-header">
+                    <div class="mehs-column-header" style="color:black;">
                         <strong>
                          <span>Безразличие</span>
                         </strong>
@@ -86,9 +77,10 @@
                        {% for meh in page.mehs %}
                            <div class="forum-entry"><a href="/user/{{ meh.user.id }}">{{ meh.user.username }}</a> <span><strong>плевал на </strong></span> 
 <a href="/topics/{{ meh.topic.id }}">{{ meh.subject }}</a>  :
+
                                                                             {% for line in meh.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
-                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
                                                                                               {{ line|slice:"1:" }}
                                                                                       {% else %}
@@ -106,8 +98,7 @@
                                                                                 {% if meh.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ meh.topic.id}}/emotion/{{ meh.id }}/edit">
-                                                                                       Править
-                                                                                       >>
+                                                                                       Править>>
                                                                                        </a>
                                                                                  </span>
 
@@ -134,11 +125,10 @@
                        {% for hate in page.hates %}
                            <div class="forum-entry"><a href="/user/{{ hate.user.id }}">{{ hate.user.username }}</a> <span><strong>ненавидит</strong></span> 
 <a href="/topics/{{  hate.topic.id }}">{{ hate.subject }}</a> 
-                            
  : 
                                                                             {% for line in hate.body_lines %}
                                                                                       {% if line|slice:"0:1" == '>' %}
-                                                                                              <span style="font-weight:bold;"> | </span>
+                                                                                              <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
                                                                                               {{ line|slice:"1:" }}
                                                                                       {% else %}
@@ -151,18 +141,17 @@
                                                                                               {% endif %}
 
                                                                             {% endfor %}
+
                                                                             {% if user.is_authenticated %}
                                                                                 {% if hate.user.id == user.id %}
                                                                                  <span class="neutral-messages" style="font-size:0.64em;">
                                                                                        <a href="/topics/{{ hate.topic.id}}/emotion/{{ hate.id }}/edit">
-                                                                                        Править>>
+                                                                                       Править>>
                                                                                        </a>
                                                                                  </span>
 
                                                                                 {% endif %}
                                                                             {% endif %}
-
-
  </div>
 
                        {% endfor %}
@@ -186,8 +175,6 @@
      </div>
 </div> <!-- row ends -->
 
-
-
 </div>
 
 
@@ -205,5 +192,4 @@
 Ваши профили, сообщения, переписка и история в безопасности.<br/>
 </div>
 -->
-
 {% endblock %}

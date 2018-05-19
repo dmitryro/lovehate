@@ -45,7 +45,7 @@
                    {% csrf_token %}
                    {% for friend in friends %}
                         <div class="row">
-                            <div class="col-sm-10">
+                            <div class="col-sm-10 relationship">
                                 <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> 
                             </div>
                             <div class="col-sm-2">
@@ -65,7 +65,7 @@
                    {% csrf_token %}
                    {% for enemy in enemies %}
                         <div class="row">
-                            <div class="col-sm-10">
+                            <div class="col-sm-10 relationship">
                                 <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a>
                             </div>
                             <div class="col-sm-2">

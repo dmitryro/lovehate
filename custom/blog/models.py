@@ -67,6 +67,9 @@ class Post(models.Model):
         return self.body.splitlines()
 
 
+    def get_absolute_url(self):
+        return '/'+self.subject+'/'
+
 class Comment(models.Model):
     title = models.CharField(max_length=250, blank=True, null=True)
     body = models.TextField(blank=True, null=True)

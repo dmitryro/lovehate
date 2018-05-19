@@ -48,7 +48,6 @@ $buttonBg: #e67e22;
 $buttonColor: #fff;
 $errorMsgColor: #ff0000;
 
-
 body {font-family: "Times New Roman";}
 
 
@@ -519,12 +518,13 @@ span.psw {
 }
 
 .footer {
-    opacity: 1.0;
-    color:#cccccc;
+    color:#333333;
     text-align: center;
     font-family: Times New Roman;
     font-weight: normal;
-    font-size: 1.2em;
+    font-size: 1.0em;
+    padding-top:1.4em;
+    padding-bottom:1.4em;
 }
 
 .footer a{
@@ -559,8 +559,7 @@ span.psw {
    overflow:hidden;
    margin-top:0.1em;
    margin-left:0.1em;
-   width:99.8%;
-   margin-right:0.1em;
+   width:99.7%;
    min-height: 3%;
    min-width:44.8em;
    padding: 0.1em 0.1em 0.1em 0.1em;
@@ -584,7 +583,7 @@ span.psw {
 .header-pan-bottom {
    font-family: "Times New Roman";
    background: #eeeeee;
-   height:1.8em;
+   min-height:1.8em;
    overflow:hidden;
 }
 
@@ -920,6 +919,17 @@ span.psw {
    font-weight:bold;
    text-decoration: none;
 }
+
+.relationship a {
+   color:#00008b;
+   text-decoration: none;
+}
+
+.relationship a:hover {
+   color:#00008b;
+   text-decoration: underline;
+}
+
 
 .neutral-messages-regular a {
    color:#00008b;
@@ -1483,7 +1493,81 @@ span.psw {
    }
 }
 
+.header-row {
+    margin-right: -15px;
+    margin-left: -15px;
+}
+.footer-row {
+    margin-right: 15px;
+    margin-left: 15px;
+}
 
+.runner {
+   width: 100%;
+   font-size:1.0em;
+   text-align:center;
+   margin-top:0.2em;
+   margin-bottom:-0.2em;
+}
+.logged-out {
+   float:right;
+   width:100%;
+   overflow:hidden;
+   padding-right:1.2em;
+   margin-left:-1.2em;
+   margin-top:0.2em;
+   margin-bottom:-0.2em;
+}
+
+.typewriter span {
+  overflow: hidden; /* Ensures the content is not revealed until the animation */
+  border-right: .15em solid #333333; /* The typwriter cursor */
+  white-space: nowrap; /* Keeps the content on a single line */
+  margin: 0 auto; /* Gives that scrolling effect as the typing happens */
+  letter-spacing: .15em; /* Adjust as needed */
+  animation: 
+    typing 3.5s steps(40, end),
+    blink-caret .75s step-end infinite;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #333333; }
+}
+
+.line-1{
+    padding-top:1.4em;
+    position: relative;
+    width: 84em;
+    margin: 0 auto;
+    font-size: 1.0em;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    transform: translateY(-50%);    
+    margin-bottom:-1.4em;
+}
+
+/* Animation */
+.anim-typewriter{
+  animation: typewriter 10s steps(132) 1s 1 normal both,
+             blinkTextCursor 1800ms steps(132) infinite normal;
+}
+@keyframes typewriter{
+  from{width: 0;}
+  to{width: 84em;}
+}
+@keyframes blinkTextCursor{
+  from{border-right-color: rgba(255,255,255,.75);}
+  to{border-right-color: transparent;}
+}
 </style>
 
 </head>
@@ -1491,7 +1575,7 @@ span.psw {
     <div class="header-pan">
          <div class="container-fluid">
 
-              <div class="row header-pan-top">
+              <div class="row header-pan-top header-row">
                                <div class="col-sm-3">
                                       <div class="container-fluid">
                                             <div class="row">
@@ -1525,18 +1609,26 @@ span.psw {
 
 
                                       <div class="container-fluid">
+
+                                             <form class="search" action="/search" id="searchform" name="searchform" method="GET">
+                       <!-- We'll have a button that'll make the search input appear, a submit button and the input -->
+
+
                                             <div class="row">
                                               <div class="col-sm-9">
 
-                                                        <input type="text" id="inlineFormInputGroup" placeholder="Введите текст..." name="search" maxlength="16" size="16">
+                                                        <input type="text" id="search"  placeholder="Введите текст..." name="q" maxlength="16" size="16">
                                               </div>
 
                                               <div class="col-sm-3">
                                                   <div style="text-align:center;margin-left:-1.2em;" class="search">
-                                                  <button type="button" style="min-width:6.0em;background:#4a4a4a;"> Искать </button>
+                                                  <button type="submit" style="min-width:6.0em;background:#4a4a4a;"> Искать </button>
                                               </div>
 
-                                              </div>                                           </div>
+                                              </div>       
+
+                                             </form>
+                                    </div>
     
                                  </div>
 
@@ -1545,7 +1637,7 @@ span.psw {
 
 
                </div> <!-- row ends -->
-               <div class = "row header-pan-middle">
+               <div class = "row header-pan-middle header-row">
                          <form method="POST" id="menu-form" name="menu-form">
                          <div class="col-sm-4">&nbsp;</div>
                          <div class="col-sm-5" style="margin-left:-1.1em;min-width:41.00em;">
@@ -1583,11 +1675,16 @@ span.psw {
                          </form>
 
                </div>   
-               <div class = "row header-pan-bottom">
-                  <div class="col-xs-4"></div>
-                  <div class="col-xs-5">
+               <div class = "row header-pan-bottom header-row">
+                  <div class="col-sm-4"></div>
+                  <div class="col-sm-5">
                                  <div id="submenu-main">
-                                  
+                                   <div id="runner-index" style="display:none;">
+
+                                   </div>
+                                   <div id="runner" class="runner typewriter">
+                                       
+                                   </div> 
                                  </div>
 
                                  <div id="submenu-forum">
@@ -1694,8 +1791,8 @@ span.psw {
                                  </div>
 
                   </div>
-                  <div class="col-xs-3">
-                           <div id="logged-out" style="float:right;width:100%;overflow:hidden;padding-right:1.2em;margin-left:-1.2em;">
+                  <div class="col-sm-3">
+                           <div id="logged-out" class="logged-out">
                                             <form method="POST">
                                                {% if not user.is_authenticated %}
                                                    <a id="modal-login-open" href="#">Зайти</a> 
@@ -2037,7 +2134,7 @@ span.psw {
 
                </div>
 
-               <div class="modal-login modaldialogue" id="modal-login">
+               <div class="modal-login modaldialogue" id="modal-login" name="modal-login">
                          <div class="modal-header">
                              <div class="container-fluid">
                                 <div class="row">
@@ -2058,7 +2155,8 @@ span.psw {
                           <div class="errors" id="modal-error"><span><a href="#" id="retry-activation" class="error">Активировать?</a></span> </div>
                     </div>
                     <div class="modal-body">
-                          <form id="authenticateform" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+
+                              <form id="authenticateform" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
                               {% csrf_token %}
 
 
@@ -2129,9 +2227,8 @@ span.psw {
 
 {% block content %}
 {% endblock %}
-<!--
 <div class="fluid-container">
-    <div class="row">
+    <div class="row footer-row">
        <div class="col-sm-4"></div>
 
        <div class="col-sm-4 footer">
@@ -2142,10 +2239,82 @@ span.psw {
        <div class="col-sm-4"></div>
     </div>
 </div>
--->
 </body>
 <script>
+
+       var i = 0;
+       var speed = 300; /* The speed/duration of the effect in milliseconds */
+
+       function typeWriter(txt) {
+          if (i < txt.length) {
+               document.getElementById("runner").innerHTML += txt.charAt(i);
+               i++;
+               setTimeout(typeWriter, speed);
+          } 
+       }
+
+       function line_one() {
+
+           var l = $('#runner-index').html();
+           
+           if (l=='One') {
+                 $('#runner').css('display', 'block');
+             //    var text = "Чтобы был хороший стул";
+                 var text = "Добавлен поиск ";
+                 $('#runner-index').html('Two');
+            //     typeWriter(text);
+                 $('#runner').html('<p class="line-1 anim-typewriter">'+text+'</p>')
+           } else {
+                  $('#runner').css('display', 'block');
+                // var text = "должен быть хороший стол.";
+                 var text = "Добавлен онлай-статус";
+                 $('#runner-index').html('One');
+              //   typeWriter(text);
+                 $('#runner').html('<p class="line-1 anim-typewriter">'+text+'</p>');
+           }
+           
+            
+           return false;
+       }
+
+
        $(document).ready(function() {
+       $('#runner').html('Чтобы был хороший стул');
+       $('#runner').css('display', 'none');
+       $('#runner-index').html('One');       
+       setInterval(line_one, 3000);
+
+
+/*
+            $(document).mouseup(function(e)  {
+                var container = $("#modal-login");
+
+                if (!container.is(e.target) && container.has(e.target).length === 0) 
+                {
+                     container.hide();
+                }
+            });
+*/
+            $(document).mouseup(function(e)  {
+                var container = $("#send-reset-link-modal");
+
+                // if the target of the click isn't the container nor a descendant of the container
+                if (!container.is(e.target) && container.has(e.target).length === 0)
+                {
+                     container.hide();
+                }
+            });
+
+            $(document).mouseup(function(e)  {
+                var container = $("#modal-send-activation");
+
+                // if the target of the click isn't the container nor a descendant of the container
+                if (!container.is(e.target) && container.has(e.target).length === 0)
+                {
+                     container.hide();
+                }
+            });
+
             var attitude = { love:1, indifferent:2, hate:3 };
             $('#comment').html('');
             $('#feeling').html('');
@@ -2202,7 +2371,7 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                        $('#submenu-div-4').addClass('active');
-            } else if ($('#current_page').val()==='mylh') {
+            } else if ($('#current_page').val()==='mylh' || $('#current_page').val()==='mylh_settings') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -2238,7 +2407,7 @@ span.psw {
                        $('#submenu-private-messages').hide();
                        $('.active').removeClass('active');
                        $('#submenu-div-6').addClass('active');
-            } else if ($('#current_page').val()==='private') {
+            } else if ($('#current_page').val()==='private' || $('#current_page').val()==='private_contacts' || $('#current_page').val()==='private_settings') {
                        $('#submenu-main').hide();
                        $('#submenu-forum').hide();
                        $('#submenu-blog').hide();
@@ -3044,6 +3213,8 @@ span.psw {
               
               $('#modal-login-open').click(function() {
                   $('.login-errors').hide();
+                  $('#login_username').attr('value','');
+                  $('#login_password').attr('value','');
                   $('#modal-login').show();
               });
              
@@ -3638,11 +3809,13 @@ span.psw {
                   }); // end ajax call
               }); // end on click for user login
 
-              $('#user-login').click(function() {
+              $('#user-login').click(function(event) {
+                  
                  if ($('#authenticateform').valid()) {
-
+                  event.preventDefault();
                   var arr = {username: $("#login_username").val(), 
-                             password: $("#login_password").val()}; 
+                             password: $("#login_password").val(),
+                             from_session: true}; 
                  
  
                   $.ajax({
@@ -3658,7 +3831,6 @@ span.psw {
                                 if (data.not_activated==true) {
                                     $('#modal-login').hide();
                                     $("#modal-send-activation").show();
-                                    
                                 } else {
                                     $('#modal-login').hide();
                                     redirect_login(arr);
@@ -3670,8 +3842,9 @@ span.psw {
                       error: function(data){
                         $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                       }
-                  }); // end ajax call
-                 
+                  });
+ 
+
                  } //end if
                  
                        

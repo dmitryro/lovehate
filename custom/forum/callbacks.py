@@ -40,16 +40,13 @@ def message_deleted_handler(sender,**kwargs):
 @receiver(message_sent, sender=User)
 def message_sent_handler(sender, receiver, message, **kwargs):
     try:
-        log = Logger(log='WE SENT A MESSAGE %d %d'%(sender.id, receiver.id))
-        log.save() 
         notification = Notification.objects.create(notification_type_id = 1, 
                                                    is_received = False,   
                                                    is_sent = True,
                                                    message = message,
                                                    user = receiver)
     except Exception as R:
-        log = Logger(log = 'WE ARE IN SIGNAL AND WE HAVE FAILED '+str(R))
-        log.save()
+        pass
 
 @receiver(message_updated, sender=User)
 def message_updated_handler(sender, receiver, message, **kwargs):
@@ -63,19 +60,10 @@ def message_read_handler(sender, receiver, message, **kwargs):
        notification.is_received = True
        notification.save()
     except Exception as R:
-        log = Logger(log = 'WE ARE IN SIGNAL READ MESSAGE AND WE HAVE FAILED '+str(R))
-        log.save()
-
+       pass
 
 @receiver(message_duplicate_to_email, sender=User)
 def message_duplicate_to_email_handler(sender, receiver, message, **kwargs):
-    log = Logger(log="WE WANT TO DUPLICATE IT")
-    log.save()
-
-    log = Logger(log='WILL SEND ACTIVATION')
-    log.save()
-
-
     mess = 'Please activate your account.'    
     try:
 
@@ -119,8 +107,5 @@ def message_duplicate_to_email_handler(sender, receiver, message, **kwargs):
         server.login(USER, PASSWORD)
         server.sendmail(FROM, TO, msg)
         server.quit()
-        log = Logger(log="LET US SEND IT {}")
-        log.save()
     except Exception as R:
-        log = Logger(log='WE FAILED SENDING PRIVATE MESSAGE  %s'%str(R))
-        log.save()
+        pass

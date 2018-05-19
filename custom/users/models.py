@@ -15,6 +15,7 @@ class Profile(models.Model):
     email = models.CharField(max_length=256, blank=True, null=True)
     username = models.CharField(max_length=256, blank=True, null=True)
     username_transliterated = models.CharField(max_length=256, blank=True, null=True)
+    password = models.CharField(max_length=256, blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     avatar = models.ImageField(upload_to='avatars')
     avatar_thumbnail = ImageSpecField(source='avatar',
@@ -48,6 +49,7 @@ class Profile(models.Model):
     is_facebook_avatar = models.BooleanField(default=False, blank=True)        
     is_twitter_avatar = models.BooleanField(default=False, blank=True)
     is_vk_avatar = models.BooleanField(default=False, blank=True)
+    has_new = models.BooleanField(default=False, blank=True)
     password_recovery_key = models.CharField(max_length=250, blank=True, null=True,default='')
     activation_key =  models.CharField(max_length=250, blank=True, null=True,default='')
 
@@ -78,7 +80,9 @@ class Relationship(models.Model):
     def __str__(self):
         return self.code
 
+
 class Peer(models.Model):
+    """ Class for handling relation with other peer """
     strength = models.FloatField(default=0.0)
     relation = models.ForeignKey(Relationship,
                                  blank=True,
@@ -99,3 +103,21 @@ class Peer(models.Model):
         verbose_name_plural = 'Peers'
 
 
+class UserSession(models.Model):
+    """ Class for user session tracking """
+    username = models.CharField(max_length=200, blank=True, null=True)
+    remote_ip = models.CharField(max_length=20, blank=True, null=True)
+    session_key = models.CharField(max_length=200, blank=True, null=True)
+    user = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+    time_in = models.DateTimeField(auto_now_add=True)
+    time_out = models.DateTimeField('Time Logged Out', blank=True, null=True)
+    time_online_hours = models.IntegerField(default=0, blank=True, null=True)
+    time_online_minutes = models.IntegerField(default=0, blank=True, null=True)
+    time_online_seconds = models.IntegerField(default=0, blank=True, null=True)
+    time_online_total = models.CharField(max_length=200, blank=True, null=True)
+    time_online_delta = models.FloatField(default=0, blank=True, null=True)
+    date_visited = models.DateField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Session'
+        verbose_name_plural = 'Sessions'

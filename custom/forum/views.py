@@ -362,7 +362,8 @@ def incoming_messages(request):
             username = request.user.username
             is_authenticated = True
             incoming = Message.objects.filter(receiver_id=user_id).order_by('-time_sent')
-            if len(incoming) > 0:
+            incoming_unread = Message.objects.filter(receiver_id=user_id, is_read=False).order_by('-time_sent')
+            if len(incoming_unread) > 0:
                 has_private = True
         else:
             logout=False
@@ -370,10 +371,12 @@ def incoming_messages(request):
             username = ''
             is_authenticated = False
             incoming = []
+            has_private = False
     except Exception as e:
             username = ''
             logout=False
             user_id = -1
+            has_private = False
             is_authenticated = False
             incoming = []
 
@@ -505,7 +508,7 @@ def newmessage_unauth(request):
                              "falure_code": 2}, status=400)
 
 
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in    
+        login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in    
    
         try:
             user = User.objects.get(username=username)
@@ -605,7 +608,7 @@ def newemotion_unauth(request):
                              "falure_code": 2}, status=400)
 
 
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in
 
         try:
             language = detect_language(str(subject))
@@ -657,11 +660,6 @@ def newemotion_unauth(request):
 def answer_private(request, message_id):
 
     try:
-        has_private = request.user.profile.has_private
-    except Exception as e:
-        has_private = False
-
-    try:
         if request.user.is_authenticated:
             logout=True
             user_id = request.user.id
@@ -685,7 +683,7 @@ def answer_private(request, message_id):
         return render(request, 'answer_private.html',{'home':'answer_private.html',
                                                       'answer_subject': "RE: {}".format(message.subject),
                                                       'user': request.user,
-                                                      'has_private': has_private,
+                                                      'has_private': request.user.profile.has_private,
                                                       'recipient': message.sender,
                                                       'username': username,
                                                       'current_page': 'private',

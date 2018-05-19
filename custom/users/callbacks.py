@@ -42,7 +42,8 @@ def reset_password_link(sender, instance, **kwargs):
         user_profile = instance.profile
         user_profile.password_recovery_key = reset_key
         user_profile.save()
-
+        log = Logger(log="PASSWORD RECOVERY KEY IS {} for ID {}".format(user_profile.password_recovery_key, user_profile.user.id))
+        log.save()
         timeNow = datetime.now()
 
         profile = ProfileMetaProp.objects.get(pk=1)

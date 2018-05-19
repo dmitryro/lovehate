@@ -32,17 +32,23 @@ from rest_auth.views import LoginView
 from custom.gui.views import home
 from custom.gui.views import blog
 from custom.gui.views import register
+from custom.gui.views import search
 from custom.gui.views import logout
 from custom.gui.views import forum
+from custom.gui.views import user_forum
 from custom.gui.views import mylh
+from custom.gui.views import mylh_settings
 from custom.gui.views import private
 from custom.gui.views import private_unauth
+from custom.gui.views import private_settings
+from custom.gui.views import private_contacts
 from custom.gui.views import cleanmessages
 from custom.gui.views import statistics
 from custom.gui.views import simple_signin
 from custom.users.views import UserList
 from custom.users.views import UserDetail
 from custom.users.views import auth
+from custom.users.views import authentic
 from custom.users.views import activate
 from custom.users.views import user_profile
 from custom.users.views import registernew
@@ -80,6 +86,7 @@ from custom.blog.views import addnewcomment
 from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
+from custom.blog.feeds import RssSiteNewsFeed, AtomSiteNewsFeed
 from custom.users.views import processrivals
 from custom.users.views import processfriends
 from custom.users.views import user_relationships
@@ -96,7 +103,8 @@ urlpatterns = [
     path('topics/<int:topic_id>/attitude/<int:attitude_id>/', forum_add),
     path('topics/<int:topic_id>/emotion/<int:emotion_id>/edit/', forum_edit),
     path('admin/', admin.site.urls),
-    path('authenticate/', csrf_exempt(auth)),
+    path('authenticate/', auth),
+    path('authenticateuser/', csrf_exempt(authentic)),
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
@@ -120,21 +128,26 @@ urlpatterns = [
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
     path('logout/', Logout.as_view()),
-    path('login/', Login.as_view()),
+    path('login/', LoginView.as_view()),
     path('signout/', logout),
     path('statistics/', statistics),
     path('register/', register),
     path('cleanmessages/', cleanmessages),
     path('private/', private),
+    path('private/settings/', private_settings),
+    path('private/contacts/', private_contacts),
     path('private/unauth/<int:receiver_id>', private_unauth),
     path('private/send/<int:receiver_id>', private),
     path('private/answer/<int:message_id>/', answer_private),
     path('signin/', home),
     path('topics/', forum),
     path('forum/', forum),
+    path('forum/user/<int:user_id>/', user_forum),
     path('mylh/', mylh),
+    path('settings/<int:user_id>/', mylh_settings),
     path('blog/', blog),
     path('blogs/', blog),
+    path('search/', search),
     path('registernew/', registernew),
     path('newmessage/', csrf_exempt(newmessage)),
     path('editemotion/', editemotion),
@@ -162,4 +175,6 @@ urlpatterns = [
     path('processfriends/', processfriends),
     path('addnewfriend/', addnewfriend),
     path('addnewenemy/', addnewenemy),
+    path('rss/', RssSiteNewsFeed()),
+    path('atom/', AtomSiteNewsFeed()),
 ]

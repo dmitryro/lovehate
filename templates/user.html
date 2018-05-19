@@ -13,7 +13,7 @@
     <div class="col-sm-2">
     </div>
     <div class="col-sm-8">
-     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+     <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;margin-bottom:0.8em;">
          <div class="row neutral-messages" style="padding-top:0.5em; padding-bottom:0.5em;">
              <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
                  Имя пользователя (ник)
@@ -38,7 +38,7 @@
              </div>
 
          </div>
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
              <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
                 Имя и Фамилия
              </div>
@@ -51,7 +51,7 @@
 
          </div>
 
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.5em;">
+         <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
              <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
              Пользователь о себе:
              </div>
@@ -92,8 +92,23 @@
     <div class="col-sm-8">
      <div class="container-fluid">
          <div class="row">
-            <div class="col-sm-4">
+            <div class="col-sm-4 links-profile">
+                   <a href="/forum/user/{{ explored_user_id }}"/> 
+                          Все сообщения пользователя
+                   </a>
+            </div>
+            <div class="col-sm-8 links-profile">
+
+
+            </div>
+         </div>
+
+
+         <div class="row">
+            <div class="col-sm-4 links-profile">
+                <a href="/blog/user/{{ explored_user_id }}"/>
                    Дневник пользователя
+                </a>
             </div>
             <div class="col-sm-8 links-profile">
                            {% for post in posts %}
@@ -105,13 +120,14 @@
             </div>
          </div>
 
+
         {% if friends.count > 0 %}
 
          <div class="row">
             <div class="col-sm-4">
                    Друзья
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8 relationship">
                  {% for friend in friends %}
                     <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> &nbsp;
                  {% endfor %}
@@ -126,7 +142,7 @@
             <div class="col-sm-4">
 Считают другом
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8 relationship">
 
                  {% for friend in friended %}
                     <a href="/user/{{ friend.initiator.id }}/">{{ friend.initiator.username }}</a> &nbsp;
@@ -142,7 +158,7 @@
             <div class="col-sm-4">
                Враги
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8 relationship">
                  {% for enemy in enemies %}
                     <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a> &nbsp;
                  {% endfor %}
@@ -157,7 +173,7 @@
             <div class="col-sm-4">
 Считают врагом
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8 relationship">
                  {% for enemy in enemied %}
                     <a href="/user/{{ enemy.initiator.id }}/">{{ enemy.initiator.username }}</a> &nbsp;
                  {% endfor %}

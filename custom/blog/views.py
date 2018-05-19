@@ -39,6 +39,7 @@ from transliterate import translit, get_available_language_codes
 from transliterate import detect_language
 from settings import settings
 
+from custom.forum.models import Message
 from custom.blog.models import Comment
 from custom.blog.models import Post
 from custom.forum.models import Attitude
@@ -118,12 +119,6 @@ def editcomment(request, comment_id):
     ip, is_routable = get_client_ip(request)
 
     try:
-        has_private = request.user.profile.has_private
-    except Exception as e:
-        has_private = False
-
-
-    try:
          comment = Comment.objects.get(id=int(comment_id))
     except Exception as e:
          comment = None
@@ -146,10 +141,7 @@ def editcomment(request, comment_id):
         post = None
 
     try:
-        if post:
-            comments = Comment.objects.filter(post=post)
-        else:
-            comments = []
+        comments = Comment.objects.filter(post=post)
     except Exception:
         comments = []
 
@@ -169,6 +161,11 @@ def editcomment(request, comment_id):
             logout=False
             user_id = -1
             is_authenticated = False
+
+    if is_authenticated:
+        has_private = request.user.profile.has_private
+    else:
+        has_private = False
 
     return render(request, 'comment_edit.html',{'home':'comment_edit.html',
                                                'post': post,
@@ -240,7 +237,10 @@ def blogpost(request, post_id):
     comments = []
 
     try:
-        has_private = request.user.profile.has_private
+        has_private = False
+        messages = Message.objects.filter(receiver_id=self.user.id, is_read=False)
+        if len(messages) > 0:
+            has_private = True
     except Exception as e:
         has_private = False
 
@@ -290,12 +290,6 @@ def blogpost(request, post_id):
 @csrf_exempt
 def editblog(request, post_id):
     try:
-        has_private = request.user.profile.has_private
-    except Exception as e:
-        has_private = False
-
-
-    try:
         if request.user.is_authenticated:
             logout=True
             user_id = request.user.id
@@ -314,6 +308,11 @@ def editblog(request, post_id):
         user_id = -1
         is_authenticated = False
 
+    if is_authenticated:
+        has_private = request.user.profile.has_private
+    else:
+        has_private = False
+
     return render(request, 'blog_edit.html',{'home':'blog_edit.html',
                                             'user': request.user,
                                             'username': username,
@@ -327,11 +326,6 @@ def editblog(request, post_id):
 
 @csrf_exempt
 def newblog(request):
-    try:
-        has_private = request.user.profile.has_private
-    except Exception as e:
-        has_private = False
-
     try:
         if request.user.is_authenticated:
             logout=True
@@ -350,14 +344,16 @@ def newblog(request):
             is_authenticated = False
 
     if is_authenticated:
+        has_private = request.user.profile.has_private
         redirect = 'blog_new.html'
     else:
+        has_private = False
         redirect = 'blog_new_unauth.html'
     return render(request, redirect,{'home':redirect,
                                             'user': request.user,
                                             'username': username,
                                             'current_page': 'new_blog',
-                                            'has_private': 'has_private',
+                                            'has_private': has_private,
                                             'is_authenticated': is_authenticated,
                                             'logout': logout,
                                             'user_id': user_id})
@@ -404,7 +400,7 @@ def addnewcommentunauth(request):
                              "reason": "Invalid user"},
                              status=400)
         #request.session.set_expiry(1086400) #sets the exp. value of the session
-        login(request, user,  backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        login(request, user,  backend='custom.users.backends.LocalBackend') #the user is now logged in
 
 
 
@@ -532,6 +528,8 @@ def updatepost(request):
         post_id = int(request.data.get('post_id', None))
         attitude = Attitude.objects.get(id=int(att))
  
+        log = Logger(log="UPDADING POST ID !!! {} {} {}".format(post_id, user_id, attitude))
+        log.save()
 
         try:
             if len(body) < 1:
@@ -547,8 +545,6 @@ def updatepost(request):
 
         shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
 
-        log = Logger(log="URL1 {} URL2 {} URL3 {} URL4 {}".format(url,url_two, url_three, url_four))
-        log.save()
 
         try:
             if url:
@@ -653,8 +649,8 @@ def addnewblogunauth(request):
                              "falure_code": 2}, status=400)
 
 
-        login(request, user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
-
+       # login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in
+        login(request, user)
 
 
         try:

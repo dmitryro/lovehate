@@ -1,4 +1,5 @@
 import cyrtranslit
+import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.contrib.auth.models import User
@@ -6,7 +7,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -65,6 +69,7 @@ class Logout(APIView):
 
     def get(self, request, format=None):
         # simply delete the token to force a login
+        request.session.flush()
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
 
@@ -310,11 +315,14 @@ def registernew(request):
 
     try:
         user = User.objects.create(username=username,
-                                   email=email,
-                                   password=password)
+                                   email=email)
+        user.set_password(password)
+        user.save()
+
         if user:
             profile = Profile.objects.create(user=user,
                                              username=username,
+                                             password=password,
                                              email=email,
                                              username_transliterated=cyrtranslit.to_latin(username, 'ru').lower(),
                                              is_activated=False,
@@ -596,7 +604,7 @@ def user_profile(request, user_id):
 
     try:
         profile = Profile.objects.get(user_id=int(user_id))
-        posts = Post.objects.filter(author=profile.user)
+        posts = Post.objects.filter(author_id=int(user_id))
         loves = Emotion.objects.filter(user=profile.user, attitude_id=1)
         loved_titles = []
         friends = Peer.objects.filter(initiator_id=int(user_id), relation_id=1)
@@ -938,17 +946,18 @@ def activate(request, activation_key):
 def recoverpassword(request):
     password = str(request.data.get('password', ''))
     user_id = request.data.get('user_id', '')
-
+    log = Logger(log="TRYING TO RECOVER {} {}".format(password, user_id))
+    log.save()
     try:
         user = User.objects.get(id=int(user_id))
         if user:
              authenticate(username=user.username, password=user.password)
-        user.password = password
+        user.set_password(password)
         user.save()
 
 
     except Exception as e:
-        log = Logger(log='FAILED READING USER {}'.format(e))
+        log = Logger(log="FAILED RECOVER {} {} {}".format(password, user_id, e))
         log.save()
         return Response({"message": "User was not found",
                          "code":400,
@@ -980,8 +989,11 @@ def changepassword(request):
     user_id = request.data.get('user_id', '')
 
     try:
-        user = User.objects.get(password=oldpassword)
+        usr = User.objects.get(id=int(user_id))
+        user = authenticate(username=usr.username, password=oldpassword)
     except Exception as e:
+        log = Logger(log="USER COULD NOT BE FOUND {}".format(e))
+        log.save()
 
         try:
             user = User.objects.get(id=int(user_id))
@@ -1003,7 +1015,7 @@ def changepassword(request):
                              "not_activated": False,
                              "reason": "invalid old password"},
                              status=400)
-    user.password = newpassword
+    user.set_password(newpassword)
     user.save()
 
     return Response({"message": "success",
@@ -1015,27 +1027,120 @@ def changepassword(request):
                      "log_out": True},
                      status=200)
 
+#@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+@csrf_exempt
+def authentic(request):
+    logout(request)
+    username = str(request.POST.get('username', ''))
+    password = str(request.POST.get('password', ''))
+
+    try:
+        user = User.objects.get(username=username)
+        password_valid = check_password(password, user.password)
+
+        if password_valid:
+            if not request.session.session_key:
+                request.session.create()
+
+        session = request.session.session_key
+
+        log = Logger(log="USERNAME {} PASSWORD {} VALID {} SESSION {}".format(username, password, password_valid, session))
+        log.save()
+        if not password_valid:
+
+            result = {"message": 'failure login for username {}'.format(username),
+                      "code":400,
+                      "log_out": False,
+                      "status": "unauthenticated",
+                      "not_activated": False,
+                      "reason": "Invalid user"}
+            js = json.dumps(result)
+            return HttpResponseBadRequest(js)
 
 
-@api_view(['POST', 'GET'])
-@renderer_classes((JSONRenderer,))
+        profile = user.profile
+
+        if not profile.is_activated:
+            not_activated = True
+            logout(request)
+      #  else:
+      #      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        else:
+            log = Logger(log="CREATING USER SESSION {} {} {}".format(user, username, password))
+            login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
+
+        result = {"message": 'success',
+                  "code":200,
+                  "user_id": user.id,
+                  "username": username,
+                  "log_out": False,
+                  "not_activated": not_activated,
+                  "status": "activated",
+                  "reason": "User is activated"}
+        js = json.dumps(result)
+        return HttpResponse(js)
+
+
+
+    except Exception as e:
+        result = {"message": 'failure {} for username {}'.format(e, username),
+                  "code":400,
+                  "log_out": False,
+                  "status": "unauthenticated",
+                  "not_activated": not_activated,
+                  "reason": "Invalid user"}
+        js = json.dumps(result)
+        return HttpResponseBadRequest(js)
+
+
+
+@api_view(['POST'])
+#@renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def auth(request):
     username = str(request.data.get('username', ''))
     password = str(request.data.get('password', ''))
+
     not_activated = False
+    logout(request)
+
+    log = Logger(log="GET IN USERNAME {} PASSWORD {} ".format(username, password))
+    log.save()
 
     try:
         user = User.objects.get(username=username)
+        password_valid = check_password(password, user.password)
+          
+        if password_valid:
+            if not request.session.session_key:
+                request.session.create()
+
+        session = request.session.session_key
+
+        log = Logger(log="USERNAME {} PASSWORD {} VALID {} SESSION {}".format(username, password, password_valid, session))
+        log.save()
+        if not password_valid:
+            return Response({"message": 'failure login for username {}'.format(username),
+                             "code":400,
+                             "log_out": False,
+                             "status": "unauthenticated",
+                             "not_activated": False,
+                             "reason": "Invalid user"},
+                             status=400)
+
+
+
         profile = user.profile
 
         if not profile.is_activated:
             not_activated = True
             logout(request)  
       #  else:
-      #      login(request, user, backend='custom.users.backends.LocalBackend')
+      #      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         else:
-            login(request, user,  backend='custom.users.backends.LocalBackend')
+            log = Logger(log="CREATING USER SESSION {} {} {}".format(user, username, password))
+            login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
 
 #        if not user.profile.is_activated:
 #            not_activated = True
@@ -1052,6 +1157,9 @@ def auth(request):
                          status=200)
 
     except Exception as e:
+        log = Logger(log="SHIT BROKE {}".format(e))
+        log.save()
+
         return Response({"message": 'failure {} for username {}'.format(e, username),
                          "code":400,
                          "log_out": False,

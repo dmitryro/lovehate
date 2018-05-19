@@ -28,9 +28,6 @@ logger = logging.getLogger('sorl.thumbnail')
 @register.simple_tag
 def topic_meta(topic_id, user_id, attitude_id,  *args, **kwargs):
     try:
-        log = Logger(log='VALUES WERE {} {} {}'.format(topic_id, user_id, attitude_id))
-        log.save()
-
         emotions = Emotion.objects.filter(topic_id=topic_id, user_id=user_id, attitude_id=attitude_id)
         return len(emotions)
     except Exception as e:
