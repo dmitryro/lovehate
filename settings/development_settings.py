@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import logging.config
+from django.utils.log import DEFAULT_LOGGING
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Disable Django's logging setup
+LOGGING_CONFIG = None
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info').upper()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -41,7 +47,6 @@ INSTALLED_APPS = [
     'bootstrap3',
     'bootstrap',
     'bootstrap_toolkit',
-    'bootstrap_pagination',
     'bootstrapform_jinja',
     'clear_cache',
     'django.contrib.admin',
@@ -53,21 +58,26 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'admin_tools',
     'django_filters',
+    'django_redis',
     'django_jinja',
+    'bootstrap_pagination',
     'oauth2_provider',
-    'guardian',
     'registration_api',
     'rest_framework',
     'rest_framework_jwt',
+    'rest_framework_filters',
     'rest_framework.authtoken',
     'rest_auth',
     'rest_auth.registration',
     'social_core',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+    #'allauth',
+    #'allauth.account',
+    #'allauth.socialaccount',
     'imagekit',
     'corsheaders',
+    'online_users',
+    'custom.blog',
+    'custom.forum',
     'custom.users',
     'custom.gui',
     'custom.utils',
@@ -78,19 +88,22 @@ GRAPPELLI_ADMIN_TITLE = str('Любовь и Ненависть')
 GRAPPELLI_CLEAN_INPUT_TYPES = True
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.BrokenLinkEmailsMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',    # This must be first on the li
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
- #   'custom.users.middleware.CorsMiddleware',
+    'online_users.middleware.OnlineNowMiddleware',
+#    'django.middleware.cache.FetchFromCacheMiddleware', # This must be last
 ]
 
+SESSION_IDLE_TIMEOUT = 1800
 ROOT_URLCONF = 'lovehate.urls'
 
 TEMPLATES = [
@@ -131,18 +144,9 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 AUTHENTICATION_BACKENDS = (
- #   'social_core.backends.open_id.OpenIdAuth',
- #   'social_core.backends.google.GoogleOpenId',
- #   'social_core.backends.google.GoogleOAuth2',
- #   'social_core.backends.google.GoogleOAuth',
- #   'social_core.backends.twitter.TwitterOAuth',
- #   'social_core.backends.facebook.FacebookOAuth2',
- #   'social_core.backends.facebook.FacebookAppOAuth2',
-#    'social_core.backends.linkedin.LinkedinOAuth',
-#    'social_core.backends.linkedin.LinkedinOAuth2',
-#    'social.backends.instagram.InstagramOAuth2',
     'django.contrib.auth.backends.ModelBackend', # default
-    "allauth.account.auth_backends.AuthenticationBackend",
+    'custom.users.backends.LocalBackend',
+#    "allauth.account.auth_backends.AuthenticationBackend",
 #    'guardian.backends.ObjectPermissionBackend',
 )
 
@@ -219,13 +223,14 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-#        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-#        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    ],
+#        'rest_framework.authentication.SessionAuthentication', 
+   ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
+ #       'rest_framework.permissions.IsAuthenticated',
     ]
 }
 
@@ -243,6 +248,11 @@ LOGGING = {
             'handlers': ['console'],
         },
     },
+   'django.security': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+    },
     'root': {'level': 'INFO'},
 }
 from django.utils.translation import ugettext_lazy as _
@@ -252,13 +262,16 @@ LANGUAGES = [
     ('en', _('English')),
 ]
 
+
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'EST'
-
+ADMINISTRATOR_PASSWORD = 'nu45edi1'
+ADMINISTRATOR_USERNAME = 'root'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-
+BITLY_API_TOKEN = 'cdb41a479f1be7644f161342b142390c360c4f5a'
+GOOGLE_API_KEY = 'AIzaSyAQG2BHktxEvFZcvy2W-3rztJfYynyqm40'
 REST_SESSION_LOGIN = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/email-messages'
@@ -270,3 +283,30 @@ EMAIL_HOST_USER = 'dmitryro'
 EMAIL_HOST_PASSWORD = 'nu45edi1'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+TIME_ZONE = 'Europe/Moscow'
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "example"
+    }
+}
+
+#SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+
+#Cookie name. this can be whatever you want
+#SESSION_COOKIE_NAME='sessionid'  # use the sessionid in your views code
+#the module to store sessions data
+#SESSION_ENGINE='django.contrib.sessions.backends.db'    
+#age of cookie in seconds (default: 2 weeks)
+#SESSION_COOKIE_AGE= 24*60*60*7 # the number of seconds for only 7 for example
+#whether a user's session cookie expires when the web browser is closed
+#SESSION_EXPIRE_AT_BROWSER_CLOSE=False
+#whether the session cookie should be secure (https:// only)
+#SESSION_COOKIE_SECURE=False
+#USER_LASTSEEN_TIMEOUT = 300

@@ -37,6 +37,7 @@ from custom.gui.views import logout
 from custom.gui.views import forum
 from custom.gui.views import user_forum
 from custom.gui.views import mylh
+from custom.gui.views import mylh_avatar
 from custom.gui.views import mylh_settings
 from custom.gui.views import private
 from custom.gui.views import private_unauth
@@ -115,7 +116,7 @@ urlpatterns = [
     path('reset/<reset_key>/', reset),
     path('api-auth/', include('rest_framework.urls')),      
     path('rest-auth/', include('rest_auth.urls')),
-    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    #path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('emotions/', EmotionList.as_view()),
     path('attitudes/', AttitudeList.as_view()),
     path('addnewemotion/', csrf_exempt(newemotion)),
@@ -123,7 +124,7 @@ urlpatterns = [
     path('editcomment/<int:comment_id>/', csrf_exempt(editcomment)),
     path('emotions/<int:pk>/', EmotionDetail.as_view()),
     path('attitudes/<int:pk>/', AttitudeDetail.as_view()),
-    path('accounts/', include('allauth.urls')),
+    #path('accounts/', include('allauth.urls')),
     path('api-token-auth/', csrf_exempt(obtain_jwt_token)),
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
@@ -144,6 +145,7 @@ urlpatterns = [
     path('forum/', forum),
     path('forum/user/<int:user_id>/', user_forum),
     path('mylh/', mylh),
+    path('mylhavatar/', mylh_avatar),
     path('settings/<int:user_id>/', mylh_settings),
     path('blog/', blog),
     path('blogs/', blog),

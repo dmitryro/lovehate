@@ -33,7 +33,6 @@ from custom.users.signals import user_send_reset_password_link
 from custom.users.signals import user_newsletter_sent
 from custom.meta.models import ProfileMetaProp
 from custom.users.mail import Gmail
-from custom.users.decorators import run_async
 from settings import settings
 
 @receiver(user_send_reset_password_link, sender=User)
@@ -162,51 +161,45 @@ def recover_profile(sender, instance, request, email,**kwargs):
 def resend_activation_handler(sender, instance, **kwargs):
     send_activation_link(instance)
 
-@run_async
 def send_newsletter(instance):
 
+    mess = 'Please activate your account.'
     try:
-     
         timeNow = datetime.now()
 
         profile = ProfileMetaProp.objects.get(pk=1)
-        #FROM = 'Любовь и Ненависть'
-    #    FROM = "Любовь и Ненависть"
-        FROM = "<strong>"
+        FROM = 'Новости Любви и Ненависти'
         USER = profile.user_name
         PASSWORD = profile.password
         PORT = profile.smtp_port
         SERVER = profile.smtp_server
         TO = instance.profile.email
-        #SUBJECT = 'Новости ЛХ'
-    #    SUBJECT = "Новости ЛХ"  
-        sub = "Любовь и Ненависть - Новости"
-        SUBJECT = "{}".format(sub)
+        SUBJECT = 'Недавние работы на сайте'
+    #    line1 = "В ходе проводившихся недавно на сайте работ алгоритм доступа был изменен"
+     #   line2 = "Пожалуйста убедитесь в правильности ваших паролей и восстановите, если в"
+      #  line3 = "этом есть необходимость (через процедуру восстановления паролей)."
+      #  line4 = "Приносим извинения за неудобства."
+        line1 = ''
+        line2 = ''
+        line3 = ''
+        line4 = ''
+        message = "{}<br/>{} <br/> {} <br/> {}".format(line1, line2, line3, line4)
+        
         MESSAGE = MIMEMultipart('alternative')
         MESSAGE['subject'] = SUBJECT
         MESSAGE['To'] = TO
         MESSAGE['From'] = "{}".format(FROM)
-        MESSAGE.preamble = """
-                Your mail reader does not support the report format.
-                Please visit us <a href="http://www.divorcesus.com">online</a>!"""
- 
+        MESSAGE.preamble = """   """
+
         f = codecs.open("templates/newsletter.html", 'r')
-        line1 = "Новости Любви и Ненависти"
-        line2 = "Недавние работы на сайте"
-        line3 = "В ходе проводившихся недавно на сайте работ алгоритм доступа был изменен. "
-        line4 = "Пожалуйста убедитесь в правильности ваших паролей и восстановите, если в "
-        line5 = "этом есть необходимость (через процедуру восстановления паролей)."
-        line6 = "Приносим извинения за неудобства."
-        news = "<h4><strong>{}</strong></h4> <br/><br/> {} <br/><br/> {} <br/> {} <br/> {} <br/> {}".format(line1, line2, line3, line4, line5, line6)
         mess = str(f.read())
-        mess = str.replace(mess, '[greeting]', 'Привет,')
-        mess = str.replace(mess, '[newsletter_statement]', news)
-        mess = str.replace(mess, '[greeting_link]','Новост')
-        mess = str.replace(mess, '[greeting_sent]', 'Это сообщение было послано на адрес')
-        mess = str.replace(mess, '[greeting_global_link]', 'Любовь и Ненависть')
-        mess = str.replace(mess, '[greeting_locale]', 'Москва, Российская Федерация')
-        mess = str.replace(mess, '[First Name]', instance.username)
-        mess = str.replace(mess,'email_address@email.com', instance.profile.email)
+    #    mess = str.replace(mess, '[greeting]', 'Приветствуем Вас на ЛХ,')
+    #    mess = str.replace(mess, '[greeting_sent]', 'Это сообщение было послано на адрес')
+    #    mess = str.replace(mess, '[greeting_global_link]', 'Любовь и Ненависть')
+    #    mess = str.replace(mess, '[greeting_locale]', 'Москва, Российская Федерация')
+    #    mess = str.replace(mess, '[First Name]', instance.username)
+    #    mess = str.replace(mess, '[news_message]', message)
+      #  mess = str.replace(mess,'email_address@email.com', instance.profile.email)
 
 
         HTML_BODY  = MIMEText(mess.encode('utf-8'), 'html','utf-8')
@@ -221,8 +214,9 @@ def send_newsletter(instance):
         server.sendmail(FROM, TO, msg)
         server.quit()
     except Exception as R:
-        log = Logger(log='Failed sending email message - {}'.format(str(R)))
+        log = Logger(log='Failed sending news email message - {}'.format(R))
         log.save()
+
 
 def send_activation_link(instance):
 

@@ -36,6 +36,28 @@
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.15.1/jquery.validate.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/static/js/vendor/jquery.ui.widget.js"></script>
+<script src="/static/js/jquery.iframe-transport.js"></script>
+<script src="/static/js/jquery.fileupload.js"></script>
+
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="https://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+<!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+<script src="/static/js/jquery.iframe-transport.js"></script>
+<!-- The basic File Upload plugin -->
+<!-- The File Upload processing plugin -->
+<script src="/static/js/jquery.fileupload-process.js"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="/static/js/jquery.fileupload-image.js"></script>
+<link rel="stylesheet" href="https://blueimp.github.io/Gallery/css/blueimp-gallery.min.css">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="/static/css/jquery.fileupload.css">
+<link rel="stylesheet" href="/static/css/jquery.fileupload-ui.css">
+<!-- CSS adjustments for browsers with JavaScript disabled -->
+<noscript><link rel="stylesheet" href="/static/css/jquery.fileupload-noscript.css"></noscript>
+<noscript><link rel="stylesheet" href="/static/css/jquery.fileupload-ui-noscript.css"></noscript>
 <style>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
 
@@ -1568,6 +1590,10 @@ span.psw {
   from{border-right-color: rgba(255,255,255,.75);}
   to{border-right-color: transparent;}
 }
+.bar {
+    height: 18px;
+    background: green;
+}
 </style>
 
 </head>
@@ -2283,6 +2309,12 @@ span.psw {
        $('#runner').css('display', 'none');
        $('#runner-index').html('One');       
        setInterval(line_one, 3000);
+
+
+
+
+
+
 
 
 /*
@@ -3321,9 +3353,27 @@ span.psw {
                      }
               });
 
+              // Variable to store your files
+              var files;
+
+              // Add events
+              $('input[type=file]').on('change', prepareUpload);
+
+              // Grab the files and set them to our variable
+              function prepareUpload(event)
+              {
+                    files = event.target.files;
+              }
               
               $('#editprofile-publish').click(function(event) {
                    if($('#editprofileform').valid()) {
+
+                       event.stopPropagation(); // Stop stuff happening
+                       event.preventDefault(); // Totally stop stuff happening
+
+                       // START A LOADING SPINNER HERE
+
+                       // Create a formdata object and add the files
 
                       var arr = {
                           user_id: $('#user_id').val(),
@@ -3334,11 +3384,18 @@ span.psw {
                           email: $("#profile_email").val(),
                           bio: $("#bio").val(),
                       };
+
+                       $.each(files, function(key, value) {
+                              arr[key] = value;
+                      });
+
+                       
                       $.ajax({
                           type: "POST",
                           url: "https://lovehate.io/saveprofile/",
                           data: JSON.stringify(arr),
                           dataType: 'json',
+                          processData: false,
                           contentType: "application/json; charset=utf-8",
 
                           success: function(data){

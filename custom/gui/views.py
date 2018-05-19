@@ -143,9 +143,6 @@ def search(request):
 def home(request):
     user_activity_objects = OnlineUserActivity.get_user_activities(timedelta(minutes=15))
     onliners = list(user for user in user_activity_objects)
-    for onliner in onliners:
-        log = Logger(log="ONLINER {}".format(dir(onliner)))
-        log.save()
 
 
     page = request.GET.get('page')
@@ -425,6 +422,41 @@ def mylh(request):
                                      'username': request.user.username,
                                      'logout': False,
                                      'user_id': ''})
+
+@csrf_exempt
+def mylh_avatar(request):
+    redirect = 'mylh_avatar.html'
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            has_private = request.user.profile.has_private
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+            has_private = False
+    except Exception as e:
+            has_private = False
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    return render(request, redirect,{'home':'mylh_avatar.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'mylh_avatar',
+                                     'has_private': has_private,
+                                     'username': request.user.username,
+                                     'logout': False,
+                                     'user_id': ''})
+
 
 @csrf_exempt
 def mylh_settings(request, user_id):
@@ -717,9 +749,6 @@ def forum(request):
 
     user_activity_objects = OnlineUserActivity.get_user_activities(timedelta(minutes=15))
     onliners = list(user for user in user_activity_objects)
-    for onliner in onliners:
-        log = Logger(log="ONLINER {}".format(dir(onliner)))
-        log.save()
 
 
     try:
@@ -854,8 +883,6 @@ def simple_signin(request):
 
     user_activity_objects = OnlineUserActivity.get_user_activities(timedelta(minutes=15))
     onliners = (user for user in user_activity_objects)
-    log = Logger(log="ONLINERS {}".format(onliners))
-    log.save()
  
     try:
         loves = Emotion.objects.filter(attitude_id=1)
@@ -919,8 +946,6 @@ def blog(request):
 
     user_activity_objects = OnlineUserActivity.get_user_activities(timedelta(minutes=15))
     onliners = (user for user in user_activity_objects)
-    log = Logger(log="ONLINERS {}".format(onliners))
-    log.save()
 
     try:
         posts = Post.objects.all().order_by('-time_last_commented')

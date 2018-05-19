@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
+from django.core.files.storage import FileSystemStorage
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -167,11 +168,23 @@ def saveprofile(request):
     last_name = request.data.get('last_name', '')
     email = request.data.get('email', '')
     bio = request.data.get('bio', '')
+  
+    log = Logger(log="FILE DICT {} {}".format(request.FILES, username))
+    log.save()
+
+   # if request.FILES['avatar']:
+   #     myfile = request.FILES['avatar']
+   #     fs = FileSystemStorage()
+   #     filename = fs.save(myfile.name, myfile)
+   #     uploaded_file_url = fs.url(filename)
+        
+    #    log = Logger(log="FILE URL {}".format(uploaded_file_url))
+    #    log.save()
 
 
     try:
         username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
-        existing_user = User.objects.get(username_transliterated=username_transliterated)
+        existing_user = User.objects.get(username=username)
             
         if existing_user.id != int(user_id):
                 return Response({"message": "failure - username used",
