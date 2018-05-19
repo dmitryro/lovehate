@@ -163,38 +163,39 @@ def resend_activation_handler(sender, instance, **kwargs):
 
 def send_newsletter(instance):
 
-    mess = 'Please activate your account.'
+    mess = 'Please activate your account.'    
     try:
-        user_profile = instance.profile
-        user_profile.activation_key = activation_key
-        user_profile.save()
-
+     
         timeNow = datetime.now()
 
         profile = ProfileMetaProp.objects.get(pk=1)
-        FROM = 'Новости Любви и Ненависти'
+        FROM = 'Любовь и Ненависть'
         USER = profile.user_name
         PASSWORD = profile.password
         PORT = profile.smtp_port
         SERVER = profile.smtp_server
         TO = instance.profile.email
-        SUBJECT = 'Недавние работы на сайте'
-
+        SUBJECT = 'Новости ЛХ'
+          
         MESSAGE = MIMEMultipart('alternative')
         MESSAGE['subject'] = SUBJECT
         MESSAGE['To'] = TO
         MESSAGE['From'] = "{}".format(FROM)
-        MESSAGE.preamble = """   """
-
-        f = codecs.open("templates/nesletter.html", 'r')
+        MESSAGE.preamble = """
+                Your mail reader does not support the report format.
+                Please visit us <a href="http://www.divorcesus.com">online</a>!"""
+ 
+        f = codecs.open("templates/newsletter.html", 'r')
+        news = "Новостное сообщение"
         mess = str(f.read())
         mess = str.replace(mess, '[greeting]', 'Приветствуем Вас на ЛХ,')
-        mess = str.replace(mess, '[greeting_statement]','Новости ЛХ.')
+        mess = str.replace(mess, '[greeting_statement]', news)
+        mess = str.replace(mess, '[greeting_link]','Новост')
         mess = str.replace(mess, '[greeting_sent]', 'Это сообщение было послано на адрес')
         mess = str.replace(mess, '[greeting_global_link]', 'Любовь и Ненависть')
         mess = str.replace(mess, '[greeting_locale]', 'Москва, Российская Федерация')
         mess = str.replace(mess, '[First Name]', instance.username)
-        mess = str.replace(mess, '[news_message]', message)
+        mess = str.replace(mess, '[message]', 'Account Activation')
         mess = str.replace(mess,'email_address@email.com', instance.profile.email)
         mess = str.replace(mess,'[link]', link)
 
@@ -216,7 +217,6 @@ def send_newsletter(instance):
     except Exception as R:
         log = Logger(log='Failed sending email message - {}'.format(str(R)))
         log.save()
-
 
 def send_activation_link(instance):
 
