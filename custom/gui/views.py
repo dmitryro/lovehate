@@ -64,6 +64,7 @@ def chunks(l, n):
 def search(request):
     page = request.GET.get('page')
     query = request.GET.get('q','')
+    cquery = query.capitalize()
     trans_query = ''
     query_transliterated=cyrtranslit.to_latin(query, 'ru').lower()
 
@@ -71,21 +72,21 @@ def search(request):
         
         posts = Post.objects.filter(Q(subject__icontains=query) |
                                     Q(body__icontains=query) |
+                                    Q(subject__icontains=cquery) |
+                                    Q(body__icontains=cquery) |
                                     Q(subject__icontains=query_transliterated) |
                                     Q(body__icontains=query_transliterated))
     except Exception as e:
-        log = Logger(log="SHIT DID NOT WORK FOR POSTS {}".format(e))
-        log.save()
         posts = []
 
     try:
         topics = Topic.objects.filter(Q(name__icontains=query) |
                                       Q(name__icontains=query_transliterated) |
+                                      Q(name__icontains=cquery) |
+                                      Q(translit_name__icontains=cquery) |
                                       Q(translit_name__icontains=query) |
                                       Q(translit_name__icontains=query_transliterated))
     except Exception as e:
-        log = Logger(log="SHIT DID NOT WORK FOR TOPICS {}".format(e))
-        log.save()
         topics = []
 
     try:
@@ -96,12 +97,8 @@ def search(request):
                                     Q(last_name__icontains=query) |
                                     Q(last_name__icontains=query_transliterated))
     except Exception as e:
-        log = Logger(log="SHIT DID NOT WORK FOR USERS {}".format(e))
-        log.save()
         users = []
 
-    log = Logger(log="FINALLY {} -- {} -- {}".format(posts, topics, users))
-    log.save()
 
     try:
         if request.user.is_authenticated:
