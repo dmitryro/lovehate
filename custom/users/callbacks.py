@@ -30,6 +30,7 @@ from custom.users.models import Profile
 from custom.users.signals import user_needs_recovery
 from custom.users.signals import user_resend_activation
 from custom.users.signals import user_send_reset_password_link
+from custom.users.signals import user_newsletter_sent
 from custom.meta.models import ProfileMetaProp
 from custom.users.mail import Gmail
 from settings import settings
@@ -42,8 +43,6 @@ def reset_password_link(sender, instance, **kwargs):
         user_profile = instance.profile
         user_profile.password_recovery_key = reset_key
         user_profile.save()
-        log = Logger(log="PASSWORD RECOVERY KEY IS {} for ID {}".format(user_profile.password_recovery_key, user_profile.user.id))
-        log.save()
         timeNow = datetime.now()
 
         profile = ProfileMetaProp.objects.get(pk=1)
@@ -161,6 +160,65 @@ def recover_profile(sender, instance, request, email,**kwargs):
 @receiver(user_resend_activation, sender=User)
 def resend_activation_handler(sender, instance, **kwargs):
     send_activation_link(instance)
+
+def send_newsletter(instance):
+
+    mess = 'Please activate your account.'
+    try:
+        user_profile = instance.profile
+        user_profile.activation_key = activation_key
+        user_profile.save()
+
+        timeNow = datetime.now()
+
+        profile = ProfileMetaProp.objects.get(pk=1)
+        FROM = 'Новости Любви и Ненависти'
+        USER = profile.user_name
+        PASSWORD = profile.password
+        PORT = profile.smtp_port
+        SERVER = profile.smtp_server
+        TO = instance.profile.email
+        SUBJECT = 'Недавние работы на сайте'
+
+        MESSAGE = MIMEMultipart('alternative')
+        MESSAGE['subject'] = SUBJECT
+        MESSAGE['To'] = TO
+        MESSAGE['From'] = "{}".format(FROM)
+        MESSAGE.preamble = """   """
+
+        f = codecs.open("templates/nesletter.html", 'r')
+        mess = str(f.read())
+        mess = str.replace(mess, '[greeting]', '▒~_▒~@иве▒~B▒~A▒~Bв▒~Cем ▒~Rа▒~A на ▒~[Х,')
+        mess = str.replace(mess, '[greeting_statement]', '▒~]ажми▒~Bе на кнопк▒~C ниже дл▒~O ак▒~Bива▒~Fии ва▒~Hей запи▒~Aи.')
+        mess = str.replace(mess, '[greeting_link]','▒~Pк▒~Bиви▒~@ова▒~B▒~L У▒~G▒~Q▒~Bн▒~C▒~N ▒~Wапи▒~A▒~L')
+        mess = str.replace(mess, '[greeting_sent]', 'Э▒~Bо ▒~Aооб▒~Iение б▒~Kло по▒~Aлано на ад▒~@е▒~A')
+        mess = str.replace(mess, '[greeting_global_link]', '▒~[▒~Nбов▒~L и ▒~]енави▒~A▒~B▒~L')
+        mess = str.replace(mess, '[greeting_locale]', '▒~\о▒~Aква, ▒| о▒~A▒~Aий▒~Aка▒~O Феде▒~@а▒~Fи▒~O')
+        mess = str.replace(mess, '[First Name]', instance.username)
+        mess = str.replace(mess, '[news_message]', message)
+        mess = str.replace(mess, '[message]', 'Newsletter')
+        mess = str.replace(mess,'email_address@email.com', instance.profile.email)
+        mess = str.replace(mess,'[link]', link)
+
+
+        HTML_BODY  = MIMEText(mess.encode('utf-8'), 'html','utf-8')
+
+        MESSAGE.attach(HTML_BODY)
+        msg = MESSAGE.as_string()
+
+        server = smtplib.SMTP(SERVER+':'+PORT)
+        server.ehlo()
+        server.starttls()
+        server.login(USER, PASSWORD)
+        server.sendmail(FROM, TO, msg)
+        server.quit()
+        instance.profile.activation_key = activation_key
+        instance.profile.save()
+        instance.save()
+    except Exception as R:
+        log = Logger(log='Failed sending email message - {}'.format(str(R)))
+        log.save()
+
 
 def send_activation_link(instance):
 
