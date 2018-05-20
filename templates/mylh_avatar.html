@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div>
+<br />
+<br />
+<br />
+</div>
+<div class="container-fluid registration-form">
+         <div class="row">
+             <div class="col-sm-4">&nbsp;
+             </div>
+             <div class="col-sm-8">&nbsp;
+             </div>
+         </div>
+
+
+         <div class="row">
+             <div class="col-sm-4">
+             </div>
+             <div class="col-sm-8">
+                    <div class=container-fluid" style="margin-left:0.4em;">
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-profile_username-error" class="error" for="profile_username"></label>
+                               </div>
+
+                               <div class="row">
+                                    <label id="inlineFormInputGroup-profile_email-error" class="error" for="profile_email"></label>
+                               </div>
+                    </div>
+
+             </div>
+         </div>
+
+
+    <div class="row">
+
+        <div class="col-sm-2">
+        </div>
+    
+        <div class="col-sm-8">
+            <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
+                <form id="editprofileform" name="editprofileform" enctype="multipart/form-data" method="post" action="/editprofile/">
+
+                 {% csrf_token %}
+                 <div class="row">
+                     <div class="col-sm-4">
+                     </div>
+                     <div class="col-sm-8">
+
+                                                               <div style="margin-top:0.6em;">&nbsp;</div>
+                                                               <div class="success profile-success" id="profile-success" style="font-weight:bold;fint-size:2.54em;">
+                                                                      Ваши изменения успeшено сохранены!
+                                                               </div>
+
+                                                               <div class="profile-errors" id="profile-errors" style="display:none;color:#ff0000;font-weight:bold;font-size:1.0em;">
+                                                                      Не удалось сохранить! Имя пользователя или имейл уже использованы!
+                                                               </div>
+
+ 
+                     </div>
+                 </div>             
+
+
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Аватар
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-3">
+                       <div class="form-group">
+                           <input type="file" name="avatar" />
+                       </div>
+                     </div>
+                     <div class="col-sm-5">
+                       <div class="form-group" style="float:right;margin-right:0.0em;">
+                          {% if profile_image_path %}
+                            <img src="{{ profile_image_path }}" height="200" width="200"/>
+                          {% elif not profile_image_path %}
+                                 <img src="https://lovehate.io/media/default.png"  height="200" width="200" />
+                          {% endif %}
+                       </div>
+                       <div class="clear"></div>
+                     </div>
+
+                 </div>
+
+ 
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Имя пользователя (ник)
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-8">
+                       <div class="form-group">
+                            <input type="text" id="profile_username" name="profile_username" maxlength="100" size="56" value="{{ user.username }}"  />
+                       </div>
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+Адрес эл. почты (имейл)
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-8">
+                       <div class="form-group">
+                            <input type="text" id="profile_email" name="profile_email" maxlength="100" size="56" value="{{ user.email }}"  />
+                       </div>
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Пароль
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-8">
+                        <div class="form-group">
+                                  *******
+                             <a href="#" id="change_password">
+Изменить
+                             </a>
+
+                        </div>
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+                           Имя собственное
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-8">
+                       <div class="form-group">
+                            <input type="text" id="first_name" name="first_name" maxlength="100" size="56" value="{{ user.first_name }}"  />
+                       </div>
+                     </div>
+                 </div>
+
+                 <div class="row">
+                     <div class="col-sm-4">
+                         <div style="float:left;font-weight:bold;font-size:1.1em;">
+                          Фамилия
+                         </div>
+                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                           *
+                         </div>
+                         <div class="clear"></div>
+                     </div>
+                     <div class="col-sm-8">
+                       <div class="form-group">
+                            <input type="text" id="last_name" name="last_name" maxlength="100" size="56" value="{{ user.last_name }}"  />
+                       </div>
+                     </div>
+                 </div>
+
+         <div class="row">
+
+                       <div class="col-sm-4" style="float:left;font-weight:bold;font-size:1.1em;">
+                                    Расскажите о себе
+                       </div>
+                       <div class="col-sm-8">
+                                    <div class="form-group">
+
+                                            <textarea name="bio" id="bio" cols="10" rows="8" style="width:100%;"
+                                             placeholder="Немного воды о себе любимой/любимом..."
+                                             >
+                                            </textarea>
+                                    </div>
+                       </div>
+          </div>
+         <div class="row">
+                       <div class="col-sm-4">
+                       </div>
+                       <div class="col-sm-2">
+
+                            <button class="btn4" id="editprofile-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                                 Сохранить
+                            </button>
+<!--
+                            <input class="btn4" id="editprofile-publish" type="submit"  style="background:#4a4a4a;min-width:6.00em;" value="Save"/>
+-->
+                       </div>
+
+                       <div class="col-sm-4">
+                       </div>
+         </div>
+                     <input type="hidden" name="profile_bio" id="profile_bio" value="{{ user.profile.bio }}"/>
+                     <input type="hidden" name="user_id" id="user_id" value="{{ user.id }}" />
+                </form>
+           </div>
+        </div>
+    </div>
+</div>     
+{% endblock %}
+

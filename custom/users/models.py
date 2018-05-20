@@ -5,6 +5,7 @@ from imagekit.processors import ResizeToFill
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.encoding import python_2_unicode_compatible
+from django.contrib.sessions.models import Session
 from datetime import date
 from custom.forum.models import Message
 
@@ -104,19 +105,25 @@ class Peer(models.Model):
 
 
 class UserSession(models.Model):
+    user = models.ForeignKey(User, related_name='user', blank=True, null=True,on_delete=models.CASCADE)
+    session = models.ForeignKey(Session, on_delete=models.CASCADE) 
+
+
+class ProfileSession(models.Model):
     """ Class for user session tracking """
+    #user_session = models.OneToOneField(Session, related_name='user_session', blank=True, null=True, on_delete=models.CASCADE)
     username = models.CharField(max_length=200, blank=True, null=True)
-    remote_ip = models.CharField(max_length=20, blank=True, null=True)
-    session_key = models.CharField(max_length=200, blank=True, null=True)
-    user = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
-    time_in = models.DateTimeField(auto_now_add=True)
-    time_out = models.DateTimeField('Time Logged Out', blank=True, null=True)
-    time_online_hours = models.IntegerField(default=0, blank=True, null=True)
-    time_online_minutes = models.IntegerField(default=0, blank=True, null=True)
-    time_online_seconds = models.IntegerField(default=0, blank=True, null=True)
-    time_online_total = models.CharField(max_length=200, blank=True, null=True)
-    time_online_delta = models.FloatField(default=0, blank=True, null=True)
-    date_visited = models.DateField(blank=True, null=True)
+    #remote_ip = models.CharField(max_length=20, blank=True, null=True)
+    #session_key = models.CharField(max_length=200, blank=True, null=True)
+    #user = models.ForeignKey(User, blank=False, null=False, on_delete=models.CASCADE)
+    #time_in = models.DateTimeField(auto_now_add=True)
+    #time_out = models.DateTimeField('Time Logged Out', blank=True, null=True)
+    #time_online_hours = models.IntegerField(default=0, blank=True, null=True)
+    #time_online_minutes = models.IntegerField(default=0, blank=True, null=True)
+    #time_online_seconds = models.IntegerField(default=0, blank=True, null=True)
+    #time_online_total = models.CharField(max_length=200, blank=True, null=True)
+    #time_online_delta = models.FloatField(default=0, blank=True, null=True)
+    #date_visited = models.DateField(blank=True, null=True)
 
     class Meta:
         verbose_name = 'Session'

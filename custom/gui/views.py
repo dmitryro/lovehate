@@ -391,8 +391,8 @@ def statistics(request):
 
 @csrf_exempt
 def mylh(request):
-    redirect = 'mylh.html'
-
+    redirect = 'mylh_avatar.html'
+    profile_image_path = None
     try:
         if request.user.is_authenticated:
             logout=True
@@ -400,6 +400,7 @@ def mylh(request):
             username = request.user.username
             has_private = request.user.profile.has_private
             is_authenticated = True
+            profile_image_path = request.user.profile.profile_image_path
         else:
             logout=False
             user_id = -1
@@ -413,12 +414,13 @@ def mylh(request):
             user_id = -1
             is_authenticated = False
 
-    return render(request, redirect,{'home':'mylh.html',
+    return render(request, redirect,{'home':'mylh_avatar.html',
                                      'user': request.user,
                                      'username': username,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'mylh',
                                      'has_private': has_private,
+                                     'profile_image_path': profile_image_path,
                                      'username': request.user.username,
                                      'logout': False,
                                      'user_id': ''})
@@ -426,7 +428,7 @@ def mylh(request):
 @csrf_exempt
 def mylh_avatar(request):
     redirect = 'mylh_avatar.html'
-
+    profile_image_path = None
     try:
         if request.user.is_authenticated:
             logout=True
@@ -434,6 +436,7 @@ def mylh_avatar(request):
             username = request.user.username
             has_private = request.user.profile.has_private
             is_authenticated = True
+            profile_image_path = request.user.profile.profile_image_path
         else:
             logout=False
             user_id = -1
@@ -453,6 +456,7 @@ def mylh_avatar(request):
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'mylh_avatar',
                                      'has_private': has_private,
+                                     'profile_image_path': profile_image_path,
                                      'username': request.user.username,
                                      'logout': False,
                                      'user_id': ''})

@@ -3,6 +3,8 @@ import json
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth.signals import user_logged_in
+from django.contrib.auth.signals import user_logged_out
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate
@@ -11,6 +13,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
+from django.http import HttpResponseRedirect
 from django.core.files.storage import FileSystemStorage
 
 from rest_framework.response import Response
@@ -44,6 +47,7 @@ from custom.users.signals import user_send_reset_password_link
 from custom.users.serializers import UserSerializer
 from custom.users.callbacks import resend_activation_handler
 from custom.users.callbacks import reset_password_link
+from custom.users.models import UserSession
 from custom.users.models import Profile
 from custom.utils.models import Logger
 
@@ -155,6 +159,91 @@ def resend_password_link(request):
                      "user_id": 1,
                      "username": username},
                      status=200)
+
+@csrf_exempt
+def editprofile(request):
+    redirect = 'mylh_avatar.html'
+    username = request.POST.get('profile_username', '')
+    user_id =  request.POST.get('user_id', '')
+    session_username = request.POST.get('session_username', '')
+    first_name = request.POST.get('first_name', '')
+    last_name = request.POST.get('last_name', '')
+    email = request.POST.get('profile_email', '')
+    bio = request.POST.get('bio', '')
+    profile_image_path = None
+    log = Logger(log="EMAIL WAS {}".format(email))
+    log.save()
+
+    if request.method=='POST':
+        profile_image_path = None
+        avtr_file = request.FILES.get('avatar', None)
+
+        if avtr_file:
+            avatar = request.FILES['avatar']
+            fs = FileSystemStorage()
+            filename = fs.save(avatar.name, avatar)
+            uploaded_file_url = fs.url(filename)
+            profile_image_path = uploaded_file_url
+            log = Logger(log="FILE URL {}".format(uploaded_file_url))
+            log.save()
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            has_private = request.user.profile.has_private
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+            has_private = False
+    except Exception as e:
+            has_private = False
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        if is_authenticated:
+            username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
+            user = request.user
+            user.username = username
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
+
+            user.profile.username = username
+            user.profile.first_name = first_name
+            user.profile.bio = bio
+            user.profile.email = email
+            user.profile.username_transliterated = username_transliterated
+            user.profile.profile_image_path = profile_image_path
+            user.save()
+            user.profile.save()
+        else:
+            user = None
+    except Exception as e:
+        user = None
+        log = Logger(log="Failed to save user {}".format(e))
+        log.save()
+
+    return HttpResponseRedirect('/mylh/')
+
+  #  return render(request, redirect,{'home':'mylh_avatar.html',
+   #                                  'user': user,
+   #                                  'username': username,
+   #                                  'is_authenticated': is_authenticated,
+   #                                  'current_page': 'mylh',
+   #                                  'profile_image_path': profile_image_path,
+   #                                  'has_private': has_private,
+   #                                  'username': request.user.username,
+   #                                  'logout': False,
+   #                                  'user_id': ''})
+
 
 
 @api_view(['POST', 'GET'])
@@ -625,6 +714,7 @@ def user_profile(request, user_id):
         friended = Peer.objects.filter(acceptor_id=int(user_id), relation_id=1)
         enemied = Peer.objects.filter(acceptor_id=int(user_id), relation_id=3) 
         has_private = profile.has_private
+        profile_image_path = profile.profile_image_path
 
         for love in loves:
              loved_titles.append(love.translit_subject)
@@ -668,6 +758,10 @@ def user_profile(request, user_id):
         is_authenticated = False
         has_private = False
     redirect = 'user.html'
+
+    if not profile_image_path:
+        profile_image_path = '/media/default.png'
+
     return render(request, 'user.html', {'home':'user.html',
                                          'explored_user_id': user_id,
                                          'explored_username': profile.user.username,
@@ -684,6 +778,7 @@ def user_profile(request, user_id):
                                          'bio': profile.bio,
                                          'posts': posts,
                                          'user': request.user,
+                                         'profile_image_path': profile_image_path,
                                          'is_authenticated': is_authenticated,
                                          'current_page': 'user_profile',
                                          'username': request.user.username,
@@ -789,7 +884,7 @@ def reset(request, reset_key):
 
         profile = Profile.objects.get(password_recovery_key=reset_key)
         redirect = 'index.html'
-        login(request, profile.user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        login(request, profile.user, backend='custom.users.backends.LocalBackend') #the user is now logged in
       
         return render(request, redirect,{'home':'index.html',
                                          'user': profile.user,
@@ -921,7 +1016,7 @@ def activate(request, activation_key):
         profile.is_activated = True
         profile.save()
         redirect = 'index.html'
-        login(request, profile.user, backend='django.contrib.auth.backends.ModelBackend') #the user is now logged in
+        login(request, profile.user, backend='custom.users.backends.LocalBackend') #the user is now logged in
       
         return render(request, redirect,{'home':'index.html',
                                          'user': profile.user,
@@ -1041,12 +1136,14 @@ def changepassword(request):
                      status=200)
 
 #@renderer_classes((JSONRenderer,))
-@permission_classes([AllowAny,])
+#@api_view(['POST'])
+#@permission_classes([AllowAny,])
 @csrf_exempt
 def authentic(request):
     logout(request)
     username = str(request.POST.get('username', ''))
     password = str(request.POST.get('password', ''))
+    not_activated = False
 
     try:
         user = User.objects.get(username=username)
@@ -1057,9 +1154,6 @@ def authentic(request):
                 request.session.create()
 
         session = request.session.session_key
-
-        log = Logger(log="USERNAME {} PASSWORD {} VALID {} SESSION {}".format(username, password, password_valid, session))
-        log.save()
         if not password_valid:
 
             result = {"message": 'failure login for username {}'.format(username),
@@ -1073,30 +1167,29 @@ def authentic(request):
 
 
         profile = user.profile
+        login(request, user,  backend='custom.users.backends.LocalBackend')
 
         if not profile.is_activated:
             not_activated = True
             logout(request)
-      #  else:
-      #      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-        else:
-            log = Logger(log="CREATING USER SESSION {} {} {}".format(user, username, password))
-            login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
 
         result = {"message": 'success',
                   "code":200,
                   "user_id": user.id,
                   "username": username,
-                  "log_out": False,
                   "not_activated": not_activated,
+                  "log_out": False,
                   "status": "activated",
-                  "reason": "User is activated"}
+                  "reason": "User is logged in"}
         js = json.dumps(result)
         return HttpResponse(js)
 
 
 
     except Exception as e:
+        log = Logger(log="SHIT DID NOT WORK {}".format(e))
+        log.save()
+
         result = {"message": 'failure {} for username {}'.format(e, username),
                   "code":400,
                   "log_out": False,
@@ -1150,10 +1243,10 @@ def auth(request):
             not_activated = True
             logout(request)  
       #  else:
-      #      login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+      #      login(request, user, backend='custom.users.backends.LocalBackend')
         else:
             log = Logger(log="CREATING USER SESSION {} {} {}".format(user, username, password))
-            login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
+            login(request, user,  backend='custom.users.backends.LocalBackend')
 
 #        if not user.profile.is_activated:
 #            not_activated = True
@@ -1182,5 +1275,23 @@ def auth(request):
                          status=400)
 
 
+def delete_user_sessions(user):
+    user_sessions = UserSession.objects.filter(user = user)
+    for user_session in user_sessions:
+        user_session.session.delete()
+
+
+def user_logged_in_handler(sender, request, user, **kwargs):
+    UserSession.objects.get_or_create(
+        user = user,
+        session_id = request.session.session_key
+    )
+
+def user_logged_out_handler(sender, request, user, **kwargs):
+    delete_user_sessions(user)
+
+
+user_logged_out.connect(user_logged_out_handler)
+user_logged_in.connect(user_logged_in_handler)
 user_send_reset_password_link.connect(reset_password_link)
 user_resend_activation.connect(resend_activation_handler)

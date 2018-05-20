@@ -2286,14 +2286,21 @@ span.psw {
            if (l=='One') {
                  $('#runner').css('display', 'block');
              //    var text = "Чтобы был хороший стул";
-                 var text = "Добавлен поиск ";
+                 var text = "Eсли не удаётся авторизоваться";
                  $('#runner-index').html('Two');
             //     typeWriter(text);
                  $('#runner').html('<p class="line-1 anim-typewriter">'+text+'</p>')
-           } else {
+           } else if (l=='Two') {
                   $('#runner').css('display', 'block');
                 // var text = "должен быть хороший стол.";
-                 var text = "Добавлен онлай-статус";
+                 var text = "пишите на dmitryro@gmail.com";
+                 $('#runner-index').html('Three');
+              //   typeWriter(text);
+                 $('#runner').html('<p class="line-1 anim-typewriter">'+text+'</p>');
+           } else {
+                  $('#runner').css('display', 'block');
+                // var text = "должен б▒~K▒~B▒~L ▒~Eо▒~@о▒~Hий ▒~A▒~Bол.";
+                 var text = "Разослано новостное письмо";
                  $('#runner-index').html('One');
               //   typeWriter(text);
                  $('#runner').html('<p class="line-1 anim-typewriter">'+text+'</p>');
@@ -3366,15 +3373,17 @@ span.psw {
               }
               
               $('#editprofile-publish').click(function(event) {
-                   if($('#editprofileform').valid()) {
-
+                  if($('#editprofileform').valid()) {
+                      
                        event.stopPropagation(); // Stop stuff happening
                        event.preventDefault(); // Totally stop stuff happening
+                      $('#editprofileform').submit();
 
                        // START A LOADING SPINNER HERE
 
                        // Create a formdata object and add the files
 
+/*
                       var arr = {
                           user_id: $('#user_id').val(),
                           username: $("#profile_username").val(),
@@ -3408,7 +3417,8 @@ span.psw {
                               $( ".profile-errors" ).fadeIn( 100 ).delay( 1000 ).fadeOut( 300 );
                           }
                       }); // end ajax call
-                } 
+               */  
+              } 
 
               });  
 
@@ -3874,15 +3884,14 @@ span.psw {
                              password: $("#login_password").val(),
                              from_session: true}; 
                  
- 
                   $.ajax({
                       type: "POST",
-                      url: "https://lovehate.io/authenticate/",
-                      data: JSON.stringify(arr),
+                      url: "https://lovehate.io/authenticate-user/",
+                      data: "username="+$("#login_username").val()+"&password="+$("#login_password").val(), //JSON.stringify(arr),
                       dataType: 'json',
-                      contentType: "application/json; charset=utf-8",
+                     // contentType: "application/json; charset=utf-8",
                       success: function(data){
-                            $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
+                            $('#logged-out').html("<a href='https://lovehate.io/signout'>"+data.username+"</a>");
                             $('#modal-login').hide();
                             if (data.code===200) {
                                 if (data.not_activated==true) {
@@ -3890,8 +3899,8 @@ span.psw {
                                     $("#modal-send-activation").show();
                                 } else {
                                     $('#modal-login').hide();
-                                    redirect_login(arr);
-                                    $('#logged-out').html("<a href='/signout'>"+data.username+"</a>");
+                                    $("#authenticateform").submit();
+                                    $('#logged-out').html("<a href='https://lovehate.io/signout'>"+data.username+"</a>");
                                     $('#modal-login').hide();
                                 }
                             }

@@ -14,70 +14,78 @@
     </div>
     <div class="col-sm-8">
      <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;margin-bottom:0.8em;">
-         <div class="row neutral-messages" style="padding-top:0.5em; padding-bottom:0.5em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-                 Имя пользователя (ник)
-             </div>
+         <div class="row neutral-messages" style="padding-top:1.2em; padding-bottom:0.5em;">
+                <div class="col-sm-10">
+                       <div class="container-fluid"> 
 
-             <div class="col-sm-4">
-                  {{ explored_username }}
-             </div>
+                            <div class="row">
+                                  <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+                                  Имя пользователя (ник)
+                                  </div>
 
-             <div class="col-sm-4">
-                  {% if user.is_authenticated %}
-                  <a href="/private/send/{{ explored_user_id }}">
-                        Отправить приват
-                  </a>
-                  {% else %}
+                                  <div class="col-sm-4">
+                                              {{ explored_username }}
+                                  </div>
 
-                    <a href="/private/unauth/{{ explored_user_id }}">
-                         Отправить приват
-                    </a>
+                                  <div class="col-sm-4">
+                                     {% if user.is_authenticated %}
+                                            <a href="/private/send/{{ explored_user_id }}">
+                                            Отправить приват
+                                            </a>
+                                     {% else %}
 
-                  {% endif %}
-             </div>
+                                            <a href="/private/unauth/{{ explored_user_id }}">
+                                                Отправить приват
+                                           </a>
 
-         </div>
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-                Имя и Фамилия
-             </div>
-             <div class="col-sm-4">
-                 {{ fullname }}
-             </div>
+                                     {% endif %}
+                                   </div>
 
-             <div class="col-sm-4">
-             </div>
-
-         </div>
-
-         <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
-             <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
-             Пользователь о себе:
-             </div>
-             <div class="col-sm-4">
-                 {{ bio }}
-             </div>
-
-             <div class="col-sm-4">
-             </div>
-
-         </div>
+                            </div> <!-- row ends -->
 
 
+                            <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
+                                   <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+                                       Имя и Фамилия
+                                   </div>
+                                   <div class="col-sm-4">
+                                         {{ fullname }}
+                                   </div>
+                                   <div class="col-sm-4">
+                                   </div>
+                            </div>
 
 
+                            <div class="row" style="padding-top:0.5em; padding-bottom:0.6em;">
+                                   <div class="col-sm-4" style="font-weight:bold;font-size:1.1em;">
+                                    Пользователь о себе:
+                                   </div>
+                                   <div class="col-sm-4">
+                                          {{ bio }}
+                                   </div>
+
+                                   <div class="col-sm-4">
+                                   </div>
+                            </div>
 
 
+                       </div> <!-- container ends -->
 
-     </div>
-<div>
-<div class="col-sm-2">
-</div> 
+                </div> <!-- col sm 8 ends -->
+                <div class="col-sm-2">
+                       <div class="form-group" style="float:right;">
+                          {% if profile_image_path %}
+                            <img src="{{ profile_image_path }}" height="160" width="160"/>
+                          {% elif not profile_image_path %}
+                                 <img src="https://lovehate.io/media/default.png"  height="160" width="160" style="margin-right:-10px;"/>
+                          {% endif %}
+                       </div>
 
+                </div>
 
 </div> <!-- row ends -->
 </div> <!-- container ends -->
+</div>
 
     <div class="col-sm-2"></div>
 </div>

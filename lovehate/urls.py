@@ -88,6 +88,7 @@ from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
 from custom.blog.feeds import RssSiteNewsFeed, AtomSiteNewsFeed
+from custom.users.views import editprofile
 from custom.users.views import processrivals
 from custom.users.views import processfriends
 from custom.users.views import user_relationships
@@ -96,6 +97,7 @@ from custom.users.views import recoverpassword
 from custom.users.views import resend_password_link
 from custom.users.views import reset
 from django.contrib import admin
+from custom.chat.views import display_chat
 
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
@@ -105,7 +107,7 @@ urlpatterns = [
     path('topics/<int:topic_id>/emotion/<int:emotion_id>/edit/', forum_edit),
     path('admin/', admin.site.urls),
     path('authenticate/', auth),
-    path('authenticateuser/', csrf_exempt(authentic)),
+    path('authenticate-user/', authentic),
     path('users/', UserList.as_view()),
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
@@ -119,12 +121,13 @@ urlpatterns = [
     #path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('emotions/', EmotionList.as_view()),
     path('attitudes/', AttitudeList.as_view()),
+    path('editprofile/', csrf_exempt(editprofile)),
+    path('mylh/', csrf_exempt(mylh)),
     path('addnewemotion/', csrf_exempt(newemotion)),
     path('addnewemotionunauth/', csrf_exempt(newemotion_unauth)),
     path('editcomment/<int:comment_id>/', csrf_exempt(editcomment)),
     path('emotions/<int:pk>/', EmotionDetail.as_view()),
     path('attitudes/<int:pk>/', AttitudeDetail.as_view()),
-    #path('accounts/', include('allauth.urls')),
     path('api-token-auth/', csrf_exempt(obtain_jwt_token)),
     path('refresh-token/', csrf_exempt(refresh_jwt_token)),
     path('verify-token/', csrf_exempt(verify_jwt_token)),
@@ -144,8 +147,8 @@ urlpatterns = [
     path('topics/', forum),
     path('forum/', forum),
     path('forum/user/<int:user_id>/', user_forum),
-    path('mylh/', mylh),
-    path('mylhavatar/', mylh_avatar),
+    path('mylh/', editprofile),
+    path('mylhavatar/', editprofile),
     path('settings/<int:user_id>/', mylh_settings),
     path('blog/', blog),
     path('blogs/', blog),
@@ -179,4 +182,5 @@ urlpatterns = [
     path('addnewenemy/', addnewenemy),
     path('rss/', RssSiteNewsFeed()),
     path('atom/', AtomSiteNewsFeed()),
+    path('chat/', display_chat),
 ]
