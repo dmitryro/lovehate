@@ -186,6 +186,9 @@ def editprofile(request):
             profile_image_path = uploaded_file_url
             log = Logger(log="FILE URL {}".format(uploaded_file_url))
             log.save()
+        else:
+            profile = request.user.profile  
+            profile_image_path = profile.profile_image_path
 
     try:
         if request.user.is_authenticated:

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -337,6 +338,76 @@ def outgoing_messages(request):
                                      'logout': False})
 
 
+def incoming_user_messages(request, sender_id):
+    redirect = 'incoming_user.html'
+    page = request.GET.get('page', 1)
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+    try:
+        delete_ids = request.POST.getlist('incoming_delete')
+        for delete_id in delete_ids:
+            message = Message.objects.get(id=int(delete_id))
+            message.delete()
+    except Exception as e:
+        pass
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+            sender_id = int(sender_id)
+            sender = User.objects.get(id=sender_id)
+            user = request.user
+            allmessages = Message.objects.filter(Q(receiver_id=sender_id, sender_id=user_id) | 
+                                                 Q(receiver_id=user_id, sender_id=sender_id)).order_by('-time_sent')
+
+            incoming_unread = Message.objects.filter(receiver_id=user_id, is_read=False).order_by('-time_sent')
+
+            if len(incoming_unread) > 0:
+                has_private = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+            all = []
+            has_private = False
+    except Exception as e:
+        username = ''
+        logout=False
+        user_id = -1
+        has_private = False
+        is_authenticated = False
+        allmessages = []
+
+    paginator = Paginator(allmessages, 10)
+
+    try:
+        allmessages_slice = paginator.page(page)
+    except PageNotAnInteger:
+        allmessages_slice = paginator.page(1)
+    except EmptyPage:
+        allmessages_slice = paginator.page(paginator.num_pages)
+
+    return render(request, redirect,{'home':'incoming_user.html',
+                                     'user': request.user,
+                                     'username': username,
+                                     'has_private': has_private,
+                                     'back_to_user': True,
+                                     'allmessages': allmessages_slice,
+                                     'is_authenticated': is_authenticated,
+                                     'current_page': 'incoming',
+                                     'username': request.user.username,
+                                     'logout': False})
+
+
+
 
 def incoming_messages(request):
     redirect = 'incoming.html'
@@ -394,6 +465,7 @@ def incoming_messages(request):
                                      'username': username,
                                      'has_private': has_private,
                                      'incoming': incoming_slice,
+                                     'back_to_user': False,
                                      'is_authenticated': is_authenticated,
                                      'current_page': 'incoming',
                                      'username': request.user.username,
@@ -653,6 +725,98 @@ def newemotion_unauth(request):
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
+
+@csrf_exempt
+def read_all_private(request, message_id):
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        message = Message.objects.get(id=int(message_id))
+        message.is_read=True
+        message.save()
+        return render(request, 'read_private.html',{'home':'read_private.html',
+                                                      'answer_subject': "RE: {}".format(message.subject),
+                                                      'user': request.user,
+                                                      'message': message,
+                                                      'has_private': request.user.profile.has_private,
+                                                      'recipient': message.sender,
+                                                      'username': username,
+                                                      'current_page': 'private',
+                                                      'back_to_user': False,
+                                                      'is_authenticated': is_authenticated,
+                                                      'logout': logout,
+                                                      'user_id': user_id})
+    except Exception as e:
+        return render(request, 'private.html',{'home':'private.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'has_private': has_private,
+                                         'current_page': 'private',
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
+
+@csrf_exempt
+def read_private(request, message_id):
+
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        message = Message.objects.get(id=int(message_id))
+        message.is_read=True
+        message.save()
+        return render(request, 'read_private.html',{'home':'read_private.html',
+                                                      'answer_subject': "RE: {}".format(message.subject),
+                                                      'user': request.user,
+                                                      'message': message,
+                                                      'has_private': request.user.profile.has_private,
+                                                      'recipient': message.sender,
+                                                      'username': username,
+                                                      'back_to_user': True,
+                                                      'current_page': 'private',
+                                                      'is_authenticated': is_authenticated,
+                                                      'logout': logout,
+                                                      'user_id': user_id})
+    except Exception as e:
+        return render(request, 'private.html',{'home':'private.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'has_private': has_private,
+                                         'current_page': 'private',
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
 
 
 

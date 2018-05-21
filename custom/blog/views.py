@@ -60,8 +60,8 @@ def newcomment(request, post_id):
 
     try:
         post = Post.objects.get(id=int(post_id))
-        post.time_last_commented = timezone.now().replace(tzinfo=tz)
-        post.save()
+    #    post.time_last_commented = timezone.now().replace(tzinfo=tz)
+    #    post.save()
     except Exception:
         post = None
 
@@ -128,7 +128,7 @@ def editcomment(request, comment_id):
     try:
         post = Post.objects.get(id=int(comment.post_id))
         post_id = post.id
-        post.time_last_commented = timezone.now().replace(tzinfo=tz)
+       # post.time_last_commented = timezone.now().replace(tzinfo=tz)
         comment.time_last_edited = timezone.now().replace(tzinfo=tz)
   #      post.time_last_edited = str(now)
         post.save()
@@ -791,6 +791,57 @@ def addnewblog(request):
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
+
+
+@csrf_exempt
+def usercomments(request, user_id):
+    page = request.GET.get('page')
+
+    try:
+        has_private = request.user.profile.has_private
+    except Exception as e:
+        has_private = False
+
+    try:
+        comments = Comment.objects.filter(author_id=int(user_id)).order_by('-time_published')
+
+        paginator = Paginator(comments, 10)
+
+        try:
+            comments_slice = paginator.page(page)
+        except PageNotAnInteger:
+            comments_slice = paginator.page(1)
+        except EmptyPage:
+            comments_slice = paginator.page(paginator.num_pages)
+
+
+        if request.user.is_authenticated:
+            logout=True
+            username = request.user.username
+            user_id = request.user.id
+            is_authenticated = True
+        else:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+            comments_slice = []
+
+    return render(request, 'user_comments.html',{'home':'user_comments.html',
+                                                 'user': request.user,
+                                                 'username': username,
+                                                 'comments': comments_slice,
+                                                 'has_private': has_private,
+                                                 'current_page': 'user_blog',
+                                                 'is_authenticated': is_authenticated,
+                                                 'logout': logout,
+                                                 'user_id': user_id})
+
 
 
 @csrf_exempt

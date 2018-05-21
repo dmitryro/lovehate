@@ -35,7 +35,7 @@
         </div>
     </div>
 
-                                                       {% for message in incoming %}
+                                                       {% for message in allmessages %}
                                                            <div class="row" style="margin-bottom:1.5em;">
   
                                                             <div  class="col-sm-1">
@@ -68,13 +68,47 @@
                                                                <span style="font-weight:normal;">
                                                            {% endif %}
 
-                                                                   <a href="/user/{{ message.sender.id }}">{{ message.sender.username }}</a> 
- - {{ message.subject }} 
+                                                                    <a href="/user/{{ message.sender.id }}">{{ message.sender.username }}</a> - {{ message.subject }} 
                                                                </span>
                                                            
                                                                    <br/>
 
-                                                  {% for line in message.body_lines %}
+                                                  {% for line in message.teaser_lines %}
+                                                      {% if  message.long_message %}
+                                                          {% if not forloop.last %}
+                                                              {% if line|slice:"0:1" == '>' %}
+                                                                  <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                  <span style="font-style:italic;">
+                                                                  {{ line|slice:"1:" }}
+                                                              {% else %}
+                                                                  <span style="font-style:normal;">
+                                                                  {{ line|slice:"0:" }}
+                                                              {% endif %}
+                                                                  </span>
+                                                           {% elif forloop.last %}
+
+                                                              {% if line|slice:"0:1" == '>' %}
+                                                                  <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                  <span style="font-style:italic;">
+                                                                  {{ line|slice:"1:" }}
+                                                              {% else %}
+                                                                  <span>
+                                                                     {{ line|slice:":-3" }}
+                                                                  <span style="font-size:0.64em;font-style:normal;"> 
+                                                                  <a href="/private/read/{{ message.id }}">читать>>
+                                                                  </a>
+                                                                  </span>
+                                                              {% endif %}
+                                                                  </span>
+
+
+
+
+
+
+                                                           {% endif  %}
+                                                      {% else %}
+
                                                           {% if line|slice:"0:1" == '>' %}
                                                                   <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                   <span style="font-style:italic;">
@@ -84,14 +118,20 @@
                                                                   {{ line|slice:"0:" }}
                                                           {% endif %}
                                                                   </span>
-                                                           <br/>
+
+
+
+                                                      {% endif %}
+
+
+
                                                   {% endfor %}
 
 <span style="font-size:0.70em;">
-<a href="/messages/{{ message.sender.id }}">
-эта переписка>>
-</a>
+&nbsp;<a href="/incoming/">
+все>></a>
 </span>
+<br/>
 
 
 
@@ -104,9 +144,10 @@
                                                            {% else %}
                                                                <span style="font-weight:normal;">
                                                            {% endif %}
-
+                                                            {% if not message.sender.id == user.id %}
 
                                                                  <a href="/private/answer/{{ message.id}}">Ответить</a>
+                                                            {% endif %}
                                                             </span>
                                                              </div>
                                                              <div  class="col-sm-1">
@@ -124,7 +165,7 @@
                                                          </div>
                                                          <div class="col-sm-3"></div>
                                                          <div class="col-sm-8">
-                                                                      {% bootstrap_paginate incoming range=10 show_prev_next="false" show_first_last="true" %} 
+                                                                      {% bootstrap_paginate allmessages range=10 show_prev_next="false" show_first_last="true" %} 
                                                          </div>
                                                       </div>
                                                   </div>

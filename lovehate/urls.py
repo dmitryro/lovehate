@@ -74,7 +74,9 @@ from custom.forum.views import newmessage
 from custom.forum.views import newmessage_unauth
 from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
+from custom.forum.views import incoming_user_messages
 from custom.forum.views import answer_private
+from custom.forum.views import read_private
 from custom.blog.views import addnewblog
 from custom.blog.views import addnewblogunauth
 from custom.blog.views import updatepost
@@ -87,6 +89,7 @@ from custom.blog.views import addnewcomment
 from custom.blog.views import addnewcommentunauth
 from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
+from custom.blog.views import usercomments
 from custom.blog.feeds import RssSiteNewsFeed, AtomSiteNewsFeed
 from custom.users.views import editprofile
 from custom.users.views import processrivals
@@ -143,6 +146,7 @@ urlpatterns = [
     path('private/unauth/<int:receiver_id>', private_unauth),
     path('private/send/<int:receiver_id>', private),
     path('private/answer/<int:message_id>/', answer_private),
+    path('private/read/<int:message_id>/', read_private),
     path('signin/', home),
     path('topics/', forum),
     path('forum/', forum),
@@ -159,7 +163,9 @@ urlpatterns = [
     path('newmessageunauth/', csrf_exempt(newmessage_unauth)),
     path('outgoing/', csrf_exempt(outgoing_messages)),
     path('incoming/', csrf_exempt(incoming_messages)),
+    path('messages/<int:sender_id>/', incoming_user_messages),
     path('blog/edit/<int:post_id>/', editblog),
+    path('blog/comments/user/<int:user_id>/', usercomments),
     path('blog/new/', newblog),
     path('blog/add/', addnewblog),
     path('addnewblog/', addnewblog),

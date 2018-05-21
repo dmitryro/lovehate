@@ -36,7 +36,7 @@
     </div>
 
                                                        {% for message in incoming %}
-                                                           <div class="row" style="margin-bottom:1.5em;">
+                                                           <div class="row">
   
                                                             <div  class="col-sm-1">
                                                                  <input type="checkbox" name="incoming_delete" value="{{ message.id }}" />
@@ -68,8 +68,7 @@
                                                                <span style="font-weight:normal;">
                                                            {% endif %}
 
-                                                                   <a href="/user/{{ message.sender.id }}">{{ message.sender.username }}</a> 
- - {{ message.subject }} 
+                                                                    {{ message.sender.username }} - {{ message.subject }} 
                                                                </span>
                                                            
                                                                    <br/>
@@ -86,12 +85,6 @@
                                                                   </span>
                                                            <br/>
                                                   {% endfor %}
-
-<span style="font-size:0.70em;">
-<a href="/messages/{{ message.sender.id }}">
-эта переписка>>
-</a>
-</span>
 
 
 

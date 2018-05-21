@@ -226,6 +226,22 @@ class Message(models.Model):
     def body_lines(self):
         return self.body.splitlines()
 
+
+    @property
+    def teaser_lines(self):
+        body = str(self.body)
+        if len(body) > 154:
+             teaser = "{}...".format(body[:150])
+        else:
+             teaser = body
+        return teaser.splitlines()
+
+
+    @property
+    def long_message(self):
+        return len(self.body) > 154
+
+
     @property
     def date_time_sent(self):
         dt = str(self.time_sent)
@@ -239,8 +255,10 @@ class Message(models.Model):
                                           self.time_sent.minute,
                                           self.time_sent.second)
 
+
     def __str__(self):
         return self.subject
+
 
     @property
     def receiver_name(self):
