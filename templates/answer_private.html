@@ -156,6 +156,8 @@
 
                        <div class="col-sm-4">
 
+
+
                        </div>
                        <div class="col-sm-8">
                                     <div class="form-group">
@@ -166,12 +168,23 @@
                        </div>
           </div>
          <div class="row private-form-row">
-                       <div class="col-sm-4">
+                       <div class="col-sm-4 neutral-messages" style="padding-top:1.4em;">
+
+               {% if back_to_user %}
+                   <a href="/messages/{{ recipient.id }}">
+                     Вернуться
+                   </a>
+               {% else %}
+                   <a href="/incoming">
+                    Вернуться
+                   </a>
+              {% endif %}
+
                        </div>
                        <div class="col-sm-2">
 
                             <button class="btn4" id="message-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
-                                  Отправить
+                            Ответить
                             </button>
                             
                        </div>

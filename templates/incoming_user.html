@@ -95,7 +95,8 @@
                                                                   <span>
                                                                      {{ line|slice:":-3" }}
                                                                   <span style="font-size:0.64em;font-style:normal;"> 
-                                                                  <a href="/private/read/{{ message.id }}">читать>>
+                                                                  <a href="/private/read/{{ message.id }}">
+                                                                  полностью>>
                                                                   </a>
                                                                   </span>
                                                               {% endif %}
@@ -127,11 +128,6 @@
 
                                                   {% endfor %}
 
-<span style="font-size:0.70em;">
-&nbsp;<a href="/incoming/">
-все>></a>
-</span>
-<br/>
 
 
 
@@ -155,7 +151,7 @@
                                                             </div>
                                                        {% endfor %}
                                                       <div class="row">                            
-                                                         <div class="col-sm-1"> 
+                                                         <div class="col-sm-2"> 
 
                             <button class="btn4"  type="submit"  style="background:#4a4a4a;min-width:6.00em;margin-top:1.4em;">
                                  Удалить
@@ -164,8 +160,17 @@
 
                                                          </div>
                                                          <div class="col-sm-3"></div>
-                                                         <div class="col-sm-8">
+                                                         <div class="col-sm-5">
                                                                       {% bootstrap_paginate allmessages range=10 show_prev_next="false" show_first_last="true" %} 
+                                                         </div>
+                                                         <div class="col-sm-2 neutral-messages" style="padding-top:2.6em;">
+<span style="font-size:1.0em;">
+&nbsp;<a href="/incoming/">
+Все Сообщения
+</a>
+</span>
+
+
                                                          </div>
                                                       </div>
                                                   </div>

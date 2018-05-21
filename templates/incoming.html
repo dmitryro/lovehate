@@ -74,7 +74,45 @@
                                                            
                                                                    <br/>
 
-                                                  {% for line in message.body_lines %}
+
+
+                                                  {% for line in message.teaser_lines %}
+                                                      {% if  message.long_message %}
+                                                          {% if not forloop.last %}
+                                                              {% if line|slice:"0:1" == '>' %}
+                                                                  <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                  <span style="font-style:italic;">
+                                                                  {{ line|slice:"1:" }}
+                                                              {% else %}
+                                                                  <span style="font-style:normal;">
+                                                                  {{ line|slice:"0:" }}
+                                                              {% endif %}
+                                                                  </span>
+                                                           {% elif forloop.last %}
+
+                                                              {% if line|slice:"0:1" == '>' %}
+                                                                  <span style="font-weight:bold; font-size:1.2em;"> | </span>
+                                                                  <span style="font-style:italic;">
+                                                                  {{ line|slice:"1:" }}
+                                                              {% else %}
+                                                                  <span>
+                                                                     {{ line|slice:":-3" }}
+                                                                  <span style="font-size:0.64em;font-style:normal;"> 
+                                                                  <a href="/private/readall/{{ message.id }}">
+                                                                  полностью>>
+                                                                  </a>
+                                                                  </span>
+                                                              {% endif %}
+                                                                  </span>
+
+
+
+
+
+
+                                                           {% endif  %}
+                                                      {% else %}
+
                                                           {% if line|slice:"0:1" == '>' %}
                                                                   <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                   <span style="font-style:italic;">
@@ -84,12 +122,19 @@
                                                                   {{ line|slice:"0:" }}
                                                           {% endif %}
                                                                   </span>
-                                                           <br/>
+
+
+
+                                                      {% endif %}
+
+
+
                                                   {% endfor %}
 
-<span style="font-size:0.70em;">
+
+<span style="font-size:0.70em;">&nbsp;
 <a href="/messages/{{ message.sender.id }}">
-эта переписка>>
+переписка>>
 </a>
 </span>
 
@@ -106,7 +151,7 @@
                                                            {% endif %}
 
 
-                                                                 <a href="/private/answer/{{ message.id}}">Ответить</a>
+                                                                 <a href="/private/answerall/{{ message.id}}">Ответить</a>
                                                             </span>
                                                              </div>
                                                              <div  class="col-sm-1">

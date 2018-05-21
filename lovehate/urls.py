@@ -76,7 +76,9 @@ from custom.forum.views import outgoing_messages
 from custom.forum.views import incoming_messages
 from custom.forum.views import incoming_user_messages
 from custom.forum.views import answer_private
+from custom.forum.views import answer_all_private
 from custom.forum.views import read_private
+from custom.forum.views import read_all_private
 from custom.blog.views import addnewblog
 from custom.blog.views import addnewblogunauth
 from custom.blog.views import updatepost
@@ -146,7 +148,9 @@ urlpatterns = [
     path('private/unauth/<int:receiver_id>', private_unauth),
     path('private/send/<int:receiver_id>', private),
     path('private/answer/<int:message_id>/', answer_private),
+    path('private/answerall/<int:message_id>/', answer_all_private),
     path('private/read/<int:message_id>/', read_private),
+    path('private/readall/<int:message_id>/', read_all_private),
     path('signin/', home),
     path('topics/', forum),
     path('forum/', forum),

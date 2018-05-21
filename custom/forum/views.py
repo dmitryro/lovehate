@@ -728,6 +728,7 @@ def newemotion_unauth(request):
 
 @csrf_exempt
 def read_all_private(request, message_id):
+    has_private = False
 
     try:
         if request.user.is_authenticated:
@@ -754,19 +755,21 @@ def read_all_private(request, message_id):
                                                       'answer_subject': "RE: {}".format(message.subject),
                                                       'user': request.user,
                                                       'message': message,
-                                                      'has_private': request.user.profile.has_private,
                                                       'recipient': message.sender,
                                                       'username': username,
+                                                      'has_private': True,
                                                       'current_page': 'private',
                                                       'back_to_user': False,
                                                       'is_authenticated': is_authenticated,
                                                       'logout': logout,
                                                       'user_id': user_id})
     except Exception as e:
+        log = Logger(log="SOME SHIT WENT WRONG = 1 {}".format(e))
+        log.save()
         return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
                                          'username': username,
-                                         'has_private': has_private,
+                                         'has_private': True,
                                          'current_page': 'private',
                                          'is_authenticated': is_authenticated,
                                          'logout': logout,
@@ -804,6 +807,55 @@ def read_private(request, message_id):
                                                       'recipient': message.sender,
                                                       'username': username,
                                                       'back_to_user': True,
+                                                      'current_page': 'private',
+                                                      'is_authenticated': is_authenticated,
+                                                      'logout': logout,
+                                                      'user_id': user_id})
+    except Exception as e:
+        log = Logger(log="SOME SHIT WENT WRONG = 2 {}".format(e))
+        log.save()
+
+        return render(request, 'private.html',{'home':'private.html',
+                                         'user': request.user,
+                                         'username': username,
+                                         'has_private': False,
+                                         'current_page': 'private',
+                                         'is_authenticated': is_authenticated,
+                                         'logout': logout,
+                                         'user_id': user_id})
+
+
+@csrf_exempt
+def answer_all_private(request, message_id):
+    has_private = True
+    try:
+        if request.user.is_authenticated:
+            logout=True
+            user_id = request.user.id
+            username = request.user.username
+            is_authenticated = True
+        else:
+            logout=False
+            user_id = -1
+            username = ''
+            is_authenticated = False
+    except Exception as e:
+            username = ''
+            logout=False
+            user_id = -1
+            is_authenticated = False
+
+    try:
+        message = Message.objects.get(id=int(message_id))
+        message.is_read=True
+        message.save()
+        return render(request, 'answer_private.html',{'home':'answer_private.html',
+                                                      'answer_subject': "RE: {}".format(message.subject),
+                                                      'user': request.user,
+                                                      'has_private': request.user.profile.has_private,
+                                                      'recipient': message.sender,
+                                                      'back_to_user': False,
+                                                      'username': username,
                                                       'current_page': 'private',
                                                       'is_authenticated': is_authenticated,
                                                       'logout': logout,
@@ -850,6 +902,7 @@ def answer_private(request, message_id):
                                                       'has_private': request.user.profile.has_private,
                                                       'recipient': message.sender,
                                                       'username': username,
+                                                      'back_to_user': True,
                                                       'current_page': 'private',
                                                       'is_authenticated': is_authenticated,
                                                       'logout': logout,
