@@ -804,7 +804,9 @@ def usercomments(request, user_id):
 
     try:
         comments = Comment.objects.filter(author_id=int(user_id)).order_by('-time_published')
-
+        explored_user_id = user_id
+        explored = User.objects.get(id=int(user_id))
+        explored_user_nickname = explored.username
         paginator = Paginator(comments, 10)
 
         try:
@@ -826,17 +828,21 @@ def usercomments(request, user_id):
             user_id = -1
             is_authenticated = False
     except Exception as e:
-            username = ''
-            logout=False
-            user_id = -1
-            is_authenticated = False
-            comments_slice = []
+        explored_user_id = request.user.id
+        explored_user_nickname = request.user.username
+        username = ''
+        logout=False
+        user_id = -1
+        is_authenticated = False
+        comments_slice = []
 
     return render(request, 'user_comments.html',{'home':'user_comments.html',
                                                  'user': request.user,
                                                  'username': username,
                                                  'comments': comments_slice,
                                                  'has_private': has_private,
+                                                 'explored_user_id': explored_user_id,
+                                                 'explored_user_nickname': explored_user_nickname, 
                                                  'current_page': 'user_blog',
                                                  'is_authenticated': is_authenticated,
                                                  'logout': logout,
