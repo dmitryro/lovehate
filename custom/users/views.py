@@ -1190,7 +1190,7 @@ def authentic(request):
 
 
     except Exception as e:
-        log = Logger(log="SHIT DID NOT WORK {}".format(e))
+        log = Logger(log="Failed authenticating user - {}".format(e))
         log.save()
 
         result = {"message": 'failure {} for username {}'.format(e, username),
@@ -1266,7 +1266,7 @@ def auth(request):
                          status=200)
 
     except Exception as e:
-        log = Logger(log="SHIT BROKE {}".format(e))
+        log = Logger(log="Failed authenticating - {}".format(e))
         log.save()
 
         return Response({"message": 'failure {} for username {}'.format(e, username),

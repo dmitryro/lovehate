@@ -764,8 +764,6 @@ def read_all_private(request, message_id):
                                                       'logout': logout,
                                                       'user_id': user_id})
     except Exception as e:
-        log = Logger(log="SOME SHIT WENT WRONG = 1 {}".format(e))
-        log.save()
         return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
                                          'username': username,
@@ -812,8 +810,6 @@ def read_private(request, message_id):
                                                       'logout': logout,
                                                       'user_id': user_id})
     except Exception as e:
-        log = Logger(log="SOME SHIT WENT WRONG = 2 {}".format(e))
-        log.save()
 
         return render(request, 'private.html',{'home':'private.html',
                                          'user': request.user,
