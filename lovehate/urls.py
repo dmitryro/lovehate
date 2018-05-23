@@ -46,6 +46,7 @@ from custom.gui.views import private_contacts
 from custom.gui.views import cleanmessages
 from custom.gui.views import statistics
 from custom.gui.views import simple_signin
+from custom.gui.views import signin
 from custom.users.views import UserList
 from custom.users.views import UserDetail
 from custom.users.views import auth
@@ -123,6 +124,7 @@ urlpatterns = [
     path('reset/<reset_key>/', reset),
     path('api-auth/', include('rest_framework.urls')),      
     path('rest-auth/', include('rest_auth.urls')),
+    #path('account/', include('account.urls')),
     #path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('emotions/', EmotionList.as_view()),
     path('attitudes/', AttitudeList.as_view()),
@@ -151,7 +153,7 @@ urlpatterns = [
     path('private/answerall/<int:message_id>/', answer_all_private),
     path('private/read/<int:message_id>/', read_private),
     path('private/readall/<int:message_id>/', read_all_private),
-    path('signin/', home),
+    path('signin/', signin),
     path('topics/', forum),
     path('forum/', forum),
     path('forum/user/<int:user_id>/', user_forum),
