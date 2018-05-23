@@ -658,7 +658,6 @@ span.psw {
    font-family: Times New Roman;
    font-size: 1.5em;
    font-weight: normal;
-   overflow: hidden;
    float: left;
    width:3.40em;
    min-width:3.40em;
@@ -670,7 +669,6 @@ span.psw {
    font-size: 1.50em;
    float: left;
    font-family: Times New Roman;
-   overflow: hidden;
    width:4.6em;
 }
 
@@ -680,12 +678,11 @@ span.psw {
    font-weight: normal;
    font-size: 1.2em;
    float: left;
-   padding-top:0.3em;
+   padding-top:0.26em;
    padding-left:0.2em;
    padding-right:0.7em;
    font-family: Times New Roman;
    width:0.9em;
-   overflow: hidden;
 }
 
 .love-rel {
