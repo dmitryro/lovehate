@@ -138,6 +138,19 @@ def search(request):
                                          'logout': logout,
                                          'user_id': user_id})
 
+@csrf_exempt
+def signin(request):
+    logout(request)
+    username = str(request.POST.get('login_username', ''))
+    password = str(request.POST.get('login_password', ''))
+    log = Logger(log="USER HERE IS {} {}".format(username, password))
+    log.save()
+
+    user = authenticate(username=username, password=password)
+    request.session.set_expiry(1086400) #sets the exp. value of the session
+    login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in
+    return HttpResponseRedirect('/')
+
 
 @csrf_exempt
 def home(request):

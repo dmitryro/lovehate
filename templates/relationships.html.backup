@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div>
+<br />
+<br />
+<br />
+</div>
+<div class="container-fluid registration-form">
+    <div class="row">
+             <div class="col-sm-2">
+             </div>
+        
+ 
+             <div class="col-sm-3">
+                 <div class="loves column-header" style="font-size:1.2em;">
+                       <strong>
+                         <span>Друзья </span>
+                       </strong>
+                 </div>
+              </div>
+                    
+              <div class="col-sm-2">
+              </div>
+
+             <div class="col-sm-3">
+                 <div class="hates column-header" style="font-size:1.2em;">
+                       <strong>
+                         <span>Враги</span>
+                       </strong>
+                 </div>
+              </div>
+
+              <div class="col-sm-2">
+              </div>
+    </div>
+    <div class="row">
+             <div class="col-sm-2">
+             </div>
+
+
+             <div class="col-sm-3">
+                    <div class="container-fluid">
+                  <form id="newfrienddeleteform"  name="newfrienddeleteform"  method="post">
+                   {% csrf_token %}
+                   {% for friend in friends %}
+                        <div class="row">
+                            <div class="col-sm-10 relationship">
+                                <a href="/user/{{ friend.acceptor.id }}/">{{ friend.acceptor.username }}</a> 
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="checkbox" name="friends_delete" value="{{ friend.acceptor.id }}" />
+                            </div>
+                        </div>
+                   {% endfor %}
+                  </form>
+                   </div>
+             </div>
+
+             <div class="col-sm-2">
+             </div>
+
+             <div class="col-sm-3">
+                  <form id="newenemydeleteform"  name="newenemydeleteform"  method="post">
+                   {% csrf_token %}
+                   {% for enemy in enemies %}
+                        <div class="row">
+                            <div class="col-sm-10 relationship">
+                                <a href="/user/{{ enemy.acceptor.id }}/">{{ enemy.acceptor.username }}</a>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="checkbox" name="enemies_delete" value="{{ enemy.acceptor.id }}" />
+                            </div>
+                        </div>
+                   {% endfor %}
+                  </form>
+ 
+                  <!-- rivals here -->
+             </div>
+
+             <div class="col-sm-2">
+             </div>
+    </div>
+
+
+
+
+
+
+    <div class="row">
+
+                     <div class="col-sm-2">
+                     </div>
+    
+
+                     <div class="col-sm-3 service-box">
+                              <div class="container-fluid">
+                                 <div class="row">
+                                          {% if not_found %}
+                                                     <div class="error"><span>
+
+                                                      Пользователь не найден!
+                                                     </span></div>
+                                          {% endif %}
+                                 </div>
+                                 <div class="row">
+                                     <form id="newfriendform"  name="newfriendform"  method="post">
+                                              <input type="hidden" value="{{ user_id }}" name="friend_user_id"  id="friend_user_id" />
+                                              <div class="col-sm-8">
+
+ 
+                                              {% csrf_token %}
+                                                        <input type="text" id="friend_username" name="friend_username" 
+                                                          placeholder="Ник пользователя - друга" size="16">
+                                              </div>
+                                              <div class="col-sm-4">
+                                                  <button type="button" id="newfriendform-publish" class="btn3" style="width:5.6em;background:#4a4a4a;" >Добавить</button>
+                                              </div>
+                                   </form>
+
+                                 </div> <!-- row ends  -->
+                               <div class="row">
+                                    <div class="col-sm-12">
+                                    <div class="friend-errors" style="display:none;text-align:left;font-weight:bold;padding-left:1.6em;">
+                                       Пользователь не найден!
+                                    </div>
+                                    </div>
+                               </div>
+
+                              </div> <!-- container ends ends  -->
+                     </div>        
+                     <div class="col-sm-2">
+                     </div>
+
+
+                     <div class="col-sm-3 service-box" style="margin-right:-1.2em;">
+
+
+                              <div class="container-fluid">
+
+                                 <div class="row">
+
+                                         <form id="newenemyform"  name="newenemyform"  method="post">
+
+
+                                              <input type="hidden" value="{{ user_id }}" name="enemy_user_id"  id="enemy_user_id" />
+                                         
+                                      
+                                             <div class="col-sm-8">
+
+                                                        {% csrf_token %}
+
+                                                        <input type="text" id="enemy_username" name="enemy_username"
+                                                          placeholder="Ник пользователя - врага"
+                                                          >
+                                             </div>
+                                             <div class="col-sm-4">
+                                                  <button type="button" class="btn3" id="newenemyform-publish"  style="width:5.6em;background:#4a4a4a;">Добавить</button>
+                                        </form>
+                                 </div> <!-- row ends  -->
+
+                               <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="enemy-errors" style="display:none;text-align:left;font-weight:bold;">
+                                         Пользователь не найден!
+                                        </div>
+                                    </div>
+                                 </div>
+
+
+                              </div> <!-- container ends ends  -->
+
+                     </div>
+</div>
+
+
+                     
+
+        <div class="col-sm-2">
+        </div>
+     </div> <!-- row ends -->
+
+</div>     <!-- container ends -->
+
+{% endblock %}

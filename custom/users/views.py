@@ -466,7 +466,7 @@ def addnewfriend(request):
         for friend_id in friends_delete:
             try:
                 f_id = int(friend_id)
-                peer = Peer.objects.get(acceptor_id=f_id)
+                peer = Peer.objects.filter(acceptor_id=f_id, relation_id=1)
                 peer.delete()
             except Exception as e:
                 return Response({"message": "Failed to delete peer {}".format(e),
@@ -565,7 +565,7 @@ def addnewenemy(request):
         for enemy_id in enemies_delete:
             try:
                 f_id = int(enemy_id)
-                peer = Peer.objects.get(acceptor_id=f_id)
+                peer = Peer.objects.filter(acceptor_id=f_id, relation_id=3)
                 peer.delete()
             except Exception as e:
                 return Response({"message": "Failed to delete peer {}".format(e),
@@ -691,12 +691,33 @@ def user_relationships(request, user_id):
         enemies = Peer.objects.filter(initiator=user_id, relation_id=3)
     except Exception as e:
         enemies = []
+   
+    add_enemies = []
+    add_frields = []
+ 
+    len_enemies = len(enemies)
+    len_friends = len(friends)
+    log = Logger(log="LEN ONE {}  LEN TWO {}".format(len_enemies, len_friends))
+    log.save()
+
+    if len_friends > len_enemies:
+        add_enemies_res = len_friends-len_enemies
+        add_enemies = [''] * add_enemies_res
+    elif len_enemies > len_friends:
+        add_frields_res = len_enemies-len_friends
+        add_frields = [''] * add_frields_res
+ 
+    log = Logger(log="FRIENDS ONE {} ENEMIES TWO {}".format(add_frields, add_enemies))
+    log.save()
+
 
     return render(request, 'relationships.html', {"user_id": user_id, 
                                                   "friends": friends, 
                                                   "enemies": enemies,
                                                   "user": request.user,
                                                   "username": username,
+                                                  "add_frields": add_frields,
+                                                  "add_enemies": add_enemies,
                                                   "has_private": has_private,
                                                   "is_authenticated": is_authenticated,
                                                   "current_page": "relationships",

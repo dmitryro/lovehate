@@ -148,27 +148,28 @@ button:hover {
     opacity: 0.8;
 }
 
-    #registration label {
-        width: 250px;
-    }
-    #registration label.error, #registration input.submit {
-        margin-left: 253px;
-    }
-    #registration label.error {
-        margin-left: 10px;
-        width: auto;
-        display: inline;
-    }
-    .forum-row, .blog-row {
-        font-size:0.78em;
-    }
+.registration label {
+    width: 250px;
+}
+
+.registration label.error, .registration input.submit {
+    margin-left: 253px;
+    margin-left: 10px;
+    width: auto;
+    display: inline;
+} 
+
+.forum-row, .blog-row {
+    font-size:0.78em;
+}
  
-    .blog-common-row {
-        font-size:1.20em;
-    }
-    #newforumform label {
-        width: 250px;
-    }
+.blog-common-row {
+    font-size:1.20em;
+}
+
+#newforumform label {
+    width: 250px;
+}
 
     #newforumform label.error, #newforumform input.submit, #newforumform input.button {
         margin-left: 253px;
@@ -2190,7 +2191,7 @@ span.psw {
                     </div>
                     <div class="modal-body">
 
-                              <form id="authenticateform" action="https://lovehate.io/signin/" enctype="multipart/form-data" method="POST">
+                              <form id="authenticateform" action="/signin/" name="authenticateform" method="POST">
                               {% csrf_token %}
 
 
@@ -2219,8 +2220,7 @@ span.psw {
                                         </div>
 
                                         <div class="row">
- 
-                                                        <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button>
+                                                        <button id="user-login" style="background:#4a4a4a;" type="button">Войти</button> 
                                         </div>
 
 
@@ -3309,7 +3309,6 @@ span.psw {
                   }).get();
 
                   if($("#newenemyform").valid()) {
-     
                          var user_id = $("#user_id").val();
                          var arr = {
                               username: $("#enemy_username").val(),
@@ -3891,7 +3890,6 @@ span.psw {
                   var arr = {username: $("#login_username").val(), 
                              password: $("#login_password").val(),
                              from_session: true}; 
-                 
                   $.ajax({
                       type: "POST",
                       url: "https://lovehate.io/authenticate-user/",
@@ -3906,6 +3904,7 @@ span.psw {
                                     $('#modal-login').hide();
                                     $("#modal-send-activation").show();
                                 } else {
+                                    $('#authenticateform').submit(); 
                                     $('#modal-login').hide();
                                     $("#authenticateform").submit();
                                     $('#logged-out').html("<a href='https://lovehate.io/signout'>"+data.username+"</a>");
@@ -3917,7 +3916,6 @@ span.psw {
                         $( "div.errors" ).fadeIn( 200 ).delay( 400 ).fadeOut( 300 );
                       }
                   });
- 
 
                  } //end if
                  
