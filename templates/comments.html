@@ -29,28 +29,29 @@
                                                                          <div class="col-sm-10">
                                                                               <span class="neutral-messages">
                                                                                 <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
-                                                                              </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }}
-                                                                         </div>
-                                                                           
-                                                                         <div class="col-sm-2">
-                                                                         
-                                                           {% if user.id == post.author.id %}
-                                                                 <span>
-                                                                       <a href="/blog/edit/{{ post.id }}">
+                                                                              </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }} &nbsp;
 
-Изменить
+                                                           {% if user.id == post.author.id %}
+                                                                 <span style="font-size:0.70em;">
+                                                                       <a href="/blog/edit/{{ post.id }}">
+править>>
                                                                        </a>
                                                                  </span>
                                                            {% elif user.id is post.author.id %}
 
-                                                                 <span>
+                                                                 <span style="font-size:0.70em;">
                                                                        <a href="/blog/edit/{{ post.id }}">
-Изменить
-
+править>>
                                                                        </a>
                                                                  </span>
 
                                                            {% endif %}
+   
+
+                                                                         </div>
+                                                                           
+                                                                         <div class="col-sm-2">
+                                                                             <! -- change was here -->                                                                     
      
                                                                          </div>
                                             </div>
@@ -72,9 +73,9 @@
                                                                                <span style="font-style:italic;">
                                                                                    {% for l in line|slice:"1:"|split:" " %}
                                                                                     {% if 'http' in l  %}
-                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                         <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                     {% else %}
-                                                                                        {{ l }}
+                                                                                        {% mark_meta l %}
                                                                                     {% endif %}
                                                                                    {% endfor %}
 
@@ -82,9 +83,9 @@
                                                                                    <span style="font-style:normal;">
                                                                                    {% for l in line|slice:"0:"|split:" " %}
                                                                                     {% if 'http' in l  %}
-                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                         <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                     {% else %}
-                                                                                        {{ l }}
+                                                                                        {% mark_meta l %}
                                                                                     {% endif %}
                                                                                    {% endfor %}
                                                                 {% endif %}
@@ -153,7 +154,22 @@
                                                            {% endif %}
 
                                      <div class="col-sm-12">
-                                         <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a> &nbsp; {{ comment.date_time_published }}
+                                         <a href="/user/{{ comment.author.id }}">{{ comment.author_nick }}</a> &nbsp; {{ comment.date_time_published }}&nbsp;
+                                                              <span style="font-size:0.7em;">
+                                                              {% if user.id  == comment.author.id %}
+                                                                    <a href="/editcomment/{{ comment.id }}/">
+править>>
+                                                                    </a>
+                                                              {% elif user.id is comment.author.id %}
+
+                                                                    <a href="/editcomment/{{ comment.id }}/">
+править>>
+                                                                    </a>
+
+                                                              {% endif %}
+                                                              </span>
+
+
                                      </div>  
                                     
                                      </div>
@@ -174,9 +190,9 @@
 
                                                                                    {% for l in line|slice:"1:"|split:" " %}
                                                                                     {% if 'http' in l  %}
-                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                         <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                     {% else %}
-                                                                                        {{ l }}
+                                                                                        {% mark_meta l %}
                                                                                     {% endif %}
                                                                                    {% endfor %}
 
@@ -185,9 +201,9 @@
                                                                                    <span style="font-style:normal;">
                                                                                    {% for l in line|slice:"0:"|split:" " %}
                                                                                     {% if 'http' in l  %}
-                                                                                         <a href="{{ l }}">{{ l }}</a>
+                                                                                         <a href="{{ l }}">{% mark_meta l %}</a>
                                                                                     {% else %}
-                                                                                        {{ l }}
+                                                                                        {% mark_meta l %}
                                                                                     {% endif %}
                                                                                    {% endfor %}
                                                                 {% endif %}
@@ -198,13 +214,6 @@
                                                   {% endfor %}  
                                               </div> 
                                               <div class="col-sm-2" style="font-weight:0.8em;">
-                                                              {% if user.id  == comment.author.id %}
-                                                                    <a href="/editcomment/{{ comment.id }}/">Изменить</a>
-                                                              {% elif user.id is comment.author.id %}
-
-                                                                    <a href="/editcomment/{{ comment.id }}/">Изменить</a>
-
-                                                              {% endif %}
 
 
                                                </div>

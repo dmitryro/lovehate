@@ -7,11 +7,14 @@ from django.template import Library, Node, NodeList, TemplateSyntaxError
 from django.utils.encoding import smart_str
 from custom.meta.models import MetaProp, ContactMetaProp
 from django import template
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
 from custom.utils.models import Logger
 from custom.blog.models import Post
 from custom.blog.models import Comment
 from custom.forum.models import Message
+
 
 register = template.Library()
 h = html2text.HTML2Text()
@@ -107,6 +110,23 @@ def link_meta(link,  *args, **kwargs):
         return link
 
 
+@register.filter(needs_autoescape=True)
+def auto_escape(value, autoescape=True):
+    '''Returns input wrapped in HTML tags'''
+    '''and also detects surrounding autoescape on filter (if any) and escapes '''
+    if autoescape:
+        value = escape(value)
+    result = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", value)
+    return result
+
+
+
+@register.simple_tag
+def mark_meta(line):
+    result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", line)
+    return mark_safe(result_line)
+
+
 @register.filter
 @stringfilter
 def split(string, sep):
@@ -115,3 +135,5 @@ def split(string, sep):
     Example usage: {{ value|split:"/" }}
     """
     return string.split(sep)
+
+

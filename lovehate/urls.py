@@ -105,6 +105,9 @@ from custom.users.views import reset
 from django.contrib import admin
 from custom.chat.views import display_chat
 
+handler404 = 'custom.gui.views.handler404'
+handler500 = 'custom.gui.views.handler500'
+
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('', home),

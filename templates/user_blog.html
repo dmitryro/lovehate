@@ -61,18 +61,18 @@
 
                                                                                                              {% for l in line|slice:"1:"|split:" " %}
                                                                                                              {% if 'http' in l  %}
-                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                                                    {% else %}
-                                                                                                                {{ l }}
+                                                                                                                {% mark_meta l %}
                                                                                                              {% endif %}
                                                                                                              {% endfor %}
                                                                                       {% else %}
                                                                                               <span style="font-style:normal;">
                                                                                                              {% for l in line|slice:"0:"|split:" " %}
                                                                                                              {% if 'http' in l  %}
-                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                                                    {% else %}
-                                                                                                                {{ l }}
+                                                                                                                {% mark_meta l %}
                                                                                                              {% endif %}
                                                                                                              {% endfor %}
                                                                                       {% endif %}

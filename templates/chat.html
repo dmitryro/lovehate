@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
+{% load blog_extras %}
 {% block content %}
+<!--
+<span>one <span class='italize'>two</span> three <span class='italize'>four</span></span>
+-->
+{% mark_meta "one `two` three `four`" %}
 
 <div>
 <br />

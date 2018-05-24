@@ -15,46 +15,38 @@
         <div class="col-sm-2">
         </div>
     
-
         <div class="col-sm-8">
-            <div class="container-fluid">
-                <form action="editprofile" method="post">
-                    <div class="row blog-common-row">
-                         <div class="col-sm-12">
-                               <div class="container-fluid">
+          <div class="container-fluid"> <!-- container starts -->
+            <form action="editprofile" method="post">
+              <div class="row blog-common-row">
+                <div class="col-sm-12">
+                  <div class="container-fluid">
+                    {% for post in posts %}
+                        {% if post.attitude.id == 1 %}
+                          <div class="row loves-messages">
+                        {% elif post.attitude.id == 2 %}
+                          <div class="row mehs-messages">
+                        {% elif post.attitude.id == 3 %}
+                          <div class="row hates-messages">
+                        {% endif %}
+                            <div class="col-sm-12">
+                              <span class="neutral-messages">
+                                <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
+                              </span>, 
+                              <strong> {{ post.subject }}</strong>, 
+                             {{ post.date_time_published }}
+                            </div>
+                          </div>
 
-                               {% for post in posts %}
-
-
-                                             
-                                                           {% if post.attitude.id == 1 %}
-                                                                 <div class="row loves-messages">
-                                                           {% elif post.attitude.id == 2 %}
-                                                                  <div class="row mehs-messages">
-                                                           {% elif post.attitude.id == 3 %}
-                                                                  <div class="row hates-messages">
-                                                           {% endif %}
-
-                                                                         <div class="col-sm-12">
-                                                                              <span class="neutral-messages">
-                                                                                <a href="/user/{{ post.author.id }}">{{ post.author_nick }}</a>
-                                                                              </span>, <strong> {{ post.subject }}</strong>, {{ post.date_time_published }}
-                                                                         </div>
-
-                                                                 </div>
-
-                                                           {% if post.attitude.id == 1 %}
-                                                                 <div class="row loves-messages" style="padding-left:0.8em;">
-                                                           {% elif post.attitude.id == 2 %}
-                                                                  <div class="row mehs-messages"  style="padding-left:0.8em;">
-                                                           {% elif post.attitude.id == 3 %}
-                                                                  <div class="row hates-messages"  style="padding-left:0.8em;">
-                                                           {% endif %}
-                                 
- 
-
-                                                                            {% for line in post.teaser_lines %}
-                                                                                {% if not forloop.last %}
+                        {% if post.attitude.id == 1 %}
+                          <div class="row loves-messages" style="padding-left:0.8em;">
+                        {% elif post.attitude.id == 2 %}
+                          <div class="row mehs-messages"  style="padding-left:0.8em;">
+                        {% elif post.attitude.id == 3 %}
+                          <div class="row hates-messages"  style="padding-left:0.8em;">
+                        {% endif %}
+                        {% for line in post.teaser_lines %}
+                            {% if not forloop.last %}
 
 
                                                                                       {% if line|slice:"0:1" == '>' %}
@@ -63,9 +55,9 @@
 
                                                                                                              {% for l in line|slice:"1:"|split:" " %}
                                                                                                              {% if 'http' in l  %}<br/>
-                                                                                                                <a href="{{ l }}">{{ l }}</a>
-                                                                                                                   {% else %}
-                                                                                                                {{ l }}
+                                                                                                                <a href="{% mark_meta l %}">{% mark_meta l %}</a>
+                                                                                                             {% else %}
+                                                                                                                 {% mark_meta l %}
                                                                                                              {% endif %}
                                                                                                              {% endfor %}
 
@@ -74,9 +66,9 @@
 
                                                                                                              {% for l in line|slice:"0:"|split:" " %}
                                                                                                              {% if 'http' in l  %}<br/>
-                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                                                    {% else %}
-                                                                                                                {{ l }}
+                                                                                                                {% mark_meta l %}
                                                                                                              {% endif %}
                                                                                                              {% endfor %}
 
@@ -113,9 +105,9 @@
 
                                                                                                              {% for l in line|slice:"1:"|split:" " %}
                                                                                                              {% if 'http' in l  %}<br/>
-                                                                                                                <a href="{{ l }}">{{ l }}</a>
+                                                                                                                <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                                                    {% else %}
-                                                                                                                {{ l }}
+                                                                                                                {% mark_meta l %}
                                                                                                              {% endif %}
                                                                                                              {% endfor %}
 
@@ -124,9 +116,9 @@
                                                                                                                   <span style="font-style:normal;">
                                                                                                                       {% for l in line|slice:"0:"|split:" " %}
                                                                                                                                {% if 'http' in l  %}<br/>
-                                                                                                                                    <a href="{{ l }}">{{ l }}</a>
+                                                                                                                                    <a href="{% mark_meta l %}">{% mark_meta l %}</a>
                                                                                                                                {% else %}
-                                                                                                                                       {{ l }}
+                                                                                                                                       {% mark_meta l %}
                                                                                                                                {% endif %}
                                                                                                                       {% endfor %}
                                                                                                {% endif %}
