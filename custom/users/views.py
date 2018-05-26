@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -558,9 +559,6 @@ def addnewenemy(request):
     user_id = request.data.get('user_id', '')
     enemies_delete = request.data.get('enemies_delete', '')
 
-    log = Logger(log="USER TO ADD AS ANEMY {} USER HATING {} ENEMIES {}".format(username, user_id, enemies_delete))
-    log.save()
-
     if len(enemies_delete)> 0:
         for enemy_id in enemies_delete:
             try:
@@ -584,9 +582,6 @@ def addnewenemy(request):
                          "username": username,
                          "log_out": True},
                          status=200)
-
-    log = Logger(log="SO FAR SO GOOD - {}".format(username))
-    log.save()
 
     try:
         acceptor = User.objects.get(username=username)
@@ -657,11 +652,11 @@ def processfriends(request):
 
 def processrivals(request):
     username = request.POST.get('rival_username', '')
-    log = Logger(log="REQUESTED NEW RIVAL {}".format(username))
-    log.save()
     return render(request, 'relationships.html', {})
 
 
+@permission_classes([IsAuthenticated,])
+@login_required(login_url='https://lovehate.io/')
 def user_relationships(request, user_id):
     try:
         if request.user.is_authenticated:
@@ -697,8 +692,6 @@ def user_relationships(request, user_id):
  
     len_enemies = len(enemies)
     len_friends = len(friends)
-    log = Logger(log="LEN ONE {}  LEN TWO {}".format(len_enemies, len_friends))
-    log.save()
 
     if len_friends > len_enemies:
         add_enemies_res = len_friends-len_enemies
@@ -707,9 +700,6 @@ def user_relationships(request, user_id):
         add_frields_res = len_enemies-len_friends
         add_frields = [''] * add_frields_res
  
-    log = Logger(log="FRIENDS ONE {} ENEMIES TWO {}".format(add_frields, add_enemies))
-    log.save()
-
 
     return render(request, 'relationships.html', {"user_id": user_id, 
                                                   "friends": friends, 
@@ -1078,8 +1068,7 @@ def activate(request, activation_key):
 def recoverpassword(request):
     password = str(request.data.get('password', ''))
     user_id = request.data.get('user_id', '')
-    log = Logger(log="TRYING TO RECOVER {} {}".format(password, user_id))
-    log.save()
+
     try:
         user = User.objects.get(id=int(user_id))
         if user:
@@ -1089,8 +1078,6 @@ def recoverpassword(request):
 
 
     except Exception as e:
-        log = Logger(log="FAILED RECOVER {} {} {}".format(password, user_id, e))
-        log.save()
         return Response({"message": "User was not found",
                          "code":400,
                          "message_error": str(e),
@@ -1159,9 +1146,6 @@ def changepassword(request):
                      "log_out": True},
                      status=200)
 
-#@renderer_classes((JSONRenderer,))
-#@api_view(['POST'])
-#@permission_classes([AllowAny,])
 @csrf_exempt
 def authentic(request):
     logout(request)
@@ -1226,7 +1210,6 @@ def authentic(request):
 
 
 @api_view(['POST'])
-#@renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def auth(request):
     username = str(request.data.get('username', ''))
@@ -1234,9 +1217,6 @@ def auth(request):
 
     not_activated = False
     logout(request)
-
-    log = Logger(log="GET IN USERNAME {} PASSWORD {} ".format(username, password))
-    log.save()
 
     try:
         user = User.objects.get(username=username)

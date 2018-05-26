@@ -9,12 +9,15 @@ from django.template import RequestContext
 from django.contrib.auth import logout as log_out
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from custom.utils.models import Logger
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from rest_framework.decorators import api_view, renderer_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from custom.forum.models import Emotion
 from custom.forum.models import Topic
 from custom.blog.models import Post
@@ -403,6 +406,8 @@ def statistics(request):
                                               'user_id': user_id})
 
 @csrf_exempt
+@permission_classes([IsAuthenticated,])
+@login_required(login_url='https://lovehate.io/')
 def mylh(request):
     redirect = 'mylh_avatar.html'
     profile_image_path = None
@@ -439,6 +444,8 @@ def mylh(request):
                                      'user_id': ''})
 
 @csrf_exempt
+@permission_classes([IsAuthenticated,])
+@login_required(login_url='https://lovehate.io/')
 def mylh_avatar(request):
     redirect = 'mylh_avatar.html'
     profile_image_path = None
@@ -476,6 +483,8 @@ def mylh_avatar(request):
 
 
 @csrf_exempt
+@permission_classes([IsAuthenticated,])
+@login_required(login_url='https://lovehate.io/')
 def mylh_settings(request, user_id):
     redirect = 'mylh_settings.html'
 

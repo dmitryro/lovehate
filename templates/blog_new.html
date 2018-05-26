@@ -7,71 +7,36 @@
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form  name="newblogform" id="newblogform">
+<form action="/addnewpost/" method="post" name="newblogform" id="newblogform" enctype="multipart/form-data">
+{% csrf_token %}
+
 <div class="row">
 
     <div class="col-sm-2">
     </div>
     <div class="col-sm-8">
      <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-         <div class="row">
-             <div class="col-sm-4">&nbsp;
-             </div>
-             <div class="col-sm-8">&nbsp;
-             </div>
-         </div>
-
-         <div class="row">
-             <div class="col-sm-4">
-             </div>
-             <div class="col-sm-8">
-                    <div class=container-fluid" style="margin-left:0.4em;">
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_subject"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="blognew_attitude"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-post-error" class="error" for="blognew_post"></label>
-                               </div>
-                    </div>
-
-             </div>
-         </div>
-
-
-
                  <div class="row form-row">
-
-
+                       <div class="col-sm-12">&nbsp;</div>
+                 </div>   
+                 <div class="row form-row">
                  <div class="col-sm-4">
-                       <div style="float:left;font-weight:bold;font-size:1.1em;">
-
-Название темы
+                       <div style="float:left;font-weight:bold;font-size:1.1em;">Название темы
                        </div>
-                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
-                           *
+                       <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">*
                        </div>
-
                        <div class="clear"></div>
-
                  </div>
                  <div class="col-sm-8">
-
                                              <div class="form-group">
                                                        <input type="text" id="blognew_subject" name="blognew_subject" maxlength="100" size="56"  />
+                                                       <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_subject"></label>
                                              </div>
-
                  </div>
 
                  </div>
 
                  <div class="row form-row">
-
-
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
                            Ссылка 1
@@ -164,7 +129,7 @@
 
 
 
-         <div class="row form-row">
+         <div class="row form-row" style="margin-bottom:0.4em;">
              <div class="col-sm-4">
 
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
@@ -226,10 +191,12 @@
                        </div>
                        <div class="col-sm-8">
                                     <div class="form-group">
+                                            
                                             <textarea name="blognew_post" id="blognew_post" cols="10" rows="8" style="width:100%;"
                                              placeholder="Ваше сообщение для публикации в дневнике ...
 " value="">
                                             </textarea>
+                                            <label id="inlineFormInputGroup-post-error" class="error" for="blognew_post"></label>
                                     </div>
                        </div>
           </div>
@@ -252,7 +219,7 @@
 </div>
 <input type="hidden" id="blog_user_id" value="{{ user.id }}" />
 </form>
-<div class="row form-row">
+<div class="row form-row" style="line-height:1.2em;">
                        <div class="col-sm-2">
                        </div>
                        <div class="col-sm-10">        

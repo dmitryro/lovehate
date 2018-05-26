@@ -124,6 +124,7 @@ def auto_escape(value, autoescape=True):
 @register.simple_tag
 def mark_meta(line):
     result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", line)
+    result_line = re.sub(r"\~(.+?)\~", r"<span class='erroneous'>\1</span>", result_line)
     return mark_safe(result_line)
 
 

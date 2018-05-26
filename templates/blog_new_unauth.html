@@ -7,8 +7,10 @@
 <br />
 </div>
 <div class="container-fluid registration-form">
-<form  name="newblogunauthform" id="newblogunauthform">
+<form action="/addnewpostunauth/" method="post" name="newblogunauthform" id="newblogunauthform" enctype="multipart/form-data">
+{% csrf_token %}
 <div class="row">
+   
 
     <div class="col-sm-2">
     </div>
@@ -32,27 +34,6 @@
                                     Не удалось авторизовать пользователя! Проверьте ник и пароль ещё раз!
                                                                </div>
 
-                               </div>
-
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_username"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-password-error" class="error" for="blognew_password"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_subject"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-attitude-error" class="error" for="blognew_attitude"></label>
-                               </div>
-
-                               <div class="row">
-                                    <label id="inlineFormInputGroup-post-error" class="error" for="blognew_post"></label>
                                </div>
                     </div>
 
@@ -78,6 +59,7 @@
 
                                              <div class="form-group">
                                                        <input type="text" id="blognew_username" name="blognew_username" maxlength="100" size="56"  />
+                                                       <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_username"></label>
                                              </div>
 
                  </div>
@@ -102,6 +84,7 @@
 
                                              <div class="form-group">
                                                        <input type="password" id="blognew_password" name="blognew_password" maxlength="100" size="56"  />
+                                                       <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_username"></label>
                                              </div>
 
                  </div>
@@ -128,6 +111,7 @@
 
                                              <div class="form-group">
                                                        <input type="text" id="blognew_subject" name="blognew_subject" maxlength="100" size="56"  />
+                                                        <label id="inlineFormInputGroup-subject-error" class="error" for="blognew_subject"></label>
                                              </div>
 
                  </div>
@@ -139,7 +123,7 @@
 
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-                        Ссылка
+                        Ссылка 1
                        </div>
                        <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
                        </div>
@@ -163,7 +147,7 @@
 
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-                       Ссылка 2
+                          Ссылка 2
                        </div>
                        <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
                        </div>
@@ -181,12 +165,14 @@
 
                  </div>
 
+
+
                  <div class="row form-row">
 
 
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-                         Ссылка 3
+                        Ссылка 3
                        </div>
                        <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
                        </div>
@@ -204,12 +190,13 @@
 
                  </div>
 
+
                  <div class="row form-row">
 
 
                  <div class="col-sm-4">
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
-                        Ссылка 4
+                      Ссылка 4
                        </div>
                        <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
                        </div>
@@ -228,7 +215,8 @@
                  </div>
 
 
-         <div class="row form-row">
+
+         <div class="row form-row" style="margin-bottom:0.4em;">
              <div class="col-sm-4">
 
                        <div style="float:left;font-weight:bold;font-size:1.1em;">
@@ -248,7 +236,7 @@
 
                                <div class="row">
                                        <div class="col-sm-4">
-                                                      <input type="radio" name="blognew_attitude" value="love" />
+                                                      <input type="radio" name="blognew_attitude" value="1" />
                                                        
                                                        <span class="loves-profile">
                                                               Любовь
@@ -258,7 +246,7 @@
                                                             
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="blognew_attitude" value="indifferent" checked />
+                                                       <input type="radio" name="blognew_attitude" value="2" checked />
                                                           
                                                        <span class="mehs-profile">
 Безразличие
@@ -269,7 +257,7 @@
 
 
                                        <div class="col-sm-4">
-                                                       <input type="radio" name="blognew_attitude" value="hate" /> 
+                                                       <input type="radio" name="blognew_attitude" value="3" /> 
                                                        <span class="hates-profile">
 Ненависть                  
                                                        </span>
@@ -294,6 +282,7 @@
                                              placeholder="Ваше сообщение для публикации в дневнике ...
 " value="">
                                             </textarea>
+                                            <label id="inlineFormInputGroup-post-error" class="error" for="blognew_post"></label>
                                     </div>
                        </div>
           </div>
@@ -316,7 +305,7 @@
 </div>
 <input type="hidden" id="blog_user_id" value="{{ user.id }}" />
 </form>
-<div class="row form-row">
+<div class="row form-row" style="line-height:1.2em;">
                        <div class="col-sm-2">
                        </div>
                        <div class="col-sm-10">        

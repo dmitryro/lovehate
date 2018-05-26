@@ -6,7 +6,9 @@ from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
 from custom.utils.models import Logger
 from django.contrib.auth.models import User
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
+from django.http import HttpResponseBadRequest
+from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import logout
@@ -618,6 +620,169 @@ def updatepost(request):
                      "status": "posted",
                      "code": 200,
                      "falure_code": 0}, status=200)
+
+
+@csrf_exempt
+def add_new_post(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    try:
+        post = request.POST.get('post', '')
+        subject = request.POST.get('subject', '')
+        att = int(request.POST.get('attitude', None))
+        url = request.POST.get('link', '')
+        url_two = request.POST.get('link_two', '')
+        url_three = request.POST.get('link_three', '')
+        url_four = request.POST.get('link_four', '')
+        username = request.POST.get('username', None)
+        password = request.POST.get('password', None)
+        attitude = Attitude.objects.get(id=int(att))
+        attitude = Attitude.objects.get(id=int(att))
+        shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+
+        user = authenticate(username=username, password=password)
+        login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in
+
+        try:
+            link = shortener.short(url)
+        except Exception as e:
+            link = None
+
+        try:
+            link_two = shortener.short(url_two)
+        except Exception as e:
+            link_two = None
+
+        try:
+            link_three = shortener.short(url_three)
+        except Exception as e:
+            link_three = None
+
+        try:
+            link_four = shortener.short(url_four)
+        except Exception as e:
+            link_four = None
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+        user = User.objects.get(id=user_id)
+        Post.objects.create(author=user, subject=subject, link=link,
+                            link_two=link_two, link_three=link_three,
+                            link_four=link_four,
+                            attitude=attitude, body=post,
+                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_edited=timezone.now().replace(tzinfo=tz),
+                            translit_subject=trans_subject,
+                            ip_address=ip_address)
+    except Exception as e:
+        log = Logger(log="Error in blogs - thi just did not work out - failed to create a new post {}".format(e))
+        log.save()
+
+    return HttpResponseRedirect('/blog/')
+
+
+@csrf_exempt
+def add_new_post_unauth(request):
+    ip, is_routable = get_client_ip(request)
+    ip_address = str(ip)
+
+    log = Logger(log="LET US TRY SHIT")
+    log.save()
+    try:
+        post = request.POST.get('blognew_post', '')
+        
+        log = Logger(log="LET US TRY POST {}".format(post))
+        log.save()
+ 
+
+        subject = request.POST.get('blognew_subject', '')
+
+
+        att = int(request.POST.get('blognew_attitude', 2))
+
+
+
+        url = request.POST.get('blognew_link', '')
+        url_two = request.POST.get('blognew_link_2', '')
+        url_three = request.POST.get('blognew_link_3', '')
+        url_four = request.POST.get('blognew_link_4', '')
+        username = request.POST.get('blognew_username', None)
+        password = request.POST.get('blognew_password', None)
+
+        try:
+            attitude = Attitude.objects.get(id=int(att))
+        except Exception as e:
+            attitude = Attitude.objects.get(id=2)
+
+
+        shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+
+        user = authenticate(username=username, password=password)
+        login(request, user,  backend='custom.users.backends.LocalBackend')
+
+        try:
+            link = shortener.short(url)
+        except Exception as e:
+            link = None
+
+        try:
+            link_two = shortener.short(url_two)
+        except Exception as e:
+            link_two = None
+
+        try:
+            link_three = shortener.short(url_three)
+        except Exception as e:
+            link_three = None
+
+        try:
+            link_four = shortener.short(url_four)
+        except Exception as e:
+            link_four = None
+
+        try:
+            language = detect_language(str(subject))
+        except Exception as e:
+            language = 'en'
+
+        if language=='ru':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='he':
+            trans_subject = translit(str(subject), reversed=True)
+        elif language=='jp':
+            trans_subject = translit(str(subject), reversed=True)
+        else:
+            trans_subject = str(subject).lower()
+
+
+        Post.objects.create(author=user, subject=subject, link=link,
+                            link_two=link_two, link_three=link_three,
+                            link_four=link_four,
+                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_edited=timezone.now().replace(tzinfo=tz),
+                            attitude=attitude, 
+                            body=post,
+                            translit_subject=trans_subject,
+                            ip_address=ip_address)
+
+    except Exception as e:
+        log = Logger(log="Error adding new unauth post - failed to create a new post {}".format(e))
+        log.save()
+
+    return HttpResponseRedirect('/blog/')
 
 
 @api_view(['POST', 'GET'])

@@ -82,6 +82,8 @@ from custom.forum.views import read_private
 from custom.forum.views import read_all_private
 from custom.blog.views import addnewblog
 from custom.blog.views import addnewblogunauth
+from custom.blog.views import add_new_post_unauth
+from custom.blog.views import add_new_post
 from custom.blog.views import updatepost
 from custom.blog.views import newblog
 from custom.blog.views import editblog
@@ -182,6 +184,8 @@ urlpatterns = [
     path('updatepost/', updatepost),
     path('addnewcomment/', addnewcomment),
     path('addnewcommentunauth/', addnewcommentunauth),
+    path('addnewpostunauth/', add_new_post_unauth),
+    path('addnewpost/', add_new_post),
     path('changepassword/', changepassword),
     path('blogpost/<int:post_id>/', blogpost),
     path('blog/user/<int:user_id>/', userblog),
