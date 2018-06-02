@@ -162,18 +162,18 @@ def resend_password_link(request):
                      status=200)
 
 @csrf_exempt
+@permission_classes([IsAuthenticated,])
+@login_required(login_url='https://lovehate.io/')
 def editprofile(request):
     redirect = 'mylh_avatar.html'
     username = request.POST.get('profile_username', '')
-    user_id =  request.POST.get('user_id', '')
+    user_id =  request.POST.get('profile_user_id', '')
     session_username = request.POST.get('session_username', '')
     first_name = request.POST.get('first_name', '')
     last_name = request.POST.get('last_name', '')
     email = request.POST.get('profile_email', '')
     bio = request.POST.get('bio', '')
     profile_image_path = None
-    log = Logger(log="EMAIL WAS {}".format(email))
-    log.save()
 
     if request.method=='POST':
         profile_image_path = None
@@ -185,69 +185,32 @@ def editprofile(request):
             filename = fs.save(avatar.name, avatar)
             uploaded_file_url = fs.url(filename)
             profile_image_path = uploaded_file_url
-            log = Logger(log="FILE URL {}".format(uploaded_file_url))
-            log.save()
         else:
             profile = request.user.profile  
             profile_image_path = profile.profile_image_path
 
     try:
-        if request.user.is_authenticated:
-            logout=True
-            user_id = request.user.id
-            username = request.user.username
-            has_private = request.user.profile.has_private
-            is_authenticated = True
-        else:
-            logout=False
-            user_id = -1
-            username = ''
-            is_authenticated = False
-            has_private = False
-    except Exception as e:
-            has_private = False
-            username = ''
-            logout=False
-            user_id = -1
-            is_authenticated = False
+        username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
+        user = request.user
+        user.username = username
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
 
-    try:
-        if is_authenticated:
-            username_transliterated=cyrtranslit.to_latin(username, 'ru').lower()
-            user = request.user
-            user.username = username
-            user.first_name = first_name
-            user.last_name = last_name
-            user.email = email
-
-            user.profile.username = username
-            user.profile.first_name = first_name
-            user.profile.bio = bio
-            user.profile.email = email
-            user.profile.username_transliterated = username_transliterated
-            user.profile.profile_image_path = profile_image_path
-            user.save()
-            user.profile.save()
-        else:
-            user = None
+        user.profile.username = username
+        user.profile.first_name = first_name
+        user.profile.bio = bio
+        user.profile.email = email
+        user.profile.username_transliterated = username_transliterated
+        user.profile.profile_image_path = profile_image_path
+        user.save()
+        user.profile.save()
     except Exception as e:
         user = None
         log = Logger(log="Failed to save user {}".format(e))
         log.save()
 
     return HttpResponseRedirect('/mylh/')
-
-  #  return render(request, redirect,{'home':'mylh_avatar.html',
-   #                                  'user': user,
-   #                                  'username': username,
-   #                                  'is_authenticated': is_authenticated,
-   #                                  'current_page': 'mylh',
-   #                                  'profile_image_path': profile_image_path,
-   #                                  'has_private': has_private,
-   #                                  'username': request.user.username,
-   #                                  'logout': False,
-   #                                  'user_id': ''})
-
 
 
 @api_view(['POST', 'GET'])

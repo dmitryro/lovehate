@@ -185,6 +185,7 @@ def editcomment(request, comment_id):
 
 @csrf_exempt
 def blogcomments(request, post_id):
+    page = request.GET.get('page')
     comments = []
 
     try:
@@ -203,8 +204,19 @@ def blogcomments(request, post_id):
             comments = Comment.objects.filter(post=post)
         else:
             comments = []
+
+        paginator = Paginator(comments, 100)
+
+        try:
+            comments_slice = paginator.page(page)
+        except PageNotAnInteger:
+            comments_slice = paginator.page(1)
+        except EmptyPage:
+            comments_slice = paginator.page(paginator.num_pages)
     except Exception:
         comments = []
+        comments_slice = []
+
 
     try:
         if request.user.is_authenticated:
@@ -224,7 +236,7 @@ def blogcomments(request, post_id):
             is_authenticated = False
     return render(request, 'comments.html',{'home':'comments.html',
                                              'post': post,
-                                             'comments': comments,
+                                             'comments': comments_slice,
                                              'user': request.user,
                                              'has_private': has_private,
                                              'username': username,
@@ -401,17 +413,8 @@ def addnewcommentunauth(request):
                              "not_activated": False,
                              "reason": "Invalid user"},
                              status=400)
-        #request.session.set_expiry(1086400) #sets the exp. value of the session
+
         login(request, user,  backend='custom.users.backends.LocalBackend') #the user is now logged in
-
-
-
-        log = Logger(log="USER IS {} {}".format(username, password))
-        log.save()
-
-        log = Logger(log="USER IS {} {} {}".format(username, password, user))
-        log.save()
-
 
         if not user:
             return Response({"message": "failed to authenticated",
@@ -421,12 +424,13 @@ def addnewcommentunauth(request):
 
 
         attitude = Attitude.objects.get(id=int(att))
-        log = Logger(log="BEFORE WE READ POST")
-        log.save()
      
-        Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
+        Comment.objects.create(author=user, title=title, 
+                               body=body, attitude=attitude, 
+                               post=post, ip_address=ip_address)
         post.time_last_commented = timezone.now().replace(tzinfo=tz)
         post.save()
+
     except Exception as e:
         log = Logger(log="Error in blogs- failed to create a new unauth post {}".format(e))
         log.save()
@@ -434,6 +438,7 @@ def addnewcommentunauth(request):
                          "status": "posted",
                          "code": 400,
                          "falure_code": 1}, status=400)
+
     return Response({"message": "success - username used",
                      "status": "posted",
                      "post_id": post_id,
@@ -455,10 +460,6 @@ def addnewcomment(request):
         cid = request.data.get('comment_id', None)
         user_id = int(request.data.get('user_id', None))
  
- 
-        log = Logger(log="BODY {} TITLE {} att {} post_id {} cid {} UID {}".format(body, title, att, post_id, cid, user_id))
-        log.save()
-
         ip, is_routable = get_client_ip(request)
         ip_address = str(ip)
         if cid:
@@ -492,9 +493,14 @@ def addnewcomment(request):
                     comment.ip_address = ip_address
                     comment.save()
             else:
-                Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
+                Comment.objects.create(author=user, title=title, 
+                                       body=body, attitude=attitude, 
+                                       post=post, ip_address=ip_address)
         except Exception as e:
-            Comment.objects.create(author=user, title=title, body=body, attitude=attitude, post=post, ip_address=ip_address)
+            Comment.objects.create(author=user, title=title, 
+                                   body=body, attitude=attitude, 
+                                   post=post, ip_address=ip_address)
+
     except Exception as e:
         log = Logger(log="Error in blogs - this just did not work out - failed to create a new comment {}".format(e))
         log.save()
@@ -530,9 +536,6 @@ def updatepost(request):
         post_id = int(request.data.get('post_id', None))
         attitude = Attitude.objects.get(id=int(att))
  
-        log = Logger(log="UPDADING POST ID !!! {} {} {}".format(post_id, user_id, attitude))
-        log.save()
-
         try:
             if len(body) < 1:
                 post = Post.objects.get(id=post_id)
@@ -814,7 +817,6 @@ def addnewblogunauth(request):
                              "falure_code": 2}, status=400)
 
 
-       # login(request, user, backend='custom.users.backends.LocalBackend') #the user is now logged in
         login(request, user)
 
 

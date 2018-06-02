@@ -96,17 +96,17 @@ def topics(request, topic_id):
         has_private = False
 
     try:
-        lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id).order_by('-time_last_edited')
+        lovers = Emotion.objects.filter(attitude_id=1, topic_id=topic_id).order_by('-time_published')
     except Exception as e:
        lovers = []
 
     try:
-        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id).order_by('-time_last_edited')
+        mehs = Emotion.objects.filter(attitude_id=2, topic_id=topic_id).order_by('-time_published')
     except Exception as e:
         mehs = []
  
     try:
-        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id).order_by('-time_last_edited')
+        haters = Emotion.objects.filter(attitude_id=3, topic_id=topic_id).order_by('-time_published')
     except Exception as e:
         haters = []
     
