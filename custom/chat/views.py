@@ -19,7 +19,18 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from custom.forum.models import Emotion
 from custom.forum.models import Topic
 from custom.blog.models import Post
-
+from custom.chat.signals import user_joined_chat
+from custom.chat.signals import user_left_chat
+from custom.chat.signals import chat_room_created
+from custom.chat.signals import chat_room_terminated
+from custom.chat.signals import user_joined_room
+from custom.chat.signals import user_left_room
+from custom.chat.callbacks import user_joined_chat_handler
+from custom.chat.callbacks import user_left_chat_handler
+from custom.chat.callbacks import user_joined_room_handler
+from custom.chat.callbacks import user_left_room_handler
+from custom.chat.callbacks import chat_room_created_handler
+from custom.chat.callbacks import chat_room_terminated_handler
 
 @csrf_exempt
 @login_required
@@ -52,4 +63,15 @@ def display_chat(request):
                                         'is_authenticated': is_authenticated,
                                         'logout': logout,
                                         'user_id': user_id})
+
+def join_room(request):
+    pass
+
+def leave_room(request):
+    pass
+
+def send_message(request):
+    pass
+
+
 
