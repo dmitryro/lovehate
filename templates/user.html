@@ -131,7 +131,8 @@
                 </a>
             </div>
             <div class="col-sm-8 links-profile">
-                           {% for post in posts %}
+                        
+                           {% for post in posts|slice:":20" %}
                                   <a href="/blog/{{ post.id }}">{{ post.subject }}</a>
                                   {% if not forloop.last %},{% endif %}&nbsp;
                            {% endfor %}
@@ -140,6 +141,9 @@
             </div>
          </div>
 
+        <div class="row">
+              &nbsp;
+        </div>
 
         {% if friends.count > 0 %}
 

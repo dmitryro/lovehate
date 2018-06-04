@@ -2,7 +2,7 @@
 {% load static %}
 {% load bootstrap_pagination %}
 {% block content %}
-
+{% load blog_extras %}
 
 <div class="container-fluid registration-form">
 <div class="row forum-row">
@@ -32,10 +32,24 @@
                                                                                       {% if line|slice:"0:1" == '>' %}
                                                                                               <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
-                                                                                              {{ line|slice:"1:" }}
+                                                                                              {% for l in line|slice:"1:"|split:" " %}
+                                                                                              {% if 'http' in l  %}
+                                                                                                     <a href="{% mark_meta l %}">{% mark_meta l %}</a>
+                                                                                              {% else %}
+                                                                                                     {% mark_meta l %}
+                                                                                              {% endif %}
+                                                                                              {% endfor %}
+
                                                                                       {% else %}
                                                                                               <span style="font-style:normal;">
-                                                                                               {{ line|slice:"0:" }}
+                                                                                               {% for l in line|slice:"0:"|split:" " %}
+                                                                                                   {% if 'http' in l  %}
+                                                                                                         <a href="{{ l }}">{% mark_meta l %}</a>
+                                                                                                   {% else %}
+                                                                                                         {% mark_meta l %}
+                                                                                                   {% endif %}
+                                                                                               {% endfor %}
+
                                                                                       {% endif %}
                                                                                               </span>
 
@@ -82,10 +96,25 @@
                                                                                       {% if line|slice:"0:1" == '>' %}
                                                                                               <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
-                                                                                              {{ line|slice:"1:" }}
+                                                                                              {% for l in line|slice:"1:"|split:" " %}
+                                                                                              {% if 'http' in l  %}
+                                                                                                     <a href="{% mark_meta l %}">{% mark_meta l %}</a>
+                                                                                              {% else %}
+                                                                                                     {% mark_meta l %}
+                                                                                              {% endif %}
+                                                                                              {% endfor %}
+
                                                                                       {% else %}
                                                                                               <span style="font-style:normal;">
-                                                                                               {{ line|slice:"0:" }}
+                                                                                               {% for l in line|slice:"0:"|split:" " %}
+                                                                                                   {% if 'http' in l  %}
+                                                                                                         <a href="{{ l }}">{% mark_meta l %}</a>
+                                                                                                   {% else %}
+                                                                                                         {% mark_meta l %}
+                                                                                                   {% endif %}
+                                                                                               {% endfor %}
+
+
                                                                                       {% endif %}
                                                                                               </span>
                                                                                               {% if not forloop.last %}
@@ -130,10 +159,24 @@
                                                                                       {% if line|slice:"0:1" == '>' %}
                                                                                               <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                               <span style="font-style:italic;">
-                                                                                              {{ line|slice:"1:" }}
+                                                                                              {% for l in line|slice:"1:"|split:" " %}
+                                                                                              {% if 'http' in l  %}
+                                                                                                     <a href="{% mark_meta l %}">{% mark_meta l %}</a>
+                                                                                              {% else %}
+                                                                                                     {% mark_meta l %}
+                                                                                              {% endif %}
+                                                                                              {% endfor %}
+
                                                                                       {% else %}
                                                                                               <span style="font-style:normal;">
-                                                                                               {{ line|slice:"0:" }}
+                                                                                               {% for l in line|slice:"0:"|split:" " %}
+                                                                                                   {% if 'http' in l  %}
+                                                                                                         <a href="{{ l }}">{% mark_meta l %}</a>
+                                                                                                   {% else %}
+                                                                                                         {% mark_meta l %}
+                                                                                                   {% endif %}
+                                                                                               {% endfor %}
+
                                                                                       {% endif %}
                                                                                               </span>
                                                                                               {% if not forloop.last %}

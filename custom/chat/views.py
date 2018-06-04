@@ -25,12 +25,12 @@ from custom.chat.signals import chat_room_created
 from custom.chat.signals import chat_room_terminated
 from custom.chat.signals import user_joined_room
 from custom.chat.signals import user_left_room
-from custom.chat.callbacks import user_joined_chat_handler
-from custom.chat.callbacks import user_left_chat_handler
-from custom.chat.callbacks import user_joined_room_handler
-from custom.chat.callbacks import user_left_room_handler
-from custom.chat.callbacks import chat_room_created_handler
-from custom.chat.callbacks import chat_room_terminated_handler
+#from custom.chat.callbacks import user_joined_chat_handler
+#from custom.chat.callbacks import user_left_chat_handler
+#from custom.chat.callbacks import user_joined_room_handler
+#from custom.chat.callbacks import user_left_room_handler
+#from custom.chat.callbacks import chat_room_created_handler
+#from custom.chat.callbacks import chat_room_terminated_handler
 
 @csrf_exempt
 @login_required

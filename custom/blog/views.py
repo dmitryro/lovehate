@@ -1030,7 +1030,7 @@ def userblog(request, user_id):
     try:
         posts = Post.objects.filter(author_id=int(user_id)).order_by('-time_last_commented')
 
-        paginator = Paginator(posts, 10)
+        paginator = Paginator(posts, 100)
 
         try:
             posts_slice = paginator.page(page)

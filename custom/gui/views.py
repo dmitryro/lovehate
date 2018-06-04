@@ -976,7 +976,7 @@ def blog(request):
     try:
         posts = Post.objects.all().order_by('-time_last_commented')
 
-        paginator = Paginator(posts, 10)
+        paginator = Paginator(posts, 100)
 
         try:
             posts_slice = paginator.page(page)

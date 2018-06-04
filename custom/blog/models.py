@@ -89,7 +89,11 @@ class Comment(models.Model):
         verbose_name_plural = 'Comments'
 
     def __str__(self):
-        return self.title
+        if self.title:
+              title = self.title
+        else:
+              title = 'unknown'
+        return title
 
     @property
     def author_nick(self):
