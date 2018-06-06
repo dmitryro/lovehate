@@ -1,6 +1,5 @@
 from pyshorteners import Shortener
 from django.shortcuts import render
-from django.contrib.auth import logout as log_out
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.views.decorators.csrf import csrf_exempt
@@ -11,7 +10,6 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login
 from django.core.exceptions import ObjectDoesNotExist
@@ -45,6 +43,12 @@ from custom.forum.models import Message
 from custom.blog.models import Comment
 from custom.blog.models import Post
 from custom.forum.models import Attitude
+from custom.blog.signals import post_comment_added
+from custom.blog.signals import post_comment_edited
+from custom.blog.signals import post_comment_deleted
+from custom.blog.callbacks import post_comment_added_handler
+from custom.blog.callbacks import post_comment_edited_handler
+from custom.blog.callbacks import post_comment_deleted_handler
 from pytz import timezone as pytz
 
 tz = pytz('Europe/Moscow')
@@ -135,6 +139,11 @@ def editcomment(request, comment_id):
   #      post.time_last_edited = str(now)
         post.save()
         comment.save()
+        if comment:
+                post_comment_edited.send(sender = comment,
+                                         instance = comment,
+                                         kwargs = None)
+
     except Exception as e:
         log = Logger(log="Something went wrong {}".format(e))
         log.save()
@@ -327,15 +336,16 @@ def editblog(request, post_id):
     else:
         has_private = False
 
-    return render(request, 'blog_edit.html',{'home':'blog_edit.html',
-                                            'user': request.user,
-                                            'username': username,
-                                            'has_private': has_private,
-                                            'post': post,
-                                            'current_page': 'edit_blog',
-                                            'is_authenticated': is_authenticated,
-                                            'logout': logout,
-                                            'user_id': user_id})
+    return render(request, 'blog_edit.html',
+                  {'home':'blog_edit.html',
+                   'user': request.user,
+                   'username': username,
+                   'has_private': has_private,
+                   'post': post,
+                   'current_page': 'edit_blog',
+                   'is_authenticated': is_authenticated,
+                   'logout': logout,
+                   'user_id': user_id})
 
 
 @csrf_exempt
@@ -404,7 +414,7 @@ def addnewcommentunauth(request):
                              "not_activated": True,
                              "status": "notactivated",
                              "reason": "User is not activated"},
-                             status=200)
+                            status=200)
         if not user:
             return Response({"message": 'failure',
                              "code":400,
@@ -412,7 +422,7 @@ def addnewcommentunauth(request):
                              "status": "unauthenticated",
                              "not_activated": False,
                              "reason": "Invalid user"},
-                             status=400)
+                            status=400)
 
         login(request, user,  backend='custom.users.backends.LocalBackend') #the user is now logged in
 
@@ -425,9 +435,14 @@ def addnewcommentunauth(request):
 
         attitude = Attitude.objects.get(id=int(att))
      
-        Comment.objects.create(author=user, title=title, 
-                               body=body, attitude=attitude, 
-                               post=post, ip_address=ip_address)
+        comment = Comment.objects.create(author=user, title=title, 
+                                         body=body, attitude=attitude, 
+                                         post=post, ip_address=ip_address)
+        if comment:
+            post_comment_added.send(sender=comment,
+                                    instance=comment,
+                                    kwargs=None)
+
         post.time_last_commented = timezone.now().replace(tzinfo=tz)
         post.save()
 
@@ -493,13 +508,23 @@ def addnewcomment(request):
                     comment.ip_address = ip_address
                     comment.save()
             else:
-                Comment.objects.create(author=user, title=title, 
-                                       body=body, attitude=attitude, 
-                                       post=post, ip_address=ip_address)
+                comment = Comment.objects.create(author=user, title=title, 
+                                                 body=body, attitude=attitude, 
+                                                 post=post, ip_address=ip_address)
+                if comment:
+                    post_comment_added.send(sender=comment,
+                                            instance=comment,
+                                            kwargs=None)
+
         except Exception as e:
-            Comment.objects.create(author=user, title=title, 
-                                   body=body, attitude=attitude, 
-                                   post=post, ip_address=ip_address)
+            comment = Comment.objects.create(author=user, title=title, 
+                                             body=body, attitude=attitude, 
+                                             post=post, ip_address=ip_address)
+            if comment:
+                post_comment_added.send(sender=comment,
+                                        instance=comment,
+                                        kwargs=None)
+
 
     except Exception as e:
         log = Logger(log="Error in blogs - this just did not work out - failed to create a new comment {}".format(e))
@@ -774,7 +799,7 @@ def add_new_post_unauth(request):
         Post.objects.create(author=user, subject=subject, link=link,
                             link_two=link_two, link_three=link_three,
                             link_four=link_four,
-                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_commented=timezone.now().replace(tzinfo=tz),
                             time_last_edited=timezone.now().replace(tzinfo=tz),
                             attitude=attitude, 
                             body=post,
@@ -857,7 +882,7 @@ def addnewblogunauth(request):
         Post.objects.create(author=user, subject=subject, link=link,
                             link_two=link_two, link_three=link_three, 
                             link_four=link_four,
-                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_commented=timezone.now().replace(tzinfo=tz),
                             time_last_edited=timezone.now().replace(tzinfo=tz),
                             attitude=attitude, body=post,
                             translit_subject=trans_subject,
@@ -940,7 +965,7 @@ def addnewblog(request):
                             link_two=link_two, link_three=link_three,
                             link_four=link_four,
                             attitude=attitude, body=post,
-                            time_last_commented= timezone.now().replace(tzinfo=tz),
+                            time_last_commented=timezone.now().replace(tzinfo=tz),
                             time_last_edited=timezone.now().replace(tzinfo=tz),
                             translit_subject=trans_subject,
                             ip_address=ip_address)
@@ -1041,29 +1066,33 @@ def userblog(request, user_id):
 
 
         if request.user.is_authenticated:
-            logout=True
+            logout = True
             username = request.user.username
             user_id = request.user.id
             is_authenticated = True
         else:
             username = ''
-            logout=False
+            logout = False
             user_id = -1
             is_authenticated = False
     except Exception as e:
             username = ''
-            logout=False
+            logout = False
             user_id = -1
             is_authenticated = False
             posts_slice = []
 
-    return render(request, 'user_blog.html',{'home':'user_blog.html',
-                                         'user': request.user,
-                                         'username': username,
-                                         'posts': posts_slice,
-                                         'has_private': has_private,
-                                         'current_page': 'user_blog',
-                                         'is_authenticated': is_authenticated,
-                                         'logout': logout,
-                                         'user_id': user_id})
+    return render(request, 'user_blog.html',
+                  {'home':'user_blog.html',
+                   'user': request.user,
+                   'username': username,
+                   'posts': posts_slice,
+                   'has_private': has_private,
+                   'current_page': 'user_blog',
+                   'is_authenticated': is_authenticated,
+                   'logout': logout,
+                   'user_id': user_id})
 
+post_comment_added.connect(post_comment_added_handler)
+post_comment_edited.connect(post_comment_edited_handler)
+post_comment_deleted.connect(post_comment_deleted_handler)
