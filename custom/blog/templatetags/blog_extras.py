@@ -3,18 +3,25 @@ import re
 import sys
 import html2text
 from lxml import html, etree
+from pyshorteners import Shortener
+
 from django.template import Library, Node, NodeList, TemplateSyntaxError
 from django.utils.encoding import smart_str
-from custom.meta.models import MetaProp, ContactMetaProp
 from django import template
 from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
+
 from custom.utils.models import Logger
 from custom.blog.models import Post
 from custom.blog.models import Comment
 from custom.forum.models import Message
+from custom.meta.models import MetaProp, ContactMetaProp
+from settings import settings
 
+import redis
+
+r = redis.StrictRedis(host='127.0.0.1', port=6379, db=1)
 
 register = template.Library()
 h = html2text.HTML2Text()
@@ -92,23 +99,9 @@ def link_meta(link,  *args, **kwargs):
     """
     Get the topic counts meta
     """
-    return h.handle("<a href=''>{}</a>".format(link))
-    try:
-        chunks = link.split(' ')
-        result = []
-        for l in chunks:
-            if l[0:4]=='http' or l[0:3]=='www':
-                link_to_append = h.handle(l)
-            else:
-                link_to_append = l
-            result.append(link_to_append)
-        res = " ".join(result)
-        return res
-
-    except Exception as e:
-        logging.error("Unable to produce link ...{}".format(e))
-        return link
-
+    shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+    short_link = shortener.short(link)
+    return h.handle("<a href=''>{}</a>".format(short_link))
 
 @register.filter(needs_autoescape=True)
 def auto_escape(value, autoescape=True):
@@ -120,9 +113,19 @@ def auto_escape(value, autoescape=True):
     return result
 
 
-
 @register.simple_tag
 def mark_meta(line):
+    if line[0:4]=='http' or line[0:3]=='www':
+         l = r.get(line)
+
+         if not l:
+            shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+            ln = shortener.short(line)
+            r.set(line, ln) 
+            line = ln.decode('utf-8')
+         else:
+            line = l.decode('utf-8')
+
     result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", line)
     result_line = re.sub(r"\~(.+?)\~", r"<span class='erroneous'>\1</span>", result_line)
     return mark_safe(result_line)
