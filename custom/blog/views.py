@@ -108,16 +108,17 @@ def newcomment(request, post_id):
                                                    'logout': logout,
                                                    'user_id': user_id})
     else:
-        return render(request, 'comment_new_unauth.html',{'home':'comment_new_unauth.html',
-                                                   'post': post,
-                                                   'comments': comments,
-                                                   'has_private': has_private,
-                                                   'user': request.user,
-                                                   'username': username,
-                                                   'current_page': 'new_comment',
-                                                   'is_authenticated': is_authenticated,
-                                                   'logout': logout,
-                                                   'user_id': user_id})
+        return render(request, 'comment_new_unauth.html',
+                      {'home':'comment_new_unauth.html',
+                       'post': post,
+                       'comments': comments,
+                       'has_private': has_private,
+                       'user': request.user,
+                       'username': username,
+                       'current_page': 'new_comment',
+                       'is_authenticated': is_authenticated,
+                       'logout': logout,
+                       'user_id': user_id})
 
 
 @csrf_exempt
@@ -243,16 +244,18 @@ def blogcomments(request, post_id):
             logout=False
             user_id = -1
             is_authenticated = False
-    return render(request, 'comments.html',{'home':'comments.html',
-                                             'post': post,
-                                             'comments': comments_slice,
-                                             'user': request.user,
-                                             'has_private': has_private,
-                                             'username': username,
-                                             'current_page': 'blog_comments',
-                                             'is_authenticated': is_authenticated,
-                                             'logout': logout,
-                                             'user_id': user_id})
+
+    return render(request, 'comments.html',
+                  {'home':'comments.html',
+                   'post': post,
+                   'comments': comments_slice,
+                   'user': request.user,
+                   'has_private': has_private,
+                   'username': username,
+                   'current_page': 'blog_comments',
+                   'is_authenticated': is_authenticated,
+                   'logout': logout,
+                   'user_id': user_id})
 
 
 @csrf_exempt
@@ -298,16 +301,17 @@ def blogpost(request, post_id):
             user_id = -1
             is_authenticated = False
 
-    return render(request, 'blog_post.html',{'home':'blog_post.html',
-                                             'post': post,
-                                             'comments': comments,
-                                             'user': request.user,
-                                             'has_private': has_private,
-                                             'username': username,
-                                             'current_page': 'blog_post',
-                                             'is_authenticated': is_authenticated,
-                                             'logout': logout,
-                                             'user_id': user_id})
+    return render(request, 'blog_post.html',
+                  {'home':'blog_post.html',
+                   'post': post,
+                   'comments': comments,
+                   'user': request.user,
+                   'has_private': has_private,
+                   'username': username,
+                   'current_page': 'blog_post',
+                   'is_authenticated': is_authenticated,
+                   'logout': logout,
+                   'user_id': user_id})
 
 
 @csrf_exempt
@@ -374,13 +378,13 @@ def newblog(request):
         has_private = False
         redirect = 'blog_new_unauth.html'
     return render(request, redirect,{'home':redirect,
-                                            'user': request.user,
-                                            'username': username,
-                                            'current_page': 'new_blog',
-                                            'has_private': has_private,
-                                            'is_authenticated': is_authenticated,
-                                            'logout': logout,
-                                            'user_id': user_id})
+                                     'user': request.user,
+                                     'username': username,
+                                     'current_page': 'new_blog',
+                                     'has_private': has_private,
+                                     'is_authenticated': is_authenticated,
+                                     'logout': logout,
+                                     'user_id': user_id})
 
 
 @api_view(['POST', 'GET'])
@@ -424,7 +428,8 @@ def addnewcommentunauth(request):
                              "reason": "Invalid user"},
                             status=400)
 
-        login(request, user,  backend='custom.users.backends.LocalBackend') #the user is now logged in
+        login(request, user,  backend='custom.users.backends.LocalBackend') 
+        #the user is now logged in
 
         if not user:
             return Response({"message": "failed to authenticated",
@@ -485,7 +490,7 @@ def addnewcomment(request):
         attitude = Attitude.objects.get(id=int(att))
         post = Post.objects.get(id=int(post_id))
         try:
-            post.time_last_commented = timezone.now().replace(tzinfo=tz) #datetime.now().strftime("YYYY-MM-DD HH:MM:ss")
+            post.time_last_commented = timezone.now().replace(tzinfo=tz) 
             post.save()
         except Exception as e:
             log = Logger(log="Error updating post {} {}".format(e, post_id))
@@ -727,15 +732,9 @@ def add_new_post_unauth(request):
     ip, is_routable = get_client_ip(request)
     ip_address = str(ip)
 
-    log = Logger(log="LET US TRY SHIT")
-    log.save()
     try:
         post = request.POST.get('blognew_post', '')
         
-        log = Logger(log="LET US TRY POST {}".format(post))
-        log.save()
- 
-
         subject = request.POST.get('blognew_subject', '')
 
 
