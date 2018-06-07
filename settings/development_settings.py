@@ -70,18 +70,20 @@ INSTALLED_APPS = [
     'rest_auth',
     'rest_auth.registration',
     'social_core',
-    #'allauth',
-    #'allauth.account',
-    #'allauth.socialaccount',
     'imagekit',
+    'taggit',
     'corsheaders',
+    'enumfields',
+    #"account",
     'online_users',
     'custom.blog',
+    'custom.blogs',
     'custom.forum',
     'custom.users',
     'custom.gui',
     'custom.utils',
     'custom.meta',
+    'custom.chat',
 ]
 
 GRAPPELLI_ADMIN_TITLE = str('Любовь и Ненависть')
@@ -93,13 +95,16 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.BrokenLinkEmailsMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'online_users.middleware.OnlineNowMiddleware',
+   # 'account.middleware.LocaleMiddleware',
+   # 'account.middleware.TimezoneMiddleware',
+   # 'account.middleware.ExpiredPasswordMiddleware',   
 #    'django.middleware.cache.FetchFromCacheMiddleware', # This must be last
 ]
 
@@ -117,6 +122,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+               # 'account.context_processors.account',
             ],
         },
     },
@@ -146,7 +152,6 @@ DATABASES = {
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend', # default
     'custom.users.backends.LocalBackend',
-#    "allauth.account.auth_backends.AuthenticationBackend",
 #    'guardian.backends.ObjectPermissionBackend',
 )
 
@@ -265,13 +270,13 @@ LANGUAGES = [
 
 LANGUAGE_CODE = 'ru'
 TIME_ZONE = 'EST'
-ADMINISTRATOR_PASSWORD = 'nu45edi1'
-ADMINISTRATOR_USERNAME = 'root'
+ADMINISTRATOR_PASSWORD = '[administrator_password]'
+ADMINISTRATOR_USERNAME = '[administrator_username]'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
-BITLY_API_TOKEN = 'cdb41a479f1be7644f161342b142390c360c4f5a'
-GOOGLE_API_KEY = 'AIzaSyAQG2BHktxEvFZcvy2W-3rztJfYynyqm40'
+BITLY_API_TOKEN ='[bitly_token]'
+GOOGLE_API_KEY = '[google_api]'
 REST_SESSION_LOGIN = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/email-messages'
@@ -279,8 +284,8 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'dmitryro'
-EMAIL_HOST_PASSWORD = 'nu45edi1'
+EMAIL_HOST_USER = '[email_username]'
+EMAIL_HOST_PASSWORD = '[email_password]'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 TIME_ZONE = 'Europe/Moscow'
@@ -297,6 +302,7 @@ CACHES = {
     }
 }
 
+TAGGIT_CASE_INSENSITIVE = True
 #SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
 #Cookie name. this can be whatever you want

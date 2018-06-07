@@ -115,14 +115,21 @@ def auto_escape(value, autoescape=True):
 
 @register.simple_tag
 def mark_meta(line):
+
     if line[0:4]=='http' or line[0:3]=='www':
+         ln = line.split("<")
+         line = ln[0]
+
          l = r.get(line)
 
          if not l:
-            shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
-            ln = shortener.short(line)
-            r.set(line, ln) 
-            line = ln.decode('utf-8')
+            try:
+                shortener = Shortener("Bitly", bitly_token=settings.BITLY_API_TOKEN)
+                ln = shortener.short(line)
+                r.set(line, ln)
+                line = ln.decode('utf-8')
+            except Exception as e:
+                pass
          else:
             line = l.decode('utf-8')
 
