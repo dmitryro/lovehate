@@ -531,9 +531,6 @@ def newmessage(request):
                                   receiver = receiver,
                                   message = message,
                                   kwargs = None)
-
-            log = Logger(log="MESSAGE SENT {}".format(message))
-            log.save()        
     except Exception as e:
         log = Logger(log="This just didn't work {}".format(e))
         log.save()         

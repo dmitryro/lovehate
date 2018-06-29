@@ -35,6 +35,24 @@
                               </span>, 
                               <strong> {{ post.subject }}</strong>, 
                              {{ post.date_time_published }}
+
+                                                           {% if user.id == post.author.id %}
+                                                                 <span style="font-size:0.70em;">
+                                                                       <a href="/blog/edit/{{ post.id }}">
+править>>
+                                                                       </a>
+                                                                 </span>
+                                                           {% elif user.id is post.author.id %}
+
+                                                                 <span style="font-size:0.70em;">
+                                                                       <a href="/blog/edit/{{ post.id }}">
+править>>
+                                                                       </a>
+                                                                 </span>
+
+                                                           {% endif %}
+
+
                             </div>
                           </div>
 

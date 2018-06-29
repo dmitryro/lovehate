@@ -68,7 +68,7 @@
                                                          {% endif %}
 
                                                          {% for line in post.body_lines %}
-                                                                {% if line|slice:"0:1" == '>' %}
+                                                                {% if line|slice:"0:1" == ">" or line|slice:"0:1" is ">" %}
                                                                                <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                                <span style="font-style:italic;">
                                                                                    {% for l in line|slice:"1:"|split:" " %}
@@ -184,7 +184,7 @@
  
                                               <div class="col-sm-10">
                                                   {% for line in comment.body_lines %}
-                                                          {% if line|slice:"0:1" == '>' %}
+                                                          {% if line|slice:"0:1" == ">" or  line|slice:"0:1" is ">" %}
                                                                   <span style="font-weight:bold; font-size:1.2em;"> | </span>
                                                                   <span style="font-style:italic;">
 

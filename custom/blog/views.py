@@ -215,7 +215,7 @@ def blogcomments(request, post_id):
         else:
             comments = []
 
-        paginator = Paginator(comments, 100)
+        paginator = Paginator(comments, 500)
 
         try:
             comments_slice = paginator.page(page)
