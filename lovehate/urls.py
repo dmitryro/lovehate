@@ -55,6 +55,7 @@ from custom.users.views import activate
 from custom.users.views import user_profile
 from custom.users.views import registernew
 from custom.users.views import resendactivationbyuser
+from custom.users.views import resend_activation_by_userid
 from custom.users.views import Logout
 from custom.users.views import Login
 from custom.users.views import changepassword
@@ -195,6 +196,7 @@ urlpatterns = [
     path('recoverpassword/', resend_password_link),
     path('updatepassword/', recoverpassword),
     path('resendactivationbyuser/', resendactivationbyuser),
+    path('resendactivationbyuser/<int:user_id>/', resend_activation_by_userid),
     path('processrivals/', processrivals),
     path('processfriends/', processfriends),
     path('addnewfriend/', addnewfriend),

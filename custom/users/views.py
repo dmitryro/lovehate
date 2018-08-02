@@ -93,6 +93,41 @@ class UserDetail(generics.RetrieveAPIView):
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
+def resend_activation_by_userid(request, user_id):
+    username = request.data.get('username', '')
+
+    try:
+        user = User.objects.get(id=int(user_id))
+    except ObjectDoesNotExist:
+        return Response({"message": "failure - user not found",
+                         "status": "failed",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1},
+                         status=400)
+    except TypeError:
+        return Response({"message": "failure - user id is not integer",
+                         "status": "failed",
+                         "code": 400,
+                         "falure_code": 1,
+                         "user_id": -1},
+                         status=400)
+
+    user_resend_activation.send(sender = user,
+                                instance = user,
+                                kwargs = None)
+
+    return Response({"message": "success",
+                     "status": "activation_resent",
+                     "code": 200,
+                     "user_id": 1,
+                     "username": username},
+                     status=200)
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
 def resendactivationbyuser(request):
     username = request.data.get('username', '')
 
