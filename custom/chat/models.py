@@ -33,16 +33,27 @@ class Importance(models.Model):
 
 
 class Room(models.Model):
+    creator = models.ForeignKey(User,
+                                blank=True,
+                                null=True,
+                                related_name='creator',
+                                on_delete=models.CASCADE)
     name = models.CharField(max_length=250, blank=True, null=True)
     is_active = models.NullBooleanField(default=False, blank=True, null=True)
     last_entered = models.DateTimeField(blank=True, null=True)
     last_left = models.DateTimeField(blank=True, null=True)
     is_empty = models.NullBooleanField(default=False, blank=True, null=True)
     is_idle = models.NullBooleanField(default=False, blank=True, null=True)
+    time_terminated = models.DateTimeField(blank=True, null=True)
+    time_created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Room'
         verbose_name_plural = 'Rooms'
+
+    def __str__(self):
+        return self.name
+
 
 
 class ChatSession(models.Model):
@@ -72,6 +83,11 @@ class Message(models.Model):
                              null=True,
                              related_name='room',
                              on_delete=models.CASCADE)
+
+    color = models.CharField(max_length=250,
+                             blank=True,
+                             default='#000000',
+                             null=True)
 
     receivers = models.ManyToManyField(User, blank=True, null=True)
 
@@ -107,5 +123,7 @@ class Message(models.Model):
         verbose_name = 'Message'
         verbose_name_plural = 'Messages'
 
+    def __str__(self):
+        return self.body
 
     

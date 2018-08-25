@@ -133,7 +133,11 @@ def mark_meta(line):
          else:
             line = l.decode('utf-8')
 
-    result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", line)
+    #result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", line)
+#    result_line = re.sub(r"(?<=\`|\`))(.*)(?=(\`|\`))", r"<span class='italize'>\1</span>", line)
+    result_line = re.sub(r"(?<=`)(.*)(?=`)", r"<span class='italize'>\1</span>", line)
+    result_line = re.sub(r"(?<=`)(.*)(?=`)", r"<span class='italize'>\1</span>", result_line)    
+    result_line = re.sub(r"\`(.+?)\`", r"<span class='italize'>\1</span>", result_line) 
     result_line = re.sub(r"\~(.+?)\~", r"<span class='erroneous'>\1</span>", result_line)
     return mark_safe(result_line)
 

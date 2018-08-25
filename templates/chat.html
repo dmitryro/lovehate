@@ -5,14 +5,14 @@
 <!--
 <span>one <span class='italize'>two</span> three <span class='italize'>four</span></span>
 -->
-{% mark_meta "one `two three four`" %}
 
 <div>
 <br />
-<br />
-<br />
 </div>
+<!-- chatapp -->
 <div class="container-fluid registration-form">
+
+
          <div class="row">
              <div class="col-sm-4">&nbsp;
              </div>
@@ -22,55 +22,160 @@
 
 
 
-
-    <div class="row">
-
+    <div class="row" id="chatapp">
         <div class="col-sm-2">
         </div>
-    
+       <form method="post">
+        <input type="hidden" name="is-user-channel" id="is-user-channel" value="" />
+        <input type="hidden" name="active-room-user-id" id="active-room-user-id" value="" />
+        <input type="hidden" name="active-room-name" id="active-room-name" value="Курилка" />
+        <input type="hidden" name="active-room" id="active-room" value="1" />
         <div class="col-sm-8">
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
-                <form id="editprofileform" name="editprofileform"  method="post">
+              
+                      <input type="hidden" id="chat_username" name="chat_username" v-model="chat_username" value="{{ user.username }}" />
+                      <input type="hidden" id="chat_user_id" name="chat_user_id" v-model="chat_user_id" value="{{ user.id }}" />
 
-
- 
                  <div class="row" style="min-height:30em;">
                      <div class="col-sm-4">
+                         {% if user.profile.in_chat %}
+                         <div style="border-bottom: 1px #979797 solid;" class="neutral-messages">
+                                 <span style="font-weight:0.8em;">
+                                 <a  v-on:click="exitchat" href="#">
+                                        Выйти    
+                                 </a>
+                                 </span>
+                         </div> 
+                          {% endif %}
                          <div style="float:left;font-weight:bold;font-size:1.1em;">
+                         
                          Сейчас в чате
                          </div>
-                         <div class="star" style="float:left;font-weight:bold;font-size:1.1em;margin-left:1.0em;">
+                         <div class="clear"></div>
+                        <input type="hidden" id="active-chat-user-id" id="active-chat-user-id" value="{{ user.id }}" />
+                         {% for usr in users %}
+                              {% if usr.profile.in_chat %}
+                                  <div id="chat-user-{{ usr.id }}" v-on:click="user({{ usr.id }})">{{ usr.username }}</div> 
+                                  <input type="hidden" id="chat-active-user-{{ usr.id }}" value="{{ usr.username }}" />
+                              {% endif %}
+                         {% endfor %}
+
+                       
+                         <div style="float:left;font-weight:bold;font-size:1.1em;margin-top:3.0em;">
+                         Комнаты
                          </div>
                          <div class="clear"></div>
+
+                         {% for room in rooms %}
+                             <div id="room-{{ room.id }}" v-on:click="room({{ room.id }})">{{ room.name }} </div>
+                             <input type="hidden" id="room-name-{{ room.id }}" value="{{ room.name }}" />
+                         {% endfor %}
+
+                         <div class="clear"></div>
+                         <div class="neutral-messages">
+                            <div class="row">
+
+                               <div class="col-sm-8">
+                                     <a href="#" id="messages-color">Цвет сообщений</a>
+                               </div>
+                               <div class="col-sm-1">
+                                   <div style="width:1.5em;height:1.5em;background:{{ user.profile.chat_color }}"  class="current-color">&nbsp;</div>  
+                               </div>
+                            </div>
+                           <chrome-picker v-model="colors" />
+
+
+                         </div>
                      </div>
                      <div class="col-sm-8">
                        <div class="form-group">
+                              
+                            <div> 
+<!--
+                            <div v-for="item in list">
+                                  [[ item ]]
+                            </div>
+                            <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="5">
+                            ...
+                            </div>
+-->
+                            <virtual-list :size="5" :remain="5" wtag="div" id="chat-window" class="chat-pane">
+                                <div v-for="item in list">[[ item ]]</div>
+                            </virtual-list>
+
+                            </div>
+<!--
                             <input type="text" id="profile_username" name="profile_username" maxlength="100" size="56" value="{{ user.username }}"  />
+-->
                        </div>
                      </div>
                  </div>
 
-         <div class="row">
+                <div class="row">
                        <div class="col-sm-4">
 
-                            <button class="btn3" id="editprofile-publish" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                   
+                              {% if not user.profile.in_chat %}
+          
+                                       <button class="btn3" v-on:click="enterchat" type="button"  style="background:#4a4a4a;min-width:6.00em;">
 Войти
-                            </button>
+                                       </button>
+                              {% elif user.profile.in_chat %}
+                                       <button class="btn3" v-on:click="talk" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                                       Отослать
+                                       </button>
+                              {% endif %}
 
                        </div>
-                       <div class="col-sm-7">
-                          <input type="text" id="chat_text" name="chat_text" maxlength="100" size="56" value=""  />
+                       
+                       <div class="col-sm-8">
+                          {% if user.profile.in_chat %}
+                              <div class="chat-text-window">
+                              <div class="container-fluid">
+                                  <div class="row">  
+                                      <div class="col-xs-2">
+                                          <div id="current-channel" class="chat-left"><strong>process=></strong></div>
+                                      </div>
+                                      <div class="col-xs-9">
+                                          <input type="text" v-model="chattext" v-on:keyup.enter="talk" id="chattext" name="chattext"  style="width:108%;padding-top:0.3em;margin-left:0.8em;margin-top:-2.2em;margin-bottom:-0.4em;display: inline;border: none;" />
+                                     </div>
+                                  </div>
+                              </div>
+                            <!-- 
+                              <input type="text" id="chat-text" name="chat-text" style="width:100%;" value=""  />
+                            -->
+                              </div>
+                          {% endif %}  
                        </div>
-
+<!--
                        <div class="col-sm-1">
+                              {% if user.profile.in_chat %}
+                                       <button class="btn3" v-on:click="talk" type="button"  style="background:#4a4a4a;min-width:6.00em;">
+                                       Пошёл   
+                                       </button>
+                              {% endif %}
                        </div>
-         </div>
-                     <input type="hidden" name="profile_bio" id="profile_bio" value="{{ user.profile.bio }}"/>
+-->
+                 </div>
+                       
 
-                </form>
+
            </div>
         </div>
+         </form>
     </div>
-</div>     
+         <div class="row">
+             <div class="col-sm-4">&nbsp;
+             </div>
+             <div class="col-sm-8">&nbsp;
+             </div>
+         </div>
 
+</div>     
+<script>
+
+// Global name as `VirtualScrollList`
+Vue.component('virtual-list', VirtualScrollList);
+//Vue.component('virtual-list', virtualScroll); 
+</script>
 {% endblock %}

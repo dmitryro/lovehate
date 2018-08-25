@@ -29,6 +29,7 @@ class Profile(models.Model):
     title = models.CharField(max_length=256, blank=True, null=True,default='')
     bio = models.TextField(blank=True, null=True,default='') 
     phone = models.CharField(max_length=256, blank=True, null=True,default='')
+    in_chat = models.NullBooleanField(default=False, blank=True, null=True)
     is_new = models.NullBooleanField(default=True, blank=True, null=True)
     activation_sent = models.NullBooleanField(default=False, blank=True, null=True)
     is_activated = models.NullBooleanField(default=False, blank=True, null=True)
@@ -53,6 +54,7 @@ class Profile(models.Model):
     has_new = models.BooleanField(default=False, blank=True)
     password_recovery_key = models.CharField(max_length=250, blank=True, null=True,default='')
     activation_key =  models.CharField(max_length=250, blank=True, null=True,default='')
+    chat_color = models.CharField(max_length=250, blank=True, null=True,default='#000000')
 
     class Meta:
         verbose_name = 'Profile'

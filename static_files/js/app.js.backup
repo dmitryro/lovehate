@@ -48,12 +48,6 @@
            $('#runner').css('display', 'none');
            $('#runner-index').html('One');       
            setInterval(line_one, 3000);
-
-/*
-           window.setInterval(function(){
-               chat.update();
-           }, 5000);
-*/
           // for(var i = 0; i< 10; i++) {
           //    chat.list.push(i);
           // }
@@ -1691,18 +1685,17 @@
                   }); // end ajax call
               }); // end on click for user login
 
-/*
               document.getElementById("user-login").addEventListener("keydown", function(e) {
                    if (!e) { var e = window.event; }
                           e.preventDefault(); // sometimes useful
                           if (e.keyCode == 13) { $('#user-login').click(); }
               }, false);
-*/      
+        
 
-  
-            $('#user-login').click(function(event) {
+              $('#user-login').click(function(event) {
+                  
                  if ($('#authenticateform').valid()) {
-               //   event.preventDefault();
+                  event.preventDefault();
                   var arr = {username: $("#login_username").val(), 
                              password: $("#login_password").val(),
                              from_session: true}; 

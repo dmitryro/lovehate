@@ -97,6 +97,21 @@ from custom.blog.views import blogcomments
 from custom.blog.views import editcomment
 from custom.blog.views import usercomments
 from custom.blog.feeds import RssSiteNewsFeed, AtomSiteNewsFeed
+from custom.chat.views import create_room
+from custom.chat.views import join_room
+from custom.chat.views import leave_room
+from custom.chat.views import post_to_users
+from custom.chat.views import post_to_room
+from custom.chat.views import send_message
+from custom.chat.views import enter_chat
+from custom.chat.views import exit_chat
+from custom.chat.views import RoomsList
+from custom.chat.views import RoomViewSet
+from custom.chat.views import MessageViewSet
+from custom.chat.views import RoomsList
+from custom.chat.views import MessagesList
+from custom.chat.views import save_chat_color
+from custom.chat.views import read_chat_color
 from custom.users.views import editprofile
 from custom.users.views import processrivals
 from custom.users.views import processfriends
@@ -111,9 +126,14 @@ from custom.chat.views import display_chat
 handler404 = 'custom.gui.views.handler404'
 handler500 = 'custom.gui.views.handler500'
 
+router = routers.DefaultRouter()
+router.register(r'chatrooms', RoomViewSet)
+router.register(r'message', MessageViewSet)
+
 urlpatterns = [
     path('grappelli/', include('grappelli.urls')), # grappelli URLS
     path('', home),
+    path('routes/^', include(router.urls)),
     path('add/', forum_new),
     path('topics/<int:topic_id>/attitude/<int:attitude_id>/', forum_add),
     path('topics/<int:topic_id>/emotion/<int:emotion_id>/edit/', forum_edit),
@@ -121,6 +141,16 @@ urlpatterns = [
     path('authenticate/', auth),
     path('authenticate-user/', authentic),
     path('users/', UserList.as_view()),
+    path('rooms/', RoomsList.as_view()), 
+    path('rooms/<int:pk>/', RoomsList.as_view()),
+    path('rooms/<int:creator_id>/', RoomsList.as_view()),
+    path('rooms/<is_active>/', RoomsList.as_view()),
+    path('chatmessages/', MessagesList.as_view()),
+    path('chatmessages/<int:sender_id>/', MessagesList.as_view()),   
+    path('chatmessages/<int:room_id>/', MessagesList.as_view()),
+    path('chatmessages/<receivers>/', MessagesList.as_view()),
+    path('chat/postrooms/', post_to_room),
+    path('chat/postusers/', post_to_users),
     path('users/<int:pk>/', UserDetail.as_view()),
     path('user/<int:user_id>/', user_profile),
     path('saveprofile/', saveprofile),
@@ -159,6 +189,14 @@ urlpatterns = [
     path('private/answerall/<int:message_id>/', answer_all_private),
     path('private/read/<int:message_id>/', read_private),
     path('private/readall/<int:message_id>/', read_all_private),
+    path('chat/create/', create_room),
+    path('chat/join/', join_room),
+    path('chat/leave/', leave_room),
+    path('chat/send/', send_message), 
+    path('chat/enter/', enter_chat),
+    path('chat/exit/', exit_chat),
+    path('chat/savecolor/', save_chat_color),
+    path('chat/readcolor/', read_chat_color),
     path('signin/', signin),
     path('topics/', forum),
     path('forum/', forum),

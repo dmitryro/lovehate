@@ -37,6 +37,7 @@
 <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
 <link rel="stylesheet" href="/static/css/jquery.fileupload.css">
 <link rel="stylesheet" href="/static/css/jquery.fileupload-ui.css">
+<link rel="stylesheet" href="/static/css/vue-virtual-infinite-scroll.css"/>
 <!-- CSS adjustments for browsers with JavaScript disabled -->
 <style>
 @import url("https://fonts.googleapis.com/css?family=Open+Sans");
@@ -259,9 +260,111 @@
 .modaldialogue .modal-header {
     padding:2px;
 }
+
+.chat-text-window {
+    width: 100%; 
+    padding: 6px 10px; 
+    margin: 8px 0; 
+    display: inline-block;
+    border: 1px solid #ccc;
+    background:#FFFFFF;
+    box-sizing: border-box; 
+    min-height:2.4em;
+}
+.chat-text-field {
+    width:108%;
+    padding-top:0.3em;
+    margin-left:0.8em;
+    margin-top:-2.2em; 
+    margin-bottom:-0.4em;
+    display: inline;
+    border: none;
+}
+.chat-left {
+    text-align:left;
+    margin-left:-1.4em;
+    min-width:10em;
+    color: #00008b;
+}
+
+    .example-list-item{
+      margin: 0;
+      padding: 0 10px;
+      font-size: 14px;
+      line-height: 40px;
+      color: #666;
+      background-color: #fafafa;
+      border-top: 1px solid #fff;
+      border-bottom: 1px solid #e3e3e3;
+    }
+    .example-list-item::before{
+      content: 'Line: ';
+    }
+
+    .chat-pane {
+        width: 100%; 
+        padding: 6px 10px; 
+        margin: 8px 0; 
+        display: inline-block;
+        border: 1px solid #ccc;
+        background:#FFFFFF;
+        box-sizing: border-box; 
+        height:100%; 
+        min-height:28em;
+    }
+</style>
+
+<!-- scroll -->
+<style>
+    .counter {
+        position: relative;
+        padding-bottom: 20px;
+    }
+    .count {
+        position: absolute;
+        right: 0;
+    }
+    .listWrap {
+        position: relative;
+    }
+    .list-loading {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .list {
+        background: #fff;
+        border-radius: 3px;
+        border: 1px solid #ddd;
+        -webkit-overflow-scrolling: touch;
+        overflow-scrolling: touch;
+    }
+    .source {
+        text-align: center;
+        padding-top: 20px;
+    }
+    .source a {
+        color: #999;
+        text-decoration: none;
+        font-weight: 100;
+    }
+    @media (max-width: 640px) {
+        .times, .count {
+            display: block;
+        }
+        .count {
+            position: relative;
+        }
+    }
+
 </style>
 <link rel="stylesheet" href="/static/css/main-styles.css"/>
-
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.0.1/vue-router.min.js"></script>
+<script src="https://tangbc.github.io/vue-virtual-scroll-list/index.js"></script>
+<script src="/static/js/vue-virtual-infinite-scroll.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-color/2.6.0/vue-color.min.js"></script>
 </head>
 <body>
     <div class="header-pan">
@@ -929,8 +1032,10 @@
        <div class="col-sm-4"></div>
 
        <div class="col-sm-4 footer">
-           <div>Любовь и Ненависть 2018</div>
-           <div>info[a]lovehate.io</div>
+           <div style="text-aligh:center;widht:100%;">Любовь и Ненависть 2018</div>
+           <div  style="text-aligh:center;widht:100%;">
+            Kляузы, предложения и пожелания - info[a]lovehate.io
+           </div>
        </div>
  
        <div class="col-sm-4"></div>
@@ -944,7 +1049,6 @@
 <script src="/static/js/vendor/jquery.ui.widget.js"></script>
 <script src="/static/js/jquery.iframe-transport.js"></script>
 <script src="/static/js/jquery.fileupload.js"></script>
-
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
 <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->
@@ -956,8 +1060,8 @@
 <script src="/static/js/jquery.fileupload-process.js"></script>
 <!-- The File Upload image preview & resize plugin -->
 <script src="/static/js/jquery.fileupload-image.js"></script>
+<script src="/static/js/vue_apps.js"></script>
 <script src="/static/js/app.js"></script>
-
 <!-- Google Analytics -->
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
