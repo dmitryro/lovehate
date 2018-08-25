@@ -89,6 +89,7 @@ class Message(models.Model):
                              default='#000000',
                              null=True)
 
+    seenby = models.ManyToManyField(User, related_name='seen_by', blank=True)
     receivers = models.ManyToManyField(User, blank=True, null=True)
 
     subject = models.CharField(max_length=250,

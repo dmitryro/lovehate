@@ -9,7 +9,7 @@ var material = VueColor.Material;
 var slider = VueColor.Slider;
 
 var colors = {
-  hex: read_color(),
+  hex: '#2F2F2F',
   hsl: { h: 150, s: 0.5, l: 0.2, a: 1 },
   hsv: { h: 150, s: 0.66, v: 0.30, a: 1 },
   rgba: { r: 25, g: 77, b: 51, a: 1 },
@@ -38,8 +38,8 @@ var chat = new Vue({
         list: [],
         busy: false,
         colors: colors,
-        color: read_color(),
     },
+
     scroll: function (event) {
         var elem = document.getElementById("chat-window");
 
@@ -47,6 +47,7 @@ var chat = new Vue({
             elem.scrollTop = elem.clientHeight*10000000;
         }
     },
+
     beforeRouteEnter(to,from,next){
         this.session = VueSession.getInstance();
         this.loggedOut = true;
@@ -59,13 +60,16 @@ var chat = new Vue({
         }
 
     },
+
     created: function () {
+      
         var room_name = $('#room-name-1').val();
-        $('#chattext').attr("value","");
+        $('#chattext').val("");
         $('#active-room').attr('value', 1);
         $('#active-room-name').attr('value', "Курилка");
         $('#current-channel').html("<strong>Курилка=></strong>");
         this.room(1);
+      //  this.refresh_color();
         var elem = document.getElementById("chat-window");
 
         if (elem) {
@@ -88,19 +92,24 @@ var chat = new Vue({
                    this.user(user_id);
                } else {
                    let room_id = $('#active-room').val();
-                   this.room(room_id);
+                   let room_name = $('#active-room-name').val();
+                   //this.room(room_id);
                }
                return false;
            },
            enterchat: function (event) {
+               this.refresh_color(); 
                this.data = [];
                this.chat_username = $('#session_user_name').val();
                this.chat_user_id =  $('#user_id').val();
+
                $('#chattext').attr("value","");
+
                var arr = {
                    "user_id": this.chat_user_id
                };
-               this.colors.hex = read_color(); 
+
+               this.colors.hex = this.read_color(); 
 
 
                $.ajax({
@@ -148,6 +157,7 @@ var chat = new Vue({
             },
 
             exitchat: function (event) {
+              // this.refresh_color(); 
                this.chat_username = $('#session_user_name').val();
                this.chat_user_id =  $('#user_id').val();
                var arr = {
@@ -179,6 +189,7 @@ var chat = new Vue({
             },
 
             user: function(user_id) {
+                // this.refresh_color();
                  this.is_user_channel = true;
                  $("#is-user-channel").attr("value",true);
 
@@ -211,9 +222,12 @@ var chat = new Vue({
                 });
 
                 var user = $("#chat-active-user-"+user_id).val();
+
                 $('#active-room-user-id').attr('value', user_id); 
                 $('#active-room-name').attr('value', user);
+
                 this.channel_user = user;
+
                 $('#current-channel').html("<strong>@"+user+"=></strong>");
 
                 var elem = document.getElementById("chat-window");
@@ -224,6 +238,7 @@ var chat = new Vue({
 
             },
             room: function (room_id) {
+                 //this.refresh_color();
                  this.data = [];
                  this.is_user_channel = false;
                  $("#is-user-channel").attr("value", false);
@@ -256,17 +271,27 @@ var chat = new Vue({
                 });
             },
             talk: function (event) {
-                let active_room_id = $('#active-room').val();
-                let is_default = false;
-                this.chat_user_id = $("#user_id").val();
+            //    this.refresh_color();
                 let message = $('#chattext').val();
-                $('#chattext').attr("value",""); 
+                $('#chattext').val("");
+                let current_color = $('#current-color').val();
+                this.chat_user_id = $("#user_id").val();
+                $.get("/profiles?id="+this.chat_user_id, function(data){
+                    if (data[0]['chat_color']) {
+                        $('#current-color').attr('value', data[0]['chat_color']);
+                        current_color = data[0]['chat_color']; 
+                    }
+                });
 
 
+                let active_room_id = $('#active-room').val();
+                let active_room_name = $('#active-room-name').val();
+                let is_default = false;
                 if (!message || message.length==0) { 
                      return;
                 }
 
+                
                 let user_messages = {};
                 let room_messages = {};
                 let users = message.match(/(?<=@)[\w\u0430-\u044f]+/ig);
@@ -335,7 +360,7 @@ var chat = new Vue({
                         "users": users_str,
                         "message": key,
                         "sender_id": $("#user_id").val(),
-                        "color": this.colors.hex, 
+                        "color": current_color, 
                     };
                     $.ajax({
                         type: "POST",
@@ -357,6 +382,7 @@ var chat = new Vue({
                 });
 
                 Object.keys(room_messages).forEach(function(key) {
+                    
                     let rooms_str = "";
                     let roomlist = room_messages[key];
                     for(var i=0; i<roomlist.length; i++) {
@@ -365,12 +391,13 @@ var chat = new Vue({
                             rooms_str = rooms_Str+",";
                         }
                     }
+
                     var arr = {
                         "rooms": rooms_str,
                         "message": key,
                         "active_room": $('#active-room').val(),
                         "sender_id": $("#user_id").val(),
-                        "color": this.colors.hex,
+                        "color": current_color,
                     };
 
                     $.ajax({
@@ -403,7 +430,7 @@ var chat = new Vue({
                                  elem.scrollTop = elem.clientHeight*10000000;
                             }
 
-                            $("#chattext").attr("value","");
+                            $("#chattext").val("");
                          
                         },
                         error: function(data){
@@ -419,7 +446,7 @@ var chat = new Vue({
                         "users": this.channel_user,
                         "message": message,
                         "sender_id": $("#user_id").val(),
-                        "color": this.colors.hex,
+                        "color": current_color,
                     };
 
                     $.ajax({
@@ -468,7 +495,7 @@ var chat = new Vue({
                         "message": message,
                         "active_room": $('#active-room').val(),
                         "sender_id": $("#user_id").val(),
-                        "color": this.colors.hex,
+                        "color": current_color,
                     };
 
                     $.ajax({
@@ -509,6 +536,22 @@ var chat = new Vue({
 
 
                 }
+
+             
+                if (rooms && rooms_texts) {
+                    $.get("/rooms", function(data){ 
+                        var roomHtml = "<div>";
+                        for(var i=0; i<data.length; i++) {
+                             roomHtml=roomHtml+"<div id='room-"+data[i]['id']+"' onclick='room("+data[i]['id']+");return false;'>"+data[i]['name']+"</div>";
+                             roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data[i]['id']+"\" value=\""+data[i]['name']+"\" />";
+                        }
+                        roomHtml=roomHtml+"</div>";
+                        let current_room_name = $('#active-room-name').val();
+                        $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+                        $("#active-room-name").attr("value", current_room_name);
+                        $('#rooms-container').html(roomHtml);
+                    });
+                } 
 /*
                 if (start_message && start_message.length > 0) {
 
@@ -580,8 +623,12 @@ var chat = new Vue({
                 if (elem) {
                     elem.scrollTop = elem.clientHeight*10000000;
                 }
-
-                $('#chattext').attr("value","");
+                $('#chattext').val("");
+            },
+            refresh_color: function (event) {
+                var current_color = $('#current-color').val();
+                current_color = this.read_color();
+                $('#current-color').attr('value', current_color);
             },
             joinroom: function (event) {
 
@@ -593,6 +640,18 @@ var chat = new Vue({
           
             sendmessage: function (event) {
 
+            },
+            read_color: function (event) {
+                var user_id = $("#user_id").val();
+               
+                if (user_id) {
+                    $.get("/profiles?id="+user_id, function(data){
+                         if( data[0]['chat_color']) {
+                              return  data[0]['chat_color'];
+                         }
+                    });
+                }
+                return '#000000';
             }
     },
     mounted:function() {
@@ -602,7 +661,8 @@ var chat = new Vue({
        if (elem) {
                 elem.scrollTop = elem.clientHeight*10000000;
        }
-       this.color = read_color();
+       $('#chattext').val("");
+       //this.refresh_color();
     },
     components: {
         'photoshop-picker': photoshop,
@@ -616,28 +676,40 @@ var chat = new Vue({
 
 });
 
-function read_color() {
-     var arr = {
-         "user_id": $("#user_id").val(),
-     };
 
-     $.ajax({
-         type: "POST",
-         url: "https://lovehate.io/chat/readcolor/",
-         crossDomain: true,
-         data: JSON.stringify(arr),
-         dataType: 'json',
-         contentType: "application/json; charset=utf-8",
-         success: function(data) {
-             return  data['color'];
-         },
-         error: function(data) {
-             return "#000000";
-         }
-     });
-     return '#000000';
+function room(room_id) {
+                 chat.data = [];
+                 chat.is_user_channel = false;
+                 $("#is-user-channel").attr("value", false);
+                 var room_name = $('#room-name-'+room_id).val();
+                 $('#current-channel').html("<strong>"+room_name+"=></strong>");
+                 $('#active-room').attr('value', room_id);
+                 $('#active-room-name').attr('value', room_name);
+                 $('#chattext').attr("value","");
+                 $.get('/chatmessages?room_id='+room_id, function(data)
+                {
+
+                            var messages = "";
+                            var temp = [];
+                            for(var i=0; i<data.length; i++) {
+                                var list_item = "<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username']+" - "+data[i]['body']+"</div>";
+                                temp.push(list_item);
+                                messages = messages+"<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username'];
+                                messages = messages+" - "+data[i]['body'];
+                                messages = messages+"</div>";
+
+                            }
+                            chat.list = temp;
+                            $("#chat-window").html(messages);
+
+                            var elem = document.getElementById("chat-window");
+                            if (elem) {
+                                  elem.scrollTop = elem.clientHeight*10000000;
+                            }
+
+                });
+
 }
-
 $(document).ready(function() {
            console.log("update will happen here");
            window.setInterval(function(){
@@ -655,6 +727,10 @@ $(document).ready(function() {
                $(".vc-chrome").show();
            });        
 
+           $('#messages-palette').click(function() {
+                $(".vc-chrome").show();
+           });
+
            $(document).mouseup(function(e)  {
                 var container = $(".vc-chrome");
                 
@@ -664,12 +740,13 @@ $(document).ready(function() {
                     if ($(".vc-chrome").is(":visible")) {
                         container.hide();
                         $('.current-color').css("background",chat.colors.hex);
-         
+                        $('#current-color').attr('value', chat.colors.hex);         
+
                         console.log("user id "+ $("#user_id").val()+" and color "+chat.colors.hex); 
                         if ($("#user_id").val()) {
                             var arr = {
                                 "user_id": $("#user_id").val(),
-                                "color": chat.colors.hex,
+                                "color": $("#current-color").val(),
                             };
                             $.ajax({
                                 type: "POST",
@@ -701,7 +778,7 @@ $(document).ready(function() {
                             }
                             $("#chat-window").html(messages);
                             chat.scroll();
-                             $("#chattext").attr("value","");
+                            $('#chattext').val("");
 
           });
 

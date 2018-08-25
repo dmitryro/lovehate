@@ -30,6 +30,7 @@
         <input type="hidden" name="active-room-user-id" id="active-room-user-id" value="" />
         <input type="hidden" name="active-room-name" id="active-room-name" value="Курилка" />
         <input type="hidden" name="active-room" id="active-room" value="1" />
+        <input type="hidden" name="current-color" id="current-color" value="{{ user.profile.chat_color }}" />
         <div class="col-sm-8">
             <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
               
@@ -52,6 +53,9 @@
                          Сейчас в чате
                          </div>
                          <div class="clear"></div>
+
+                         <div id="users-container">
+
                         <input type="hidden" id="active-chat-user-id" id="active-chat-user-id" value="{{ user.id }}" />
                          {% for usr in users %}
                               {% if usr.profile.in_chat %}
@@ -60,16 +64,21 @@
                               {% endif %}
                          {% endfor %}
 
+                         </div>
                        
                          <div style="float:left;font-weight:bold;font-size:1.1em;margin-top:3.0em;">
                          Комнаты
                          </div>
                          <div class="clear"></div>
 
+                         <div id="rooms-container">
+
                          {% for room in rooms %}
                              <div id="room-{{ room.id }}" v-on:click="room({{ room.id }})">{{ room.name }} </div>
                              <input type="hidden" id="room-name-{{ room.id }}" value="{{ room.name }}" />
                          {% endfor %}
+
+                         </div>
 
                          <div class="clear"></div>
                          <div class="neutral-messages">
@@ -79,7 +88,7 @@
                                      <a href="#" id="messages-color">Цвет сообщений</a>
                                </div>
                                <div class="col-sm-1">
-                                   <div style="width:1.5em;height:1.5em;background:{{ user.profile.chat_color }}"  class="current-color">&nbsp;</div>  
+                                   <div style="width:1.5em;height:1.5em;background:{{ user.profile.chat_color }}"  id="messages-palette" class="current-color">&nbsp;</div>  
                                </div>
                             </div>
                            <chrome-picker v-model="colors" />
@@ -108,6 +117,9 @@
                             <input type="text" id="profile_username" name="profile_username" maxlength="100" size="56" value="{{ user.username }}"  />
 -->
                        </div>
+                       <div>
+                                          <div id="current-channel" class="chat-left"><strong>process=></strong></div>
+                       </div>
                      </div>
                  </div>
 
@@ -121,46 +133,53 @@
 Войти
                                        </button>
                               {% elif user.profile.in_chat %}
+<!--
                                        <button class="btn3" v-on:click="talk" type="button"  style="background:#4a4a4a;min-width:6.00em;">
                                        Отослать
                                        </button>
+-->
                               {% endif %}
 
                        </div>
                        
-                       <div class="col-sm-8">
-                          {% if user.profile.in_chat %}
-                              <div class="chat-text-window">
-                              <div class="container-fluid">
-                                  <div class="row">  
+                       <div class="col-xs-8">
+                              <div class="container-fluid" style="margin-left: -1.1em; width: 104%;">
+                                    <div class="row">
+                    
+                                            {% if user.profile.in_chat %}
+
+                                                     <div class="col-xs-9">
+                                            
+                                                                   <div class="chat-text-window">
+<!--
                                       <div class="col-xs-2">
                                           <div id="current-channel" class="chat-left"><strong>process=></strong></div>
                                       </div>
-                                      <div class="col-xs-9">
-                                          <input type="text" v-model="chattext" v-on:keyup.enter="talk" id="chattext" name="chattext"  style="width:108%;padding-top:0.3em;margin-left:0.8em;margin-top:-2.2em;margin-bottom:-0.4em;display: inline;border: none;" />
-                                     </div>
-                                  </div>
-                              </div>
+--> 
+                                                                           <input type="text" v-on:keyup.enter="talk" id="chattext" style="width:100%;padding-top:0.3em;margin-top:-2.2em;margin-bottom:-0.4em;display: inline;border: none;" value=""/>
+                                                                   </div>
+                                                     </div>
+                                                     <div class="col-xs-3">
+                                                                    <button class="btn3" v-on:click="talk"  type="button" style="min-height: 2.5em; background: rgb(74, 74, 74); min-width: 5.5em;" >
+                                                                        Отправить
+                                                                    </button>
+                                                          
+                                                     </div> 
                             <!-- 
                               <input type="text" id="chat-text" name="chat-text" style="width:100%;" value=""  />
                             -->
-                              </div>
-                          {% endif %}  
-                       </div>
+                                          {% endif %} 
+                                 </div> <!-- end row -->
+                             </div> <!-- end container --> 
+                       </div> <!-- end col-xs-8-->
 <!--
-                       <div class="col-sm-1">
-                              {% if user.profile.in_chat %}
-                                       <button class="btn3" v-on:click="talk" type="button"  style="background:#4a4a4a;min-width:6.00em;">
-                                       Пошёл   
-                                       </button>
-                              {% endif %}
-                       </div>
+                                <button class="btn3" v-on:click="talk" type="button"  style="min-height: 2.5em; background: rgb(74, 74, 74); min-width: 5.5em; font-size: 1em;margin-left:-1.8em;text-align:center;">
 -->
-                 </div>
+                       </div> <!-- end row -->
+                 </div> <!-- end container -->
                        
 
 
-           </div>
         </div>
          </form>
     </div>

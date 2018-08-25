@@ -287,7 +287,13 @@ def read_chat_color(request):
         user_id = request.data.get('user_id')
         user = User.objects.get(id=int(user_id))
         color = user.profile.chat_color
+        log = Logger("============> USER ID {} - {}".format(user_id, request))
+        log.save()
+
     except Exception as e:
+        log = Logger("============> CURRENT USER ID {} - {} -{}".format(user_id, request, e))
+        log.save()
+
         return Response({'message':str(e), 'cause':str(e)})
 
     return Response({'message':'success', 'color': color})
