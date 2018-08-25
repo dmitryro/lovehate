@@ -175,7 +175,7 @@ var chat = new Vue({
                         redirect_url('chat'); 
                     },
                     error: function(data){
-                        alert("failure:"+data.message);
+                        console.log("failure:"+data.message);
                     }
                });
 
@@ -298,8 +298,8 @@ var chat = new Vue({
                 let rooms = message.match(/(?<=#)[\w\u0430-\u044f]+/ig); 
                 //let rooms_texts =  message.match(/(?<=#(\w+)\s)\w+(\w+\s?){1,}/g);
                 //let users_texts = message.match(/(?<=@(\w+)\s)\w+(\w+\s?){1,}/g);
-                let rooms_texts = message.match(/(?<=#([\w\u0430-\u044f]+)\s)([\w\u0430-\u044f]+\s?){1,}/ig);
-                let users_texts = message.match(/(?<=@([\w\u0430-\u044f]+)\s)([\w\u0430-\u044f]+\s?){1,}/ig);
+                let rooms_texts = message.match(/(?<=#([\w\u0451\u0430-\u044f]+)\s)([\,\.-\w\u0451\u0430-\u044f]+\s?){1,}/ig);
+                let users_texts = message.match(/(?<=@([\w\u0451\u0430-\u044f]+)\s)([\,\.-\w\u0451\u0430-\u044f]+\s?){1,}/ig);
 
 
                 var start_message = message.split(/(?:@|#)+/)[0];
