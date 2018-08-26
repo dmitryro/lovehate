@@ -1,6 +1,24 @@
 from django.contrib import admin
 from custom.chat.models import Room
 from custom.chat.models import Message
+from custom.chat.models import UserChannel
+
+########################################
+# Register User Channel with Django    #
+########################################
+
+class UserChannelAdmin(admin.ModelAdmin):
+    fieldsets = ((None, {'fields': ['name',
+                                    'owner', 'pending_messages',]}),)
+
+    list_display = ('id', 'name', 'owner',)
+    list_editable = ('name', 'owner',)
+    search_fields = ('name', 'owner',)
+
+    class Meta:
+         verbose_name = 'User Channel'
+         verbose_name_plural = 'User Channel'
+
 
 ########################################
 #  Register Room with Django Admin     #
@@ -36,7 +54,7 @@ class MessageAdmin(admin.ModelAdmin):
          verbose_name = 'Message'
          verbose_name_plural = 'Messages'
 
-
+admin.site.register(UserChannel, UserChannelAdmin)
 admin.site.register(Room, RoomAdmin)
 admin.site.register(Message, MessageAdmin)
 

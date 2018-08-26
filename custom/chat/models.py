@@ -31,7 +31,6 @@ class Importance(models.Model):
         verbose_name = 'Importance'
         verbose_name_plural = 'Importances'
 
-
 class Room(models.Model):
     creator = models.ForeignKey(User,
                                 blank=True,
@@ -127,4 +126,25 @@ class Message(models.Model):
     def __str__(self):
         return self.body
 
+
+class UserChannel(models.Model):
+    name = models.CharField(max_length=250,
+                                  blank=True,
+                                  null=True)
+    owner = models.ForeignKey(User,
+                              blank=True,
+                              null=True,
+                              related_name='channel_owner',
+                              on_delete=models.CASCADE)
+    last_seen = models.DateTimeField(blank=True, null=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+    pending_messages = models.ManyToManyField(Message, related_name='pending_messages', blank=True)
+
+    class Meta:
+        verbose_name = 'User Channel'
+        verbose_name_plural = 'User Channels'
+
+    def __str__(self):
+        return self.name
     
+

@@ -38,6 +38,7 @@ from custom.forum.models import Topic
 from custom.blog.models import Post
 from custom.chat.models import Room
 from custom.chat.models import Message
+from custom.chat.models import UserChannel
 from custom.chat.signals import user_joined_chat
 from custom.chat.signals import user_left_chat
 from custom.chat.signals import chat_room_created
@@ -46,8 +47,10 @@ from custom.chat.signals import user_joined_room
 from custom.chat.signals import user_left_room
 from custom.chat.serializers import RoomSerializer
 from custom.chat.serializers import MessageSerializer
+from custom.chat.serializers import UserChannelSerializer
 from custom.chat.filters import MessageFilter
 from custom.chat.filters import RoomFilter
+from custom.chat.filters import UserChannelFilter
 from custom.utils.models import Logger
 
 #from custom.chat.callbacks import user_joined_chat_handler
@@ -73,6 +76,16 @@ class MessagesList(generics.ListAPIView):
     filter_class = MessageFilter
     search_fields = ('id', 'sender_id', 'room_id'
                      'body', 'subject',)
+
+
+class UserChannelsList(generics.ListAPIView):
+    queryset = UserChannel.objects.all()
+    serializer_class = UserChannelSerializer
+    filter_backends = (filters.SearchFilter, DjangoFilterBackend,)
+    filter_class = UserChannelFilter
+    search_fields = ('id', 'owner_id', 'name'
+                     'last_seen', 'time_created', 'pending_messages',)
+    
 
 
 class RoomViewSet(viewsets.ModelViewSet):
@@ -130,6 +143,7 @@ def display_chat(request):
                                         'user': request.user,
                                         'users': users,
                                         'rooms': rooms,
+                                        'chat_user_id': user_id,
                                         'has_private': has_private,
                                         'username': username,
                                         'current_page': 'chat',
@@ -195,9 +209,18 @@ def post_to_users(request):
 
         recipients = []
         recipient_ids = []
+        channels = []
 
-        for user in users:
-            usr = User.objects.get(username=user)
+       
+        for username in users:
+            usr = User.objects.get(username=username)
+
+            try:
+                channel = UserChannel.objects.get(owner=usr)
+            except Exception as e:
+                channel = UserChannel.objects.create(name="Channel of {}".format(usr.username),
+                                                     owner=usr)
+            channels.append(channel)
             recipients.append(usr)
             recipient_ids.append(usr.id)
  
@@ -205,9 +228,13 @@ def post_to_users(request):
         user.profile.chat_color=color
         user.profile.save()
   
-
         message = Message.objects.create(body=message, color=color, sender=user)
         message.receivers.add(*recipients)         
+
+
+        for channel in channels:
+            channel.pending_messages.add(message)
+            channel.save()
 
         id_lst = []    
         messages_list = Message.objects.filter(sender_id=int(sender_id), receivers__in=recipient_ids)
@@ -215,8 +242,6 @@ def post_to_users(request):
         messages_serializer = MessageSerializer(messages_list, many=True) 
         rooms_serializer = RoomSerializer(rooms_list, many=True)  
     except Exception as e:
-        log = Logger(log="WE FAILED POSTING TO USERS {}".format(e))
-        log.save()
         return Response({'message':str(e), 'cause':str(e)})
 
     
@@ -237,11 +262,21 @@ def post_to_room(request):
         user.profile.chat_color=color
         user.profile.save()
 
+        log = Logger(log="ROOM WE ARE SAVING {}".format(rooms))
+        log.save()
+
         for r in rooms:
             try:
                 room = Room.objects.get(name=str(r))
+                log = Logger(log="ROOM WAS FOUND")
+                log.save()
+
             except Exception as e:
+
                 room = Room.objects.create(creator=user, name=r)
+                log = Logger(log="ROOM WAS NOT FOUND - CREATING NRE {}".format(e))
+                log.save()
+
             
             message = Message.objects.create(room=room, body=message, color=color, sender=user)
 
@@ -250,9 +285,8 @@ def post_to_room(request):
         messages_serializer = MessageSerializer(messages_list, many=True)
         rooms_serializer = RoomSerializer(rooms_list, many=True)
     except Exception as e:
-        log = Logger(log="WE FAILED POSTING TO ROOM {}".format(e))
+        log = Logger(log="SHIT DID NOT WORK {}".format(e))
         log.save()
-
         return Response({'message':str(e), 'cause':str(e)})
 
     return Response({'message':'success', 'messages':messages_serializer.data, 'rooms':rooms_serializer.data})
@@ -287,12 +321,8 @@ def read_chat_color(request):
         user_id = request.data.get('user_id')
         user = User.objects.get(id=int(user_id))
         color = user.profile.chat_color
-        log = Logger("============> USER ID {} - {}".format(user_id, request))
-        log.save()
 
     except Exception as e:
-        log = Logger("============> CURRENT USER ID {} - {} -{}".format(user_id, request, e))
-        log.save()
 
         return Response({'message':str(e), 'cause':str(e)})
 
@@ -308,9 +338,31 @@ def enter_chat(request):
         user = User.objects.get(id=int(user_id))
         user.profile.in_chat = True
         user.profile.save()
+
+        try:
+            channel = UserChannel.objects.get(owner=user)
+        except Exception as e:
+            UserChannel.objects.create(name="Channel of {}".format(user.username),
+                                       owner=user)
+                                        
     except Exception as e:
         return Response({'message':str(e), 'cause':str(e)})
     
+    return Response({'message':'success'})
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def clean_pending(request):
+    try:
+        user_id = request.data.get('user_id')
+        user = User.objects.get(id=int(user_id))
+        channel = UserChannel.objects.get(owner=user)
+        channel.pending_messages.clear()
+    except Exception as e:
+
+        return Response({'message':str(e), 'cause':str(e)})
     return Response({'message':'success'})
 
 
