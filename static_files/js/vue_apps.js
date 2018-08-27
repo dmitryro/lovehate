@@ -1128,6 +1128,78 @@ function leave_room(room_id) {
 }
 
 function user(user_id) {
+                 let chat_user_id = $("#chat-user-id").val();
+                 let room_id = $('#active-room').val();
+                 leave_room(room_id);
+
+                 if (chat_user_id==user_id) {
+
+                    var arr = {
+                        "user_id": user_id,
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "https://lovehate.io/chat/cleanpending/",
+                        crossDomain: true,
+                        data: JSON.stringify(arr),
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data) {
+                             $('.pending-user').html("");
+                        },
+                        error: function(data) {
+                        }
+                    });
+
+                 }
+
+                 chat.is_user_channel = true;
+                 $("#is-user-channel").attr("value",true);
+
+                 chat.data = [];
+                 let url = '/chatmessages?receivers='+user_id;
+                 $.get(url, function(data)
+                {
+                            var messages = "";
+                            var temp = [];
+                            for(var i=0; i<data.length; i++) {
+                                var list_item = "<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username']+" - "+data[i]['body']+"</div>";
+                                temp.push(list_item);
+
+                                messages = messages+"<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username'];
+                                messages = messages+" - "+data[i]['body'];
+                                messages = messages+"</div>";
+
+                            }
+                            chat.list = temp;
+
+                            $("#chat-window").html(messages);
+
+                            var elem = document.getElementById("chat-window");
+
+                            if (elem) {
+                              elem.scrollTop = elem.clientHeight*10000000;
+                            }
+
+
+                });
+
+                var user = $("#chat-active-user-"+user_id).val();
+
+                $('#active-room-user-id').attr('value', user_id); 
+                $('#active-room-name').attr('value', user);
+
+                chat.channel_user = user;
+
+//                $('#current-channel').html("<strong>@"+user+"=></strong>");
+
+                var elem = document.getElementById("chat-window");
+
+                if (elem) {
+                     elem.scrollTop = elem.clientHeight*10000000;
+                }
+
 
     return false;
 }
