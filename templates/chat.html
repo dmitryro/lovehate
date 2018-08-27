@@ -76,29 +76,30 @@
                          </div>
                        
                          <div style="float:left;font-weight:bold;font-size:1.1em;margin-top:3.0em;">
-
-                         <div class="row">
-                         <div class="col-sm-6">
+                                 {% if user.profile.in_chat %}
+                                  <div class="row">
+                                      <div class="col-sm-6">
                          Комнаты
-                         </div>
-                         <div class="col-sm-4"><a id="add-room" href="#" style="text-decoration:none;">(+)</a>
-                         </div>  
-                         </div>
+                                      </div>
+                                      <div class="col-sm-4"><a id="add-room" href="#" style="text-decoration:none;">(+)</a>
+                                      </div>  
+                                  </div>
+                                 {% endif %}
 
-                         <div id="add-room-modal" class="add-room-modal" style="position:absolute;overflow:hidden;background: rgb(246, 246, 246); border: 1px solid rgb(151, 151, 151);width:95%;display:none;">
-
+                                 {% if user.profile.in_chat %}
+                                 <div id="add-room-modal" class="add-room-modal">
                                      <form id="newroomform"  name="newroomform"  method="post">
                                               <input type="hidden" value="" name="new_room_id"  id="new_room_id" />
                                             <div class="row add-room-row">
                                               <div style="float:left;width:10%;">&nbsp;</div>
                                               <div style="float:left;width:40%;">
                                                     {% csrf_token %}
-                                                        <input type="text" id="new_room" name="new_room"
+                                                        <input type="text" id="newroom" name="newroom" v-model="newroom"
                                                           placeholder="" size="16" />
                                               </div>
                                               <div style="float:left;width:5%;">&nbsp;</div>
                                               <div style="float:left;width:32%;">
-                                                  <button type="button" id="newroomform-publish" class="btn3" style="min-width:5.2em;font-size:0.9em;background:#4a4a4a;margin-right:1.2em;" >
+                                                  <button type="button" id="newroomform-publish" v-on:click="addroom" class="btn3" style="min-width:5.2em;font-size:0.9em;background:#4a4a4a;margin-right:1.2em;" >
                                                    Добавить
                                                   </button>
                                               </div>
@@ -108,26 +109,55 @@
                                     </form>
 
                             
-                         </div> 
+                                </div> 
+                               {% endif %}
 
+                               {% if user.profile.in_chat %}
+                                <div id="delete-room-modal" class="delete-room-modal">
+
+                                     <form id="deleteroomform"  name="deleteroomform"  method="post">
+                                              <input type="hidden" value="" name="delete_room_id"  id="delete_room_id" />
+                                            <div class="row add-room-row">
+                                              <div style="float:left;width:8%;">&nbsp;</div>
+                                              <div style="float:left;width:53%;">
+                                                    <div id="delete-room-message" style="font-weight:normal;font-size:0.9em;padding-top:1.0em;"></div>
+                                              </div>
+                                              <div style="float:left;width:%;">&nbsp;</div>
+                                              <div style="float:left;width:30%;">
+                                                  <button type="button" id="deleteroomform-publish" v-on:click="delete_room" class="btn3" style="min-width:5.2em;font-size:0.9em;background:#4a4a4a;margin-right:1.2em;" >
+                                                   Удалить
+                                                  </button>
+                                              </div>
+                                              <div style="float:left;width:8%;"></div>
+                                              <div class="clear"></div>
+                                            </div>
+                                    </form>
+
+                                </div>
+
+                                {% endif %}
 
                          </div>
                          <div class="clear"></div>
-
+                         {% if user.profile.in_chat %}
                          <div id="rooms-container">
 
-                         {% for room in rooms %}
-                             <div id="room-{{ room.id }}" v-on:click="room({{ room.id }})">{{ room.name }} </div>
-                             <input type="hidden" id="room-name-{{ room.id }}" value="{{ room.name }}" />
-                         {% endfor %}
+                                 {% for room in rooms %}
+                                       <div id="room-{{ room.id }}" v-on:click="room({{ room.id }})">{{ room.name }} </div>
+                                       <input type="hidden" id="room-name-{{ room.id }}" value="{{ room.name }}" />
+                                 {% endfor %}
 
                          </div>
 
+                         {% endif %}
+
                          <div class="clear"></div>
+
                          <div class="neutral-messages">
+                           {% if user.profile.in_chat %}
                             <div class="row">
 
-                               <div class="col-sm-8">
+                               <div class="col-sm-9">
                                      <a href="#" id="messages-color">Цвет сообщений</a>
                                </div>
                                <div class="col-sm-1">
@@ -136,8 +166,9 @@
                             </div>
                            <chrome-picker v-model="colors" />
 
-
+                           {% endif %}
                          </div>
+
                      </div>
                      <div class="col-sm-8">
                        <div class="form-group">
@@ -161,7 +192,9 @@
 -->
                        </div>
                        <div>
+                                 {% if user.profile.in_chat %}
                                           <div id="current-channel" class="chat-left"><strong>process=></strong></div>
+                                 {% endif %}
                        </div>
                      </div>
                  </div>

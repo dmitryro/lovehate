@@ -38,6 +38,7 @@ var chat = new Vue({
         list: [],
         busy: false,
         colors: colors,
+        newroom: null,
     },
 
     scroll: function (event) {
@@ -110,7 +111,7 @@ var chat = new Vue({
                    let url = '/channels/?owner_id='+user_id;
                    $.get(url, function(data) {
                        if (data[0]['pending_messages'].length) {
-                           $('.pending-user').html("<span class=\"red\" style=\"font-size:0.88em;color:#ff0000;font-weight:bold;transition: all .2s ease-out;\">"+data[0]['pending_messages'].length+"</span>");
+                           $('.pending-user').html("<span onclick='user("+user_id+");' class=\"red\" style=\"font-size:0.88em;color:#ff0000;font-weight:bold;transition: all .2s ease-out;\">"+data[0]['pending_messages'].length+"</span>");
                        }   
                    });
                }
@@ -210,6 +211,8 @@ var chat = new Vue({
             user: function(user_id) {
                 // this.refresh_color();
                  let chat_user_id = $("#chat-user-id").val();
+                 let room_id = $('#active-room').val();
+                 this.leave_room(room_id);
 
                  if (chat_user_id==user_id) {
 
@@ -271,7 +274,7 @@ var chat = new Vue({
 
                 this.channel_user = user;
 
-                $('#current-channel').html("<strong>@"+user+"=></strong>");
+//                $('#current-channel').html("<strong>@"+user+"=></strong>");
 
                 var elem = document.getElementById("chat-window");
 
@@ -282,6 +285,7 @@ var chat = new Vue({
             },
             room: function (room_id) {
                  //this.refresh_color();
+                 let chat_user_id = $('#chat-user-id').val();
                  this.data = [];
                  this.is_user_channel = false;
                  $("#is-user-channel").attr("value", false);
@@ -290,6 +294,9 @@ var chat = new Vue({
                  $('#active-room').attr('value', room_id);
                  $('#active-room-name').attr('value', room_name);
                  $('#chattext').attr("value","");
+
+                 this.join_room(room_id);
+
                  $.get('/chatmessages?room_id='+room_id, function(data)
                 {
 
@@ -315,6 +322,7 @@ var chat = new Vue({
             },
             talk: function (event) {
             //    this.refresh_color();
+                let chat_user_id = $('#chat-user-id').val();
                 let message = $('#chattext').val();
                 $('#chattext').val("");
                 let current_color = $('#current-color').val();
@@ -462,10 +470,30 @@ var chat = new Vue({
 
                             var roomHtml = "<div>";
                             for(var i=0; i<data["rooms"].length; i++) {
-                                 roomHtml=roomHtml+"<div id='room-"+data["rooms"][i]['id']+"' onclick='room("+data["rooms"][i]['id']+");return false;'>"+data["rooms"][i]['name']+"</div>";
+                                 var room_users = "";
+                                 if (data["rooms"]["active_users"].length > 0) {
+                                     room_users = " - "+data["rooms"]["active_users"].length;
+                                 }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
                                  roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+ 
+
+
                             }
-                            roomHtml=roomHtml+"</div>";
                             let current_room_name = $('#active-room-name').val();
                             $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
                             $("#active-room-name").attr("value", current_room_name);
@@ -511,9 +539,10 @@ var chat = new Vue({
                         dataType: 'json',
                         contentType: "application/json; charset=utf-8",
                         success: function(data) {
-                            
+ //                       alert("call time two");
                         var messages = "";
                         var temp = [];
+/*
                         for(var i=0; i<data['messages'].length; i++) {
                               var list_item = "<div style=\"color:"+data['messages'][i]['color']+"\"> @"+data['messages'][i]['sender']['username']+" - "+data['messages'][i]['body']+"</div>";
                               temp.push(list_item);
@@ -521,7 +550,6 @@ var chat = new Vue({
                               messages = messages+" - "+data['messages'][i]['body'];
                               messages = messages+"</div>";
                         }
-
                         this.list = temp;
                         $("#chat-window").html(messages);
 
@@ -530,7 +558,7 @@ var chat = new Vue({
                         if (elem) {
                             elem.scrollTop = elem.clientHeight*10000000;
                         }
-
+*/
                         
                         },
                         error: function(data){
@@ -697,12 +725,134 @@ var chat = new Vue({
                 current_color = this.read_color();
                 $('#current-color').attr('value', current_color);
             },
-            joinroom: function (event) {
+            join_room: function (room_id) {
 
+                 let chat_user_id = $('#chat-user-id').val();
+                 let room_name =  $('#room-name-'+room_id).val();
+
+                 var arr = {
+                    "room_id": room_id,
+                    "user_id": chat_user_id,
+                 };
+
+                 $.ajax({
+                    type: "POST",
+                    url: "https://lovehate.io/chat/join/",
+                    crossDomain: true,
+                    data: JSON.stringify(arr),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                      var messages = "";
+                        var temp = [];
+
+                        var roomHtml = "<div>";
+
+                        for(var i=0; i<data["rooms"].length; i++) {
+                            var room_users = "";
+                            if (data["rooms"][i]["active_users"].length > 0) {
+                                room_users = " - "+data["rooms"][i]["active_users"].length;
+                            }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
+                                 roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+
+
+
+
+
+
+ 
+                        }
+
+                        let current_room_name = $('#active-room-name').val();
+                        $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+                        $("#active-room-name").attr("value", current_room_name);
+                        $('#rooms-container').html(roomHtml);
+                    },
+                    error: function(data) {
+                       console.log("Error joining room "+data);
+                    }
+                 });
+                 return false;
             },
 
-            leaveroom: function (event) {
 
+            leave_room: function (room_id) {
+
+                 let chat_user_id = $('#chat-user-id').val();
+                 let room_name =  $('#room-name-'+room_id).val();
+
+                 var arr = {
+                    "room_id": room_id,
+                    "user_id": chat_user_id,
+                 };
+
+                 $.ajax({
+                    type: "POST",
+                    url: "https://lovehate.io/chat/leave/",
+                    crossDomain: true,
+                    data: JSON.stringify(arr),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        var messages = "";
+                        var temp = [];
+
+                        var roomHtml = "<div>";
+
+                        for(var i=0; i<data["rooms"].length; i++) {
+
+                            var room_users = "";
+                            if (data["rooms"][i]["active_users"].length > 0) {
+                               room_users = " - "+data["rooms"][i]["active_users"].length;
+                            }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
+                                 roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+
+
+
+
+
+                        }
+
+                        let current_room_name = $('#active-room-name').val();
+                        $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+                        $("#active-room-name").attr("value", current_room_name);
+                        $('#rooms-container').html(roomHtml);
+                    },
+                    error: function(data) {
+                       console.log("Error leaving room "+data);
+                    }
+                 });
+                 return false;
             },
           
             sendmessage: function (event) {
@@ -719,10 +869,104 @@ var chat = new Vue({
                     });
                 }
                 return '#000000';
+            },
+            delete_room: function() {
+                let delete_room_id = $("#delete_room_id").val();
+                var arr = {
+                        "room_id": delete_room_id,
+                };
+
+ 
+                $.ajax({
+                    type: "POST",
+                    url: "https://lovehate.io/chat/deleteroom/",
+                    crossDomain: true,
+                    data: JSON.stringify(arr),
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                    var message = "Сделано.";
+                    $("#delete-room-message").html(message);
+                    $(".delete-room-modal").fadeOut();
+                    },
+                    error: function(data){
+                      console.log("failure: "+data);
+                    }
+               });
+               this.room(1);
+               return false;
+            },
+            addroom: function(event) {
+                let chat_user_id = $('#chat-user-id').val(); 
+                if (!this.newroom || this.newroom.length==0) {
+                    $("#newroom").attr("style","border:1px solid #FF0000"); 
+                    window.setTimeout(function() {  $("#newroom").attr("style",""); }, 1200);
+                } else {
+                    let current_color = $('#current-color').val();
+                    var arr = {
+                        "rooms": this.newroom,
+                        "message": "Создана новая комната "+this.newroom,
+                        "active_room": $('#active-room').val(),
+                        "sender_id": $("#chat-user-id").val(),
+                        "color": current_color,
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "https://lovehate.io/chat/postrooms/",
+                        crossDomain: true,
+                        data: JSON.stringify(arr),
+                        dataType: 'json',
+                        contentType: "application/json; charset=utf-8",
+                        success: function(data) {
+                            var messages = "";
+                            var temp = [];
+                            var roomHtml = "<div>";
+                            for(var i=0; i<data["rooms"].length; i++) {
+
+                                 var room_users = "";
+                                 if (data["rooms"][i]["active_users"].length > 0) {
+                                     room_users = " - "+data["rooms"][i]["active_users"].length;
+                                 }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
+                                 roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+
+ 
+
+
+
+                            }
+                            let current_room_name = $('#active-room-name').val();
+                            $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+                            $("#active-room-name").attr("value", current_room_name);
+                            $('#rooms-container').html(roomHtml);
+
+                        },
+                        error: function(data) {
+                        }
+                    });
+
+                    $("#add-room-modal").fadeOut();
+
+                }
             }
+
     },
     mounted:function() {
-//       this.room(1); 
        this.loggedIn = false;       
        var elem = document.getElementById("chat-window");
        if (elem) {
@@ -743,38 +987,186 @@ var chat = new Vue({
 
 });
 
+function delete_room(room_id) {
+    $("#delete-room-modal").show();
 
+    $.get("/rooms?id="+room_id, function(data){
+         var message = "Удалить комнату  "+data[0]['name']+"?";
+         $("#delete-room-message").html(message);
+         $("#delete_room_id").attr("value", data[0]['id']);
+    });
+
+
+    return false;
+}
+
+function join_room(room_id) {
+    let chat_user_id = $('#chat-user-id').val();
+    let room_name =  $('#room-name-'+room_id).val();
+
+    var arr = {
+        "room_id": room_id,
+        "user_id": chat_user_id,
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "https://lovehate.io/chat/join/",
+        crossDomain: true,
+        data: JSON.stringify(arr),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+            var messages = "";
+            var temp = [];
+
+            var roomHtml = "<div>";
+
+            for(var i=0; i<data["rooms"].length; i++) {
+                var room_users = "";
+                if (data["rooms"][i]["active_users"].length > 0) {
+                    room_users = " - "+data["rooms"][i]["active_users"].length;
+                }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
+                                 roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+
+
+
+
+            }
+
+            let current_room_name = $('#active-room-name').val();
+            $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+            $("#active-room-name").attr("value", current_room_name);
+            $('#rooms-container').html(roomHtml);
+       },
+       error: function(data) {
+            console.log("Error joining room "+data);
+       }
+    });
+    return false;
+
+
+
+}
+
+function leave_room(room_id) {
+    let chat_user_id = $('#chat-user-id').val();
+    let room_name =  $('#room-name-'+room_id).val();
+
+    var arr = {
+        "room_id": room_id,
+        "user_id": chat_user_id,
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "https://lovehate.io/chat/leave/",
+        crossDomain: true,
+        data: JSON.stringify(arr),
+        dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        success: function(data) {
+            var messages = "";
+            var temp = [];
+
+            var roomHtml = "<div>";
+
+            for(var i=0; i<data["rooms"].length; i++) {
+                var room_users = "";
+            
+                if (data["rooms"][i]["active_users"].length > 0) {
+                    room_users = " - "+data["rooms"][i]["active_users"].length;
+                }
+
+                                 var delete_room = "<span style='text-decoration:none;font-weight:bold;font-size:1.8em;'>&nbsp;</span>";
+
+                                 if (chat_user_id==data["rooms"][i]["creator"]["id"]) {
+                                     delete_room = "<a href=\"#\" style=\"text-decoration:none;font-weight:bold;font-size:1.8em;\">-</a>";
+                                 }
+
+                                 roomHtml=roomHtml+"<div class='neutral-messages' style='padding-top:0.0em;padding-bottom:0.0em;'>";
+                                 roomHtml=roomHtml+"<div style='float:left;width:86%;' id='room-"+data["rooms"][i]['id']+"' onclick='room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;'>";
+                                 roomHtml=roomHtml+data["rooms"][i]['name']+room_users;
+                                 roomHtml=roomHtml+"<input type='hidden' id=\"room-name-"+data["rooms"][i]['id']+"\" value=\""+data["rooms"][i]['name']+"\" />";
+                                 roomHtml=roomHtml+"</div>"
+                                 roomHtml=roomHtml+"<div id='delete-room-";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+"' style='width:12%;float:left;margin-top:-0.6em;' onclick=\"delete_room(";
+                                 roomHtml=roomHtml+data["rooms"][i]['id']+");return false;\">"+delete_room+"</div><div class='clear'></div></div>";
+
+
+
+
+            }
+
+            let current_room_name = $('#active-room-name').val();
+            $('#current-channel').html("<strong>"+current_room_name+"=></strong>");
+            $("#active-room-name").attr("value", current_room_name);
+            $('#rooms-container').html(roomHtml);
+       },
+       error: function(data) {
+            console.log("Error joining room "+data);
+       }
+    });
+    return false;
+
+}
+
+function user(user_id) {
+
+    return false;
+}
+ 
 function room(room_id) {
-                 chat.data = [];
-                 chat.is_user_channel = false;
-                 $("#is-user-channel").attr("value", false);
-                 var room_name = $('#room-name-'+room_id).val();
-                 $('#current-channel').html("<strong>"+room_name+"=></strong>");
-                 $('#active-room').attr('value', room_id);
-                 $('#active-room-name').attr('value', room_name);
-                 $('#chattext').attr("value","");
-                 $.get('/chatmessages?room_id='+room_id, function(data)
-                {
+                 
+    chat.data = [];
+    chat.is_user_channel = false;
+    let chat_user_id = $('#chat-user-id').val();
+    let room_name =  $('#room-name-'+room_id).val();
 
-                            var messages = "";
-                            var temp = [];
-                            for(var i=0; i<data.length; i++) {
-                                var list_item = "<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username']+" - "+data[i]['body']+"</div>";
-                                temp.push(list_item);
-                                messages = messages+"<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username'];
-                                messages = messages+" - "+data[i]['body'];
-                                messages = messages+"</div>";
+    $("#is-user-channel").attr("value", false);
+    $('#current-channel').html("<strong>"+room_name+"=></strong>");
+    $('#active-room').attr('value', room_id);
+    $('#active-room-name').attr('value', room_name);
+    $('#chattext').attr("value","");
 
-                            }
-                            chat.list = temp;
-                            $("#chat-window").html(messages);
+    join_room(room_id);
 
-                            var elem = document.getElementById("chat-window");
-                            if (elem) {
-                                  elem.scrollTop = elem.clientHeight*10000000;
-                            }
+    $.get('/chatmessages?room_id='+room_id, function(data) {
 
-                });
+        let messages = "";
+        let temp = [];
+
+        for(var i=0; i<data.length; i++) {
+            var list_item = "<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username']+" - "+data[i]['body']+"</div>";
+            temp.push(list_item);
+            messages = messages+"<div style=\"color:"+data[i]['color']+"\"> @"+data[i]['sender']['username'];
+            messages = messages+" - "+data[i]['body'];
+            messages = messages+"</div>";
+        }
+        chat.list = temp;
+        $("#chat-window").html(messages);
+
+        var elem = document.getElementById("chat-window");
+        if (elem) {
+            elem.scrollTop = elem.clientHeight*10000000;
+        }
+    });
 
 }
 
@@ -802,6 +1194,7 @@ $(document).ready(function() {
                 if ($("#add-room-modal").is(":visible")) {
                     $("#add-room-modal").hide();
                 } else {
+                    $('#newroom').val("");
                     $('#add-room-modal').show();
                 }
            });
@@ -840,7 +1233,13 @@ $(document).ready(function() {
                  if (!container.is(e.target) && container.has(e.target).length === 0) {
                      container.fadeOut();
                  }
- 
+
+                var delete_container = $(".delete-room-modal"); 
+
+                if (!delete_container.is(e.target) && delete_container.has(e.target).length === 0) {
+                     delete_container.fadeOut();
+                }
+                    
                 var container = $(".vc-chrome");
                 
 

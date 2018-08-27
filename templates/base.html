@@ -282,7 +282,6 @@
 }
 .chat-left {
     text-align:left;
-    margin-left:-1.4em;
     min-width:10em;
     color: #00008b;
 }
@@ -357,6 +356,27 @@
             position: relative;
         }
     }
+    .red-box {
+        border: 1px solid #ff0000;
+        opacity: 0.5;  
+    }
+    .add-room-modal {
+        z-index:10000;
+        position:absolute;
+        overflow:hidden;
+        background: rgb(246, 246, 246); 
+        border: 1px solid rgb(151, 151, 151);
+        width:95%;display:none;
+    }
+    .delete-room-modal {
+        z-index:10000;
+        position:absolute;
+        overflow:hidden;
+        background: rgb(246, 246, 246); 
+        border: 1px solid rgb(151, 151, 151);
+        width:95%;display:none;
+    }
+
 
 </style>
 <link rel="stylesheet" href="/static/css/main-styles.css"/>
