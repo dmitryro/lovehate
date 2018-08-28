@@ -66,7 +66,8 @@ class RoomsList(generics.ListAPIView):
     filter_backends = (filters.SearchFilter, DjangoFilterBackend,)
     filter_class = RoomFilter
     search_fields = ('id', 'name', 'is_active'
-                     'date_created', 'creator_id',)
+                     'date_created', 'creator_id', 
+                     'active_users')
 
 
 class MessagesList(generics.ListAPIView):
@@ -84,9 +85,9 @@ class UserChannelsList(generics.ListAPIView):
     filter_backends = (filters.SearchFilter, DjangoFilterBackend,)
     filter_class = UserChannelFilter
     search_fields = ('id', 'owner_id', 'name'
-                     'last_seen', 'time_created', 'pending_messages',)
+                     'last_seen', 'time_created', 
+                     'pending_messages',)
     
-
 
 class RoomViewSet(viewsets.ModelViewSet):
     """
@@ -172,14 +173,63 @@ def create_room(request):
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def join_room(request):
-    return Response({'message':'success'})
+    try:
+        user_id = request.data.get('user_id')
+        room_id = request.data.get('room_id')
+        user = User.objects.get(id=int(user_id))         
+
+        rooms = Room.objects.all()
+        
+        for room in rooms:
+            if room.id == int(room_id):
+               room.active_users.remove(user)
+               if user in room.active_users.all():  
+                   pass
+               else:
+                   room.active_users.add(user)
+            else:
+               room.active_users.remove(user)
+
+        rooms_serializer = RoomSerializer(rooms, many=True)
+
+    except Exception as e:
+        return Response({'message':str(e), 'cause':str(e)})
+
+    return Response({'message':'success', 'rooms':rooms_serializer.data})
+
+
+@api_view(['POST', 'GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes([AllowAny,])
+def delete_room(request):
+    try:
+        room_id = request.data.get('room_id')
+        room = Room.objects.get(id=int(room_id))
+        room.delete()
+        rooms = Room.objects.all()
+        rooms_serializer = RoomSerializer(rooms, many=True)
+    except Exception as e:
+        return Response({'message':str(e), 'cause':str(e)})
+
+    return Response({'message':'success', 'rooms':rooms_serializer.data })
 
 
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
 def leave_room(request):
-    return Response({'message':'success'})
+    try:
+        user_id = request.data.get('user_id')
+        room_id = request.data.get('room_id')
+        user = User.objects.get(id=int(user_id))
+        room = Room.objects.get(id=int(room_id))
+        room.active_users.remove(user)
+        rooms = Room.objects.all()
+        rooms_serializer = RoomSerializer(rooms, many=True)
+    except Exception as e:
+        return Response({'message':str(e), 'cause':str(e)})
+
+    return Response({'message':'success', 'rooms':rooms_serializer.data })
 
 
 @api_view(['POST', 'GET'])
@@ -248,6 +298,7 @@ def post_to_users(request):
     return Response({'message':'success', 'messages':messages_serializer.data, 'rooms':rooms_serializer.data})
 
 
+
 @api_view(['POST', 'GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes([AllowAny,])
@@ -262,21 +313,14 @@ def post_to_room(request):
         user.profile.chat_color=color
         user.profile.save()
 
-        log = Logger(log="ROOM WE ARE SAVING {}".format(rooms))
-        log.save()
 
         for r in rooms:
             try:
                 room = Room.objects.get(name=str(r))
-                log = Logger(log="ROOM WAS FOUND")
-                log.save()
 
             except Exception as e:
 
                 room = Room.objects.create(creator=user, name=r)
-                log = Logger(log="ROOM WAS NOT FOUND - CREATING NRE {}".format(e))
-                log.save()
-
             
             message = Message.objects.create(room=room, body=message, color=color, sender=user)
 
@@ -285,8 +329,6 @@ def post_to_room(request):
         messages_serializer = MessageSerializer(messages_list, many=True)
         rooms_serializer = RoomSerializer(rooms_list, many=True)
     except Exception as e:
-        log = Logger(log="SHIT DID NOT WORK {}".format(e))
-        log.save()
         return Response({'message':str(e), 'cause':str(e)})
 
     return Response({'message':'success', 'messages':messages_serializer.data, 'rooms':rooms_serializer.data})
@@ -299,8 +341,6 @@ def save_chat_color(request):
     try:
         user_id = request.data.get('user_id')
         color = request.data.get('color')
-        log = Logger(log="WE ARE GOING TO SAVE IT {} {}".format(user_id, color))
-        log.save()
         user = User.objects.get(id=int(user_id))
         user.profile.in_chat = True
         user.profile.chat_color = color

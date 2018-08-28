@@ -45,6 +45,11 @@ class Room(models.Model):
     is_idle = models.NullBooleanField(default=False, blank=True, null=True)
     time_terminated = models.DateTimeField(blank=True, null=True)
     time_created = models.DateTimeField(auto_now_add=True)
+    active_users = models.ManyToManyField(User, related_name='active_users', blank=True)
+
+    @property
+    def total_users(self):
+        return len(self.active_users.all())
 
     class Meta:
         verbose_name = 'Room'

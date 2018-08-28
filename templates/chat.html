@@ -23,6 +23,8 @@
 
 
 <div class="row" id="chatapp">
+
+
 <div class="col-sm-2">
 </div>
 <form method="post">
@@ -35,7 +37,7 @@
 <div class="container-fluid" style="background:#f6f6f6;border: 1px #979797 solid;">
 
 <input type="hidden" id="chat_username" name="chat_username" v-model="chat_username" value="{{ user.username }}" />
-<input type="hidden" id="chat_user_id" name="chat_user_id" v-model="chat_user_id" value="{{ user.id }}" />
+<input type="hidden" id="chat_user_id" name="chat_user_id" v-model="chat_user_id" value="{{ chat_user_id }}" />
 
 <div class="row" style="min-height:30em;">
 <div class="col-sm-4">
@@ -57,6 +59,7 @@
                          <div id="users-container">
                         <input type="hidden" id="chat-user-id" value="{{ chat_user_id }}" />
                         <input type="hidden" id="active-chat-user-id" value="{{ user.id }}" />
+
                          {% for usr in users %}
                               {% if usr.profile.in_chat %}
                                 <div class="row">
@@ -81,7 +84,7 @@
                                       <div class="col-sm-6">
                          Комнаты
                                       </div>
-                                      <div class="col-sm-4"><a id="add-room" href="#" style="text-decoration:none;">(+)</a>
+                                      <div class="col-sm-4 neutral-messages"><a id="add-room" href="#" style="text-decoration:none;">(+)</a>
                                       </div>  
                                   </div>
                                  {% endif %}
@@ -114,7 +117,6 @@
 
                                {% if user.profile.in_chat %}
                                 <div id="delete-room-modal" class="delete-room-modal">
-
                                      <form id="deleteroomform"  name="deleteroomform"  method="post">
                                               <input type="hidden" value="" name="delete_room_id"  id="delete_room_id" />
                                             <div class="row add-room-row">
@@ -142,10 +144,51 @@
                          {% if user.profile.in_chat %}
                          <div id="rooms-container">
 
-                                 {% for room in rooms %}
-                                       <div id="room-{{ room.id }}" v-on:click="room({{ room.id }})">{{ room.name }} </div>
-                                       <input type="hidden" id="room-name-{{ room.id }}" value="{{ room.name }}" />
-                                 {% endfor %}
+
+
+                                 <virtual-list :size="5" :remain="5" wtag="div" id="rooms-menu-window" class="menu-pane">
+
+                                          <div v-for="rm in rooms" class='neutral-messages'  style='padding-top:0.0em;padding-bottom:0.0em;'>
+
+                                                    <div v-if="rm.creator.id == chat_user_id" style='float:left;width:86%;' v-on:click='room(rm.id)'> 
+                                                         <span v-if="rm.active_users.length > 0" style="float:left;">[[ rm.name ]] - [[ rm.active_users.length ]]</span>
+                                                         <span v-if="rm.active_users.length == 0" style="float:left;">[[ rm.name ]]</span>
+                                                         
+  
+                                                    </div>
+
+                                                    <div v-if="rm.creator.id != chat_user_id" style='float:left;width:86%;' v-on:click='room(rm.id)'>
+                                                         <span v-if="rm.active_users.length > 0" style="float:left;">[[ rm.name ]] - [[ rm.active_users.length ]]</span>
+                                                         <span v-if="rm.active_users.length == 0" style="float:left;">[[ rm.name ]]</span>
+
+
+                                                    </div>
+
+
+                                                    <div v-if="rm.creator.id == chat_user_id" style="width:12%;float:left;margin-top:-0.6em"  v-on:click="delete__room(rm.id)">
+                                                         <span>
+                                                                      <a href="#" style="text-decoration:none;font-weight:bold;font-size:1.8em;">-</a>
+                                                         </span>
+                                                    </div>
+
+
+                                                    <div v-if="rm.creator.id != chat_user_id" style="width:12%;float:left;margin-top:0.0em;margin-bottom:0.6em;"  v-on:click="delete__room(rm.id)">
+
+                                                         <span>&nbsp;
+                                                         </span>
+                                                    </div>
+
+
+
+                                                    <div class='clear'></div>
+
+
+                                          </div>
+
+                                  </virtual-list>
+
+
+
 
                          </div>
 

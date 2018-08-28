@@ -311,6 +311,40 @@
         height:100%; 
         min-height:28em;
     }
+    .users-pane {
+        width: 100%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        background:#FFFFFF;
+        background:#f6f6f6;
+        box-sizing: border-box;
+        height:100%;
+        width:100%;
+        min-height:10em;
+    }
+    .menu-pane {
+        width: 100%;
+        padding: 6px 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        background:#FFFFFF;
+        background:#f6f6f6;
+        box-sizing: border-box;
+        height:100%;
+        width:100%;
+        min-height:10em;
+
+/* Turn on custom 8px wide scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* 1px wider than Lion. */
+  /* This is more usable for users trying to click it. */
+  background-color: rgba(0,0,0,0);
+  -webkit-border-radius: 100px;
+    }
+
 </style>
 
 <!-- scroll -->
@@ -384,7 +418,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-router/3.0.1/vue-router.min.js"></script>
 <script src="https://tangbc.github.io/vue-virtual-scroll-list/index.js"></script>
 <script src="/static/js/vue-virtual-infinite-scroll.js"></script>
+<script src="/static/js/vue-infinite-loading.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-color/2.6.0/vue-color.min.js"></script>
+
 </head>
 <body>
     <div class="header-pan">
@@ -1069,6 +1105,7 @@
 <script src="/static/js/vendor/jquery.ui.widget.js"></script>
 <script src="/static/js/jquery.iframe-transport.js"></script>
 <script src="/static/js/jquery.fileupload.js"></script>
+<script src="/static/js/jquery/jquery.nicescroll.min.js"></script
 <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
 <script src="https://blueimp.github.io/JavaScript-Load-Image/js/load-image.all.min.js"></script>
 <!-- The Canvas to Blob plugin is included for image resizing functionality -->

@@ -10,13 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'first_name', 'last_name', 'email')
 
 
-
 class RoomSerializer(serializers.ModelSerializer):
     creator = UserSerializer(many=False, read_only=True)
+    active_users = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
-        fields = ('id', 'name', 'time_created', 'creator',)
+        fields = ('id', 'name', 'time_created', 'creator', 'active_users',)
 
 
 class MessageSerializer(serializers.ModelSerializer):

@@ -15,7 +15,8 @@ class UserChannelFilter(filters.FilterSet):
 
     class Meta:
         model = UserChannel
-        fields = ['id', 'owner_id', 'name', 'last_seen', 'time_created', 'pending_messages']
+        fields = ['id', 'owner_id', 'name', 'last_seen', 
+                  'time_created', 'pending_messages']
 
 
 class MessageFilter(filters.FilterSet):
@@ -38,8 +39,9 @@ class RoomFilter(filters.FilterSet):
     is_active = filters.CharFilter(name='is_active')
     time_created = filters.CharFilter(name='time_created') 
     creator_id = filters.CharFilter(name='creator_id')
-
+    active_users = filters.CharFilter(name='active_users')
  
     class Meta:
         model = Room
-        fields = ['id', 'name', 'is_active', 'time_created', 'creator_id']
+        fields = ['id', 'name', 'is_active', 'time_created', 
+                  'creator_id', 'active_users']

@@ -26,7 +26,7 @@ class UserChannelAdmin(admin.ModelAdmin):
 
 class RoomAdmin(admin.ModelAdmin):
     fieldsets = ((None, {'fields': ['name',
-                                    'creator',]}),)
+                                    'creator', 'active_users',]}),)
     list_display = ('id', 'name', 'creator',)
     list_editable = ('name', 'creator',)
     search_fields = ('name', 'creator',)
