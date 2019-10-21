@@ -56,7 +56,7 @@ django-session-idle-timeout==1.4.2
 django-tagging==0.4.6
 django-taggit==0.22.2
 django-user-accounts==2.0.3
-djangorestframework==3.8.2
+djangorestframework==3.9.1
 djangorestframework-filters==0.10.2
 djangorestframework-jwt==1.11.0
 djangorestframework-oauth==1.1.0
