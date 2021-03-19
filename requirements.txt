@@ -1,7 +1,7 @@
 ConfigArgParse==0.11.0
 Cython==0.28.2
 Django==2.0.4
-Jinja2==2.10
+Jinja2==2.11.3
 Markdown==2.6.11
 MarkupSafe==1.0
 Pillow==5.1.0
