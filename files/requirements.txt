@@ -49,7 +49,7 @@ django-redis-sessions==0.6.1
 django-registration-rest-framework==0.2.2
 django-rest-auth==0.9.3
 django-session-idle-timeout==1.4.2
-djangorestframework==3.8.2
+djangorestframework==3.11.2
 djangorestframework-filters==0.10.2
 djangorestframework-jwt==1.11.0
 djangorestframework-oauth==1.1.0
