@@ -69,7 +69,7 @@ idna==2.5
 itypes==1.1.0
 josepy==1.0.1
 language-selector==0.1
-lxml==4.2.1
+lxml==4.6.5
 mccabe==0.6.1
 mock==1.0.1
 mysqlclient==1.3.12
