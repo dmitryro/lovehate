@@ -6,7 +6,7 @@ Markdown==2.6.11
 MarkupSafe==1.0
 Pillow==5.1.0
 PyICU==1.5
-PyJWT==1.6.1
+PyJWT==2.4.0
 PyYAML==3.12
 acme==0.22.2
 asn1crypto==0.22.0
