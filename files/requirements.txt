@@ -56,7 +56,7 @@ djangorestframework-oauth==1.1.0
 flake8==3.5.0
 future==0.15.2
 html2text==2018.1.9
-html5lib==0.999
+html5lib==0.99999999
 idna==2.5
 itypes==1.1.0
 josepy==1.0.1
